@@ -1,4 +1,4 @@
-// script.js — logic chính
+// script.js — fix theme toggle mobile
 (function () {
   "use strict";
 
@@ -9,6 +9,7 @@
   const beforeOut   = $("#beforeResult");
   const afterOut    = $("#afterResult");
   const toggleBtn   = $("#themeToggle");
+  const root = document.documentElement;
 
   function format(num){
     return Number.isFinite(num) ? num.toFixed(2) : "0.00";
@@ -42,24 +43,27 @@
   });
 
   // ========== Theme Toggle ==========
-  const root = document.documentElement;
-  const savedTheme = localStorage.getItem("theme");
+  function updateToggleIcon() {
+    const theme = root.getAttribute("data-theme");
+    toggleBtn.textContent = theme === "dark" ? "☀️" : "🌙";
+  }
 
+  // Đọc theme từ localStorage hoặc hệ thống
+  const savedTheme = localStorage.getItem("theme");
   if (savedTheme) {
     root.setAttribute("data-theme", savedTheme);
-    toggleBtn.textContent = savedTheme === "dark" ? "☀️" : "🌙";
   } else {
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
     root.setAttribute("data-theme", prefersDark ? "dark" : "light");
-    toggleBtn.textContent = prefersDark ? "☀️" : "🌙";
   }
+  updateToggleIcon();
 
   toggleBtn.addEventListener("click", () => {
     const current = root.getAttribute("data-theme");
     const next = current === "dark" ? "light" : "dark";
     root.setAttribute("data-theme", next);
     localStorage.setItem("theme", next);
-    toggleBtn.textContent = next === "dark" ? "☀️" : "🌙";
+    updateToggleIcon();
   });
 
   window.addEventListener("DOMContentLoaded", () => {
