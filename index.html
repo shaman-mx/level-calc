@@ -14,11 +14,10 @@
     <!-- Trước Lv15 -->
     <div class="box">
       <h2><span class="dot before-dot"></span> Trước Level 15</h2>
-      <div class="input-wrap" id="beforeWrap">
+      <div class="input-wrap">
         <input type="number" id="beforeInput" placeholder="Nhập số..." oninput="calcBefore(); toggleClear(this)">
-        <button class="clear-btn" onclick="clearInput('beforeInput')">✖</button>
+        <button class="clear-btn" onclick="clearInput('beforeInput')">nhập lại</button>
       </div>
-      <div class="formula">× 105 ÷ 95</div>
       <div class="result-box before-result">
         <div class="result-label">Kết quả:</div>
         <div class="result-value" id="beforeResult">0.00</div>
@@ -29,11 +28,10 @@
     <!-- Sau Lv15 -->
     <div class="box">
       <h2><span class="dot after-dot"></span> Sau Level 15</h2>
-      <div class="input-wrap" id="afterWrap">
+      <div class="input-wrap">
         <input type="number" id="afterInput" placeholder="Nhập số..." oninput="calcAfter(); toggleClear(this)">
-        <button class="clear-btn" onclick="clearInput('afterInput')">✖</button>
+        <button class="clear-btn" onclick="clearInput('afterInput')">nhập lại</button>
       </div>
-      <div class="formula">× 110 ÷ 95</div>
       <div class="result-box after-result">
         <div class="result-label">Kết quả:</div>
         <div class="result-value" id="afterResult">0.00</div>
@@ -41,6 +39,10 @@
       </div>
     </div>
   </div>
+
+  <p class="note">
+    Nhập số vào các ô tương ứng để xem kết quả tính toán ngay lập tức
+  </p>
 
   <script src="script.js"></script>
 </body>
