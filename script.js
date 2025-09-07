@@ -1,4 +1,4 @@
-// script.js — fix đổi theme ngay lập tức trên mobile iOS/Android
+// script.js — hoàn chỉnh, hỗ trợ nút xoá nhanh & dark mode
 (function () {
   "use strict";
 
@@ -9,6 +9,8 @@
   const beforeOut   = $("#beforeResult");
   const afterOut    = $("#afterResult");
   const toggleBtn   = $("#themeToggle");
+  const clearBefore = $("#clearBefore");
+  const clearAfter  = $("#clearAfter");
   const root = document.documentElement;
 
   // ===== Hàm định dạng số =====
@@ -32,7 +34,7 @@
   beforeInput.addEventListener("input", calcBefore);
   afterInput.addEventListener("input", calcAfter);
 
-  // Cho phép dán số có dấu phẩy
+  // Hỗ trợ dán số có dấu phẩy
   [beforeInput, afterInput].forEach((el) => {
     el.addEventListener("paste", (e) => {
       const text = (e.clipboardData || window.clipboardData).getData("text");
@@ -45,23 +47,32 @@
     });
   });
 
-  // ====== QUẢN LÝ THEME ======
+  // ====== Nút xoá nhanh ======
+  clearBefore.addEventListener("click", () => {
+    beforeInput.value = "";
+    calcBefore();
+    beforeInput.focus();
+  });
+
+  clearAfter.addEventListener("click", () => {
+    afterInput.value = "";
+    calcAfter();
+    afterInput.focus();
+  });
+
+  // ====== Dark / Light Theme Toggle ======
   function setTheme(theme) {
-    // Cập nhật attribute trên <html>
     root.setAttribute("data-theme", theme);
-    // Lưu lựa chọn
     localStorage.setItem("theme", theme);
-    // Cập nhật icon nút
     toggleBtn.textContent = theme === "dark" ? "☀️" : "🌙";
 
-    // *** FORCE REPAINT TRÊN MOBILE ***
-    // Trick này buộc Safari & Chrome Android render lại ngay lập tức
+    // Force repaint trên iOS Safari
     document.body.style.visibility = "hidden";
-    document.body.offsetHeight; // Trigger reflow
+    document.body.offsetHeight;
     document.body.style.visibility = "visible";
   }
 
-  // Áp dụng theme lúc load trang
+  // Áp dụng theme khi load
   const savedTheme = localStorage.getItem("theme");
   if (savedTheme) {
     setTheme(savedTheme);
@@ -70,7 +81,6 @@
     setTheme(prefersDark ? "dark" : "light");
   }
 
-  // Toggle theme khi bấm nút
   toggleBtn.addEventListener("click", () => {
     const current = root.getAttribute("data-theme");
     const next = current === "dark" ? "light" : "dark";
