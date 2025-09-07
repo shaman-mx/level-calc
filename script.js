@@ -1,4 +1,4 @@
-// app.js — logic tách riêng, không phụ thuộc thư viện
+// script.js — logic chính
 (function () {
   "use strict";
 
@@ -8,9 +8,9 @@
   const afterInput  = $("#afterInput");
   const beforeOut   = $("#beforeResult");
   const afterOut    = $("#afterResult");
+  const toggleBtn   = $("#themeToggle");
 
   function format(num){
-    // Giữ 2 chữ số sau dấu phẩy, hiển thị gọn gàng
     return Number.isFinite(num) ? num.toFixed(2) : "0.00";
   }
 
@@ -26,16 +26,15 @@
     afterOut.textContent = format(res);
   }
 
-  // Lắng nghe nhập liệu và khởi tạo
+  // Lắng nghe nhập liệu
   beforeInput.addEventListener("input", calcBefore);
   afterInput.addEventListener("input", calcAfter);
 
-  // Cho phép paste số có dấu phẩy (vi-VN)
+  // Cho phép paste số có dấu phẩy
   [beforeInput, afterInput].forEach((el) => {
     el.addEventListener("paste", (e) => {
       const text = (e.clipboardData || window.clipboardData).getData("text");
       if (text && /,/.test(text)) {
-        // Đổi , -> . để parseFloat đọc được
         setTimeout(() => {
           el.value = text.replace(',', '.');
           el.dispatchEvent(new Event("input", { bubbles: true }));
@@ -44,7 +43,29 @@
     });
   });
 
-  // Tính lại khi tải trang (nếu trình duyệt tự khôi phục giá trị input)
+  // ========== Theme Toggle ==========
+  const root = document.body;
+  const savedTheme = localStorage.getItem("theme");
+
+  // Nếu user có chọn theme => áp dụng, không thì theo hệ thống
+  if (savedTheme) {
+    root.setAttribute("data-theme", savedTheme);
+    toggleBtn.textContent = savedTheme === "dark" ? "☀️" : "🌙";
+  } else {
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    root.setAttribute("data-theme", prefersDark ? "dark" : "light");
+    toggleBtn.textContent = prefersDark ? "☀️" : "🌙";
+  }
+
+  toggleBtn.addEventListener("click", () => {
+    const current = root.getAttribute("data-theme");
+    const next = current === "dark" ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    localStorage.setItem("theme", next);
+    toggleBtn.textContent = next === "dark" ? "☀️" : "🌙";
+  });
+
+  // Tính lại khi load trang
   window.addEventListener("DOMContentLoaded", () => {
     calcBefore();
     calcAfter();
