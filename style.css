@@ -22,13 +22,11 @@ body {
 
 .input-wrap {
   position: relative;
-  display: flex;
-  align-items: center;
 }
 
 .input-wrap input {
   width: 100%;
-  padding: 10px 60px 10px 10px; /* chừa chỗ cho nút "nhập lại" */
+  padding: 10px 60px 10px 10px;
   font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -36,7 +34,9 @@ body {
 
 .clear-btn {
   position: absolute;
+  top: 50%;
   right: 10px;
+  transform: translateY(-50%);
   font-size: 12px;
   color: #888;
   background: none;
@@ -47,6 +47,10 @@ body {
 
 .clear-btn:hover {
   color: #000;
+}
+
+.input-wrap.show-clear .clear-btn {
+  display: block;
 }
 
 .result-box {
@@ -70,4 +74,9 @@ body {
 }
 .after-dot {
   background: #e74c3c;
+}
+
+.note {
+  margin-top: 20px;
+  font-size: 14px;
 }
