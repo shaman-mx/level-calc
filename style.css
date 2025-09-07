@@ -1,0 +1,25 @@
+.input-container {
+  position: relative;
+  display: inline-block;
+}
+
+.input-container input {
+  padding-right: 30px; /* chừa chỗ cho nút xoá */
+}
+
+.clear-btn {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #999;
+  display: none; /* mặc định ẩn */
+}
+
+.clear-btn:hover {
+  color: red;
+}
