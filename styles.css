@@ -122,7 +122,10 @@ html[data-theme="dark"] .field__input {
   border-color: var(--brand-blue);
   box-shadow: 0 0 0 4px var(--ring);
 }
-
+.input-error {
+  border: 2px solid #e63946 !important;
+  background-color: #ffe5e5 !important;
+}
 /* Nút xoá nhanh */
 .clear-btn {
   position: absolute;
