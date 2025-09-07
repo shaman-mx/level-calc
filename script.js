@@ -26,11 +26,9 @@
     afterOut.textContent = format(res);
   }
 
-  // Lắng nghe nhập liệu
   beforeInput.addEventListener("input", calcBefore);
   afterInput.addEventListener("input", calcAfter);
 
-  // Cho phép paste số có dấu phẩy
   [beforeInput, afterInput].forEach((el) => {
     el.addEventListener("paste", (e) => {
       const text = (e.clipboardData || window.clipboardData).getData("text");
@@ -44,10 +42,9 @@
   });
 
   // ========== Theme Toggle ==========
-  const root = document.body;
+  const root = document.documentElement;
   const savedTheme = localStorage.getItem("theme");
 
-  // Nếu user có chọn theme => áp dụng, không thì theo hệ thống
   if (savedTheme) {
     root.setAttribute("data-theme", savedTheme);
     toggleBtn.textContent = savedTheme === "dark" ? "☀️" : "🌙";
@@ -65,7 +62,6 @@
     toggleBtn.textContent = next === "dark" ? "☀️" : "🌙";
   });
 
-  // Tính lại khi load trang
   window.addEventListener("DOMContentLoaded", () => {
     calcBefore();
     calcAfter();
