@@ -199,3 +199,38 @@ if (choicesBody) {
     choicesBody.appendChild(row);
   });
 }
+// ====== THÊM NÚT ĐIỀU HƯỚNG TỰ ĐỘNG ======
+(function addNavButtons() {
+  const main = document.querySelector("main");
+  if (!main) return; // Nếu trang không có <main> thì bỏ qua
+
+  // Tạo wrapper
+  const wrapper = document.createElement("div");
+  wrapper.className = "exp-link-wrapper";
+
+  // Nút Bảng EXP
+  const expBtn = document.createElement("a");
+  expBtn.href = "exp.html";
+  expBtn.className = "exp-btn";
+  expBtn.textContent = "📄 Bảng EXP";
+
+  // Nút Câu Hỏi
+  const choicesBtn = document.createElement("a");
+  choicesBtn.href = "choices.html";
+  choicesBtn.className = "exp-btn alt";
+  choicesBtn.textContent = "❓ Câu hỏi";
+
+  // Nút Trang Chính
+  const homeBtn = document.createElement("a");
+  homeBtn.href = "index.html";
+  homeBtn.className = "exp-btn back";
+  homeBtn.textContent = "🏠 Trang chính";
+
+  // Gắn tất cả nút vào wrapper
+  wrapper.appendChild(expBtn);
+  wrapper.appendChild(choicesBtn);
+  wrapper.appendChild(homeBtn);
+
+  // Thêm wrapper vào cuối <main>
+  main.appendChild(wrapper);
+})();
