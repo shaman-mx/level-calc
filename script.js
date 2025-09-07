@@ -165,7 +165,7 @@ const choicesData = [
     option2: { text: "Từ chối", reward: "Tăng tu vi", danger: false },
   },
   {
-    option1: { text: "Dùng cầm dựa vào", reward: "Tăng tu vi", danger: false },
+    option1: { text: "Dũng cảm dựa vào", reward: "Tăng tu vi", danger: false },
     option2: { text: "Đi nấp", reward: "Không có gì", danger: true },
   },
   {
