@@ -100,7 +100,16 @@ html[data-theme="dark"] .theme-toggle { border-color: #334155; }
 /* Fields */
 .field { display: grid; gap: 8px; margin-block: 8px 2px; }
 .field__label { font-size: 14px; color: var(--muted); }
+
+/* Wrapper chứa input + nút xoá */
+.field__wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
 .field__input {
+  width: 100%;
   padding: 12px;
   font-size: 16px;
   border: 1px solid #cbd5e1;
@@ -110,14 +119,39 @@ html[data-theme="dark"] .theme-toggle { border-color: #334155; }
   outline: none;
   transition: var(--transition);
 }
+
 html[data-theme="dark"] .field__input {
   border-color: #334155;
   background: #0b1324;
   color: #e6edf6;
 }
+
 .field__input:focus {
   border-color: var(--brand-blue);
   box-shadow: 0 0 0 4px var(--ring);
+}
+
+/* Nút xoá nhanh */
+.clear-btn {
+  position: absolute;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 16px;
+  cursor: pointer;
+  display: none;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.clear-btn:hover {
+  color: var(--brand-blue);
+}
+
+/* Hiển thị nút xoá khi có dữ liệu */
+.field__input:not(:placeholder-shown) ~ .clear-btn {
+  display: block;
 }
 
 /* Formula */
