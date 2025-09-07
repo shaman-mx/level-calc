@@ -315,3 +315,43 @@ html[data-theme="dark"] .exp-btn { background: #3b82f6; }
 html[data-theme="dark"] .exp-btn:hover { background: #2563eb; }
 html[data-theme="dark"] .exp-btn.alt { background: #22c55e; }
 html[data-theme="dark"] .exp-btn.alt:hover { background: #16a34a; }
+
+.exp-link-wrapper {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.exp-btn {
+  background-color: #2563eb;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 15px;
+  text-decoration: none;
+  transition: background-color 0.3s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.exp-btn:hover {
+  background-color: #1e40af;
+}
+
+.exp-btn.alt {
+  background-color: #16a34a;
+}
+
+.exp-btn.alt:hover {
+  background-color: #15803d;
+}
+
+.exp-btn.back {
+  background-color: #6b7280;
+}
+
+.exp-btn.back:hover {
+  background-color: #4b5563;
+}
+
