@@ -173,7 +173,7 @@ const choicesData = [
     option2: { text: "Khai thác sâu", reward: "Không có gì", danger: true },
   },
   {
-    option1: { text: "Lưỡng thiện", reward: "Tăng tu vi", danger: false },
+    option1: { text: "Lương thiện", reward: "Tăng tu vi", danger: false },
     option2: { text: "Lớn mạnh", reward: "Đan vàng", danger: false },
   },
   {
@@ -185,8 +185,8 @@ const choicesData = [
     option2: { text: "Đan dược", reward: "Đan xanh", danger: false },
   },
   {
-    option1: { text: "Tới giục chim loan", reward: "Đan xanh", danger: false },
-    option2: { text: "Trò chuyện với phó", reward: "Đan vàng", danger: false },
+    option1: { text: "Trợ giúp chim loan", reward: "Đan xanh", danger: false },
+    option2: { text: "Trợ giúp chuột vàng", reward: "Đan vàng", danger: false },
   },
   {
     option1: { text: "Tưới vườn thuốc", reward: "Tăng tu vi", danger: false },
