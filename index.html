@@ -5,6 +5,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Máy Tính Level</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    .input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-wrap input {
+      width: 100%;
+      padding: 8px 30px 8px 10px; /* chừa khoảng bên phải để nút xoá không che chữ */
+      box-sizing: border-box;
+    }
+
+    .clear-btn {
+      position: absolute;
+      right: 8px;
+      background: none;
+      border: none;
+      color: red;
+      font-size: 16px;
+      cursor: pointer;
+      display: none; /* mặc định ẩn */
+    }
+
+    .input-wrap.show-clear .clear-btn {
+      display: block;
+    }
+
+    .formula {
+      margin-left: 8px;
+      font-size: 14px;
+      color: #555;
+    }
+  </style>
 </head>
 <body>
   <h1>🌙 Bao Chửng tập tành tu tiên</h1>
@@ -14,7 +48,7 @@
     <!-- Trước Lv15 -->
     <div class="box">
       <h2><span class="dot before-dot"></span> Trước Level 15</h2>
-      <div class="input-wrap">
+      <div class="input-wrap" id="beforeWrap">
         <input type="number" id="beforeInput" placeholder="Nhập số..." oninput="calcBefore(); toggleClear(this)">
         <button class="clear-btn" onclick="clearInput('beforeInput')">✖</button>
         <div class="formula">× 105 ÷ 95</div>
@@ -29,7 +63,7 @@
     <!-- Sau Lv15 -->
     <div class="box">
       <h2><span class="dot after-dot"></span> Sau Level 15</h2>
-      <div class="input-wrap">
+      <div class="input-wrap" id="afterWrap">
         <input type="number" id="afterInput" placeholder="Nhập số..." oninput="calcAfter(); toggleClear(this)">
         <button class="clear-btn" onclick="clearInput('afterInput')">✖</button>
         <div class="formula">× 110 ÷ 95</div>
@@ -59,6 +93,36 @@
     Nhập số vào các ô tương ứng để xem kết quả tính toán ngay lập tức
   </p>
 
-  <script src="script.js"></script>
+  <script>
+    function toggleClear(input) {
+      const wrap = input.parentElement;
+      if (input.value.trim() !== "") {
+        wrap.classList.add("show-clear");
+      } else {
+        wrap.classList.remove("show-clear");
+      }
+    }
+
+    function clearInput(id) {
+      const input = document.getElementById(id);
+      input.value = "";
+      toggleClear(input);
+      if (id === "beforeInput") {
+        document.getElementById("beforeResult").innerText = "0.00";
+      } else {
+        document.getElementById("afterResult").innerText = "0.00";
+      }
+    }
+
+    function calcBefore() {
+      const val = parseFloat(document.getElementById("beforeInput").value);
+      document.getElementById("beforeResult").innerText = isNaN(val) ? "0.00" : (val * 105 / 95).toFixed(2);
+    }
+
+    function calcAfter() {
+      const val = parseFloat(document.getElementById("afterInput").value);
+      document.getElementById("afterResult").innerText = isNaN(val) ? "0.00" : (val * 110 / 95).toFixed(2);
+    }
+  </script>
 </body>
 </html>
