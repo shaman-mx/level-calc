@@ -1,24 +1,29 @@
-function calcBefore() {
-  let val = parseFloat(document.getElementById("beforeInput").value) || 0;
-  let res = val * 105 / 95;
-  document.getElementById("beforeResult").innerText = res.toFixed(2);
-}
-
-function calcAfter() {
-  let val = parseFloat(document.getElementById("afterInput").value) || 0;
-  let res = val * 110 / 95;
-  document.getElementById("afterResult").innerText = res.toFixed(2);
-}
-
 function toggleClear(input) {
-  const btn = input.parentElement.querySelector('.clear-btn');
-  btn.style.display = input.value ? 'block' : 'none';
+  const wrap = input.parentElement;
+  if (input.value.trim() !== "") {
+    wrap.classList.add("show-clear");
+  } else {
+    wrap.classList.remove("show-clear");
+  }
 }
 
 function clearInput(id) {
   const input = document.getElementById(id);
-  input.value = '';
-  if (id === "beforeInput") calcBefore();
-  if (id === "afterInput") calcAfter();
+  input.value = "";
   toggleClear(input);
+  if (id === "beforeInput") {
+    document.getElementById("beforeResult").innerText = "0.00";
+  } else {
+    document.getElementById("afterResult").innerText = "0.00";
+  }
+}
+
+function calcBefore() {
+  const val = parseFloat(document.getElementById("beforeInput").value);
+  document.getElementById("beforeResult").innerText = isNaN(val) ? "0.00" : (val * 105 / 95).toFixed(2);
+}
+
+function calcAfter() {
+  const val = parseFloat(document.getElementById("afterInput").value);
+  document.getElementById("afterResult").innerText = isNaN(val) ? "0.00" : (val * 110 / 95).toFixed(2);
 }
