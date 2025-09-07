@@ -12,9 +12,13 @@
   const clearAfter = $("#clearAfter");
   const root = document.documentElement;
 
-  // ===== Hàm tính toán biểu thức an toàn =====
+  // ==== Hàm định dạng số ====
+  function format(num) {
+    return Number.isFinite(num) ? num.toFixed(2) : "0.00";
+  }
+
+  // ==== Hàm tính toán biểu thức ====
   function safeEval(expr) {
-    // Chỉ cho phép số, dấu + - * / . và ngoặc ()
     if (!/^[0-9+\-*/().\s]+$/.test(expr)) return NaN;
     try {
       return new Function(`return (${expr})`)();
@@ -23,71 +27,31 @@
     }
   }
 
-  // ===== Hàm định dạng số =====
-  function format(num) {
-    return Number.isFinite(num) ? num.toFixed(2) : "0.00";
-  }
-
-  // ====== Tính toán trước Lv15 ======
+  // ==== Tính trước level 15 ====
   function calcBefore() {
-    const raw = beforeInput.value.replace(",", ".");
-    const val = safeEval(raw); // cho phép nhập phép tính
-    if (isNaN(val)) {
-      beforeOut.textContent = "0.00";
-      beforeInput.classList.add("input-error");
-      return;
-    }
-    beforeInput.classList.remove("input-error");
+    const expr = beforeInput.value.replace(",", ".");
+    const val = safeEval(expr);
     const res = (val * 105) / 95;
     beforeOut.textContent = format(res);
   }
 
-  // ====== Tính toán sau Lv15 ======
+  // ==== Tính sau level 15 ====
   function calcAfter() {
-    const raw = afterInput.value.replace(",", ".");
-    const val = safeEval(raw);
-    if (isNaN(val)) {
-      afterOut.textContent = "0.00";
-      afterInput.classList.add("input-error");
-      return;
-    }
-    afterInput.classList.remove("input-error");
+    const expr = afterInput.value.replace(",", ".");
+    const val = safeEval(expr);
     const res = (val * 110) / 95;
     afterOut.textContent = format(res);
   }
 
-  // ====== Sự kiện input trước Lv15 ======
+  // ==== Gắn sự kiện input ====
   if (beforeInput && beforeOut) {
     beforeInput.addEventListener("input", calcBefore);
-
-    // Hỗ trợ dán số có dấu phẩy
-    beforeInput.addEventListener("paste", (e) => {
-      const text = (e.clipboardData || window.clipboardData).getData("text");
-      if (text && /,/.test(text)) {
-        setTimeout(() => {
-          beforeInput.value = text.replace(",", ".");
-          beforeInput.dispatchEvent(new Event("input", { bubbles: true }));
-        }, 0);
-      }
-    });
   }
-
-  // ====== Sự kiện input sau Lv15 ======
   if (afterInput && afterOut) {
     afterInput.addEventListener("input", calcAfter);
-
-    afterInput.addEventListener("paste", (e) => {
-      const text = (e.clipboardData || window.clipboardData).getData("text");
-      if (text && /,/.test(text)) {
-        setTimeout(() => {
-          afterInput.value = text.replace(",", ".");
-          afterInput.dispatchEvent(new Event("input", { bubbles: true }));
-        }, 0);
-      }
-    });
   }
 
-  // ====== Nút xoá nhanh ======
+  // ==== Nút xoá nhanh ====
   if (clearBefore && beforeInput) {
     clearBefore.addEventListener("click", () => {
       beforeInput.value = "";
@@ -95,7 +59,6 @@
       beforeInput.focus();
     });
   }
-
   if (clearAfter && afterInput) {
     clearAfter.addEventListener("click", () => {
       afterInput.value = "";
@@ -104,19 +67,15 @@
     });
   }
 
-  // ====== Dark / Light Theme Toggle ======
+  // ==== Dark / Light Theme ====
   function setTheme(theme) {
     root.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
     if (toggleBtn) toggleBtn.textContent = theme === "dark" ? "☀️" : "🌙";
-
-    // Force repaint trên iOS Safari
     document.body.style.visibility = "hidden";
     document.body.offsetHeight;
     document.body.style.visibility = "visible";
   }
-
-  // Áp dụng theme khi load
   const savedTheme = localStorage.getItem("theme");
   if (savedTheme) {
     setTheme(savedTheme);
@@ -124,19 +83,119 @@
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
     setTheme(prefersDark ? "dark" : "light");
   }
-
-  // Chỉ gắn sự kiện khi nút toggle tồn tại
   if (toggleBtn) {
     toggleBtn.addEventListener("click", () => {
       const current = root.getAttribute("data-theme");
-      const next = current === "dark" ? "light" : "dark";
-      setTheme(next);
+      setTheme(current === "dark" ? "light" : "dark");
     });
   }
 
-  // Tính toán lại kết quả khi load (chỉ trên index)
   window.addEventListener("DOMContentLoaded", () => {
     if (beforeInput && beforeOut) calcBefore();
     if (afterInput && afterOut) calcAfter();
   });
 })();
+const choicesData = [
+  {
+    option1: { text: "Ăn quả", reward: "Tăng tu vi", danger: false },
+    option2: { text: "Uống nước từ suối", reward: "Tăng tu vi", danger: false },
+  },
+  {
+    option1: { text: "Bí mật điều tra", reward: "Thư thách đấu", danger: false },
+    option2: { text: "Tấn công trực diện", reward: "Không có gì", danger: true },
+  },
+  {
+    option1: { text: "Chiến đấu", reward: "Thư thách đấu", danger: false },
+    option2: { text: "Ngưỡng mộ", reward: "Tăng tu vi", danger: false },
+  },
+  {
+    option1: { text: "Cùng nhau khám phá", reward: "Trừ tu vi", danger: true },
+    option2: { text: "Tự khám phá", reward: "Đan vàng", danger: false },
+  },
+  {
+    option1: { text: "Cứu chữa", reward: "Đan xanh", danger: false },
+    option2: { text: "Rời đi", reward: "Trừ tu vi", danger: true },
+  },
+  {
+    option1: { text: "Đá thần", reward: "Tăng tu vi", danger: false },
+    option2: { text: "Đá hiếm", reward: "Tăng tu vi", danger: false },
+  },
+  {
+    option1: { text: "Đánh nhau với người đó", reward: "Đan xanh", danger: false },
+    option2: { text: "Cho lời khuyên", reward: "Tăng tu vi", danger: false },
+  },
+  {
+    option1: { text: "Đi đến hồ đen", reward: "Trừ tu vi", danger: true },
+    option2: { text: "Đi đến thôn hoa sen", reward: "Đan xanh", danger: false },
+  },
+  {
+    option1: { text: "Đi sang trái", reward: "Trừ tu vi", danger: true },
+    option2: { text: "Đi sang phải", reward: "Thư thách đấu", danger: false },
+  },
+  {
+    option1: { text: "Đi trên thuyền", reward: "Đan xanh", danger: false },
+    option2: { text: "Bay trên kiếm", reward: "Thư thách đấu", danger: false },
+  },
+  {
+    option1: { text: "Đi vào ban đêm", reward: "Đan vàng", danger: false },
+    option2: { text: "Đi vào ban ngày", reward: "Không có gì", danger: true },
+  },
+  {
+    option1: { text: "Đồng ý", reward: "Tăng tu vi", danger: false },
+    option2: { text: "Từ chối", reward: "Tăng tu vi", danger: false },
+  },
+  {
+    option1: { text: "Dũng cảm dựa vào", reward: "Tăng tu vi", danger: false },
+    option2: { text: "Đi nấp", reward: "Không có gì", danger: true },
+  },
+  {
+    option1: { text: "Khai thác bề mặt", reward: "Tăng tu vi", danger: false },
+    option2: { text: "Khai thác sâu", reward: "Không có gì", danger: true },
+  },
+  {
+    option1: { text: "Lương thiện", reward: "Tăng tu vi", danger: false },
+    option2: { text: "Lớn mạnh", reward: "Đan vàng", danger: false },
+  },
+  {
+    option1: { text: "Tặng thuốc", reward: "Đan xanh", danger: false },
+    option2: { text: "Cứu chữa", reward: "Đan vàng", danger: false },
+  },
+  {
+    option1: { text: "Tiên thảo", reward: "Tăng tu vi", danger: false },
+    option2: { text: "Đan dược", reward: "Đan xanh", danger: false },
+  },
+  {
+    option1: { text: "Trợ giúp chim loan", reward: "Đan xanh", danger: false },
+    option2: { text: "Trợ giúp chuột vàng", reward: "Đan vàng", danger: false },
+  },
+  {
+    option1: { text: "Tưới vườn thuốc", reward: "Tăng tu vi", danger: false },
+    option2: { text: "Luyện đan", reward: "Đan xanh", danger: false },
+  },
+];
+const choicesBody = document.getElementById("choicesBody");
+if (choicesBody) {
+  choicesData.forEach((q) => {
+    const row = document.createElement("tr");
+
+    const td1 = document.createElement("td");
+    td1.innerHTML = `
+      <div class="choice ${q.option1.danger ? "danger" : ""}">
+        <span>${q.option1.text}</span>
+        <span class="reward">(${q.option1.reward})</span>
+      </div>
+    `;
+
+    const td2 = document.createElement("td");
+    td2.innerHTML = `
+      <div class="choice ${q.option2.danger ? "danger" : ""}">
+        <span>${q.option2.text}</span>
+        <span class="reward">(${q.option2.reward})</span>
+      </div>
+    `;
+
+    row.appendChild(td1);
+    row.appendChild(td2);
+    choicesBody.appendChild(row);
+  });
+}
