@@ -3,7 +3,10 @@
   "short_name": "Level Calc",
   "start_url": "./index.html",
   "display": "standalone",
-  "description": "Công cụ tính lực chiến TU TIÊN WEPLAY",
+  "orientation": "portrait",
+  "description": "Công cụ tính lực chiến TU TIÊN WEPLAY, hỗ trợ mọi nền tảng.",
+  "background_color": "transparent",
+  "theme_color": "transparent",
   "icons": [
     {
       "src": "icons/icon-192.png",
@@ -15,7 +18,5 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-  ],
-  "background_color": "transparent",
-  "theme_color": "transparent"
+  ]
 }
