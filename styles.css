@@ -1,5 +1,5 @@
-/* ========== CSS cơ bản ========== */
-:root {
+/* ========== Màu và biến ========== */
+html {
   --bg: #f8fafc;
   --text: #0f172a;
   --muted: #64748b;
@@ -10,8 +10,8 @@
   --transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
-/* DARK MODE */
-:root[data-theme="dark"] {
+/* Dark mode */
+html[data-theme="dark"] {
   --bg: #0b1220;
   --text: #e6edf6;
   --muted: #9aa7b7;
@@ -19,7 +19,7 @@
   --ring: rgba(59,130,246,.4);
 }
 
-/* Hiệu ứng chuyển theme */
+/* Hiệu ứng chuyển mượt */
 html, body, .card, .info, .field__input {
   transition: var(--transition);
 }
@@ -37,7 +37,7 @@ body {
   padding-bottom: 48px;
 }
 
-/* Containers */
+/* Container */
 .container { width: min(1080px, 92vw); margin-inline: auto; padding: 16px; }
 
 /* Header */
@@ -69,10 +69,10 @@ h1 {
   justify-content: center;
   transition: background .3s, transform .2s;
 }
-:root[data-theme="dark"] .theme-toggle { border-color: #334155; }
+html[data-theme="dark"] .theme-toggle { border-color: #334155; }
 .theme-toggle:hover { transform: scale(1.05); }
 
-/* Cards grid */
+/* Cards */
 .cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -110,7 +110,7 @@ h1 {
   outline: none;
   transition: var(--transition);
 }
-:root[data-theme="dark"] .field__input {
+html[data-theme="dark"] .field__input {
   border-color: #334155;
   background: #0b1324;
   color: #e6edf6;
@@ -166,4 +166,15 @@ h1 {
   text-align: center;
   color: var(--muted);
   font-size: 12px;
+}
+
+/* Mobile tối ưu */
+@media (max-width: 480px) {
+  body { font-size: 15px; padding-bottom: 64px; }
+  .header-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .theme-toggle { align-self: flex-end; width: 44px; height: 44px; font-size: 20px; }
+  .cards { grid-template-columns: 1fr; gap: 16px; }
+  .card { padding: 16px; }
+  .field__input { padding: 14px; font-size: 17px; }
+  .result__value { font-size: 24px; }
 }
