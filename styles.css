@@ -212,3 +212,21 @@ html[data-theme="dark"] .field__input {
   .field__input { padding: 14px; font-size: 17px; }
   .result__value { font-size: 24px; }
 }
+
+/* Ẩn nút tăng/giảm giá trị trong input number */
+/* Chrome, Safari, Edge, Opera */
+.field__input::-webkit-outer-spin-button,
+.field__input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+.field__input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Tránh trường hợp Safari iOS vẫn hiển thị */
+input[type=number] {
+  appearance: textfield;
+}
