@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Máy Tính Level</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -18,7 +18,7 @@
         <input type="number" id="beforeInput" placeholder="Nhập số..." oninput="calcBefore(); toggleClear(this)">
         <button class="clear-btn" onclick="clearInput('beforeInput')">nhập lại</button>
       </div>
-      <div class="result-box before-result">
+      <div class="result-box">
         <div class="result-label">Kết quả:</div>
         <div class="result-value" id="beforeResult">0.00</div>
         <div class="result-footer">Tự động cập nhật</div>
@@ -32,7 +32,7 @@
         <input type="number" id="afterInput" placeholder="Nhập số..." oninput="calcAfter(); toggleClear(this)">
         <button class="clear-btn" onclick="clearInput('afterInput')">nhập lại</button>
       </div>
-      <div class="result-box after-result">
+      <div class="result-box">
         <div class="result-label">Kết quả:</div>
         <div class="result-value" id="afterResult">0.00</div>
         <div class="result-footer">Tự động cập nhật</div>
@@ -40,9 +40,7 @@
     </div>
   </div>
 
-  <p class="note">
-    Nhập số vào các ô tương ứng để xem kết quả tính toán ngay lập tức
-  </p>
+  <p class="note">Nhập số vào các ô tương ứng để xem kết quả ngay lập tức.</p>
 
   <script src="script.js"></script>
 </body>
