@@ -113,3 +113,59 @@
     if (afterInput && afterOut) calcAfter();
   });
 })();
+
+// ====== DỮ LIỆU CÂU HỎI ======
+const choicesData = [
+  {
+    option1: { text: "Ăn quả", reward: "Tăng tu vi", danger: false },
+    option2: { text: "Uống nước từ suối", reward: "Tăng tu vi", danger: false },
+  },
+  {
+    option1: { text: "Bí mật điều tra", reward: "Thư thách đấu", danger: false },
+    option2: { text: "Tấn công trực diện", reward: "Không có gì", danger: true },
+  },
+  {
+    option1: { text: "Chiến đấu", reward: "Thư thách đấu", danger: false },
+    option2: { text: "Ngưỡng mộ", reward: "Tăng tu vi", danger: false },
+  },
+  {
+    option1: { text: "Cùng nhau khám phá", reward: "Trừ tu vi", danger: true },
+    option2: { text: "Tự khám phá", reward: "Đan vàng", danger: false },
+  },
+  {
+    option1: { text: "Cứu chữa", reward: "Đan xanh", danger: false },
+    option2: { text: "Rời đi", reward: "Trừ tu vi", danger: true },
+  },
+  // ... tiếp tục bổ sung theo bảng bạn gửi
+];
+
+// ====== RENDER BẢNG CÂU HỎI ======
+const choicesBody = document.getElementById("choicesBody");
+
+if (choicesBody) {
+  choicesData.forEach((q) => {
+    const row = document.createElement("tr");
+
+    // Lựa chọn 1
+    const td1 = document.createElement("td");
+    td1.innerHTML = `
+      <div class="choice ${q.option1.danger ? "danger" : ""}">
+        <span>${q.option1.text}</span>
+        <span class="reward">(${q.option1.reward})</span>
+      </div>
+    `;
+
+    // Lựa chọn 2
+    const td2 = document.createElement("td");
+    td2.innerHTML = `
+      <div class="choice ${q.option2.danger ? "danger" : ""}">
+        <span>${q.option2.text}</span>
+        <span class="reward">(${q.option2.reward})</span>
+      </div>
+    `;
+
+    row.appendChild(td1);
+    row.appendChild(td2);
+    choicesBody.appendChild(row);
+  });
+}
