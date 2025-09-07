@@ -272,7 +272,11 @@ html[data-theme="dark"] .choices-table td { border-color: #334155; }
 .choice span { font-size: 15px; }
 .reward { color: var(--brand-green); font-size: 13px; }
 html[data-theme="dark"] .reward { color: #4ade80; }
-.danger { color: #ef4444 !important; font-weight: 600; }
+.choice.danger span,
+.choice.danger .reward {
+  color: #ef4444 !important;
+  font-weight: 600;
+}
 
 @media (max-width: 600px) {
   .choices-table th, .choices-table td { padding: 10px; font-size: 14px; }
