@@ -1,31 +1,24 @@
 function calcBefore() {
-  const input = document.getElementById("beforeInput").value;
-  const result = input ? (input * 105 / 95).toFixed(2) : "0.00";
-  document.getElementById("beforeResult").innerText = result;
+  const val = parseFloat(document.getElementById("beforeInput").value);
+  document.getElementById("beforeResult").innerText = isNaN(val) ? "0.00" : (val * 105 / 95).toFixed(2);
 }
 
 function calcAfter() {
-  const input = document.getElementById("afterInput").value;
-  const result = input ? (input * 110 / 95).toFixed(2) : "0.00";
-  document.getElementById("afterResult").innerText = result;
+  const val = parseFloat(document.getElementById("afterInput").value);
+  document.getElementById("afterResult").innerText = isNaN(val) ? "0.00" : (val * 110 / 95).toFixed(2);
 }
 
 function clearInput(id) {
   const input = document.getElementById(id);
   input.value = "";
-  if (id === "beforeInput") {
-    document.getElementById("beforeResult").innerText = "0.00";
-  } else {
-    document.getElementById("afterResult").innerText = "0.00";
-  }
-  input.nextElementSibling.style.display = "none"; // ẩn nút
+  input.dispatchEvent(new Event('input'));  // trigger toggleClear
 }
 
-function toggleClear(el) {
-  const btn = el.nextElementSibling;
-  if (el.value) {
-    btn.style.display = "block";
+function toggleClear(input) {
+  const wrap = input.parentElement;
+  if (input.value) {
+    wrap.classList.add("show-clear");
   } else {
-    btn.style.display = "none";
+    wrap.classList.remove("show-clear");
   }
 }
