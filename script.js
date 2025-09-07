@@ -287,3 +287,42 @@ function updateAllCalculations() {
         updateResult();
     }
 }
+
+// Hàm tính biểu thức an toàn
+function safeEval(expr) {
+    if (!/^[0-9+\-*/().\s]+$/.test(expr)) return NaN;
+    try {
+        return new Function(`return (${expr})`)();
+    } catch {
+        return NaN;
+    }
+}
+
+// Lấy tất cả input số dạng text hoặc number
+const numInputs = document.querySelectorAll('input[type="text"], input[type="number"]');
+
+numInputs.forEach(input => {
+    input.addEventListener('input', () => {
+        const expr = input.value.trim();
+        if (expr === "") {
+            input.dataset.value = "";
+            updateAllResults();
+            return;
+        }
+        const res = safeEval(expr);
+        if (!isNaN(res)) {
+            input.dataset.value = res;
+            input.style.color = ""; // reset màu
+        } else {
+            input.dataset.value = "";
+            input.style.color = "red"; // báo lỗi
+        }
+        updateAllResults();
+    });
+});
+
+function updateAllResults() {
+    if (typeof updateResult === 'function') {
+        updateResult();
+    }
+}
