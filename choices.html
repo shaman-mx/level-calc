@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Câu hỏi & Câu trả lời - TU TIÊN WEPLAY</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-row">
+      <div>
+        <h1>Câu hỏi & Câu trả lời</h1>
+        <p>Lựa chọn đúng để nhận thưởng tối đa</p>
+      </div>
+      <button id="themeToggle" class="theme-toggle">🌙</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <a href="index.html" class="back-btn">⬅ Quay về trang chính</a>
+
+    <div class="choices-wrapper">
+      <table class="choices-table" aria-label="Bảng lựa chọn câu trả lời">
+        <thead>
+          <tr>
+            <th>Câu trả lời 1</th>
+            <th>Câu trả lời 2</th>
+          </tr>
+        </thead>
+        <tbody id="choicesBody">
+          <!-- JS sẽ tự render nội dung ở đây -->
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2025 TU TIÊN WEPLAY. All rights reserved.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
