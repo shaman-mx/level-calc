@@ -17,15 +17,25 @@
     return Number.isFinite(num) ? num.toFixed(2) : "0.00";
   }
 
+  // ===== Hàm tính biểu thức an toàn =====
+  function safeEval(expr) {
+    if (!/^[0-9+\-*/().\s]+$/.test(expr)) return NaN;
+    try {
+      return new Function(`return (${expr})`)();
+    } catch {
+      return NaN;
+    }
+  }
+
   // ====== Tính toán ======
   function calcBefore() {
-    const val = parseFloat(beforeInput.value.replace(',', '.')) || 0;
+    const val = safeEval(beforeInput.value.replace(',', '.')) || 0;
     const res = (val * 105) / 95;
     beforeOut.textContent = format(res);
   }
 
   function calcAfter() {
-    const val = parseFloat(afterInput.value.replace(',', '.')) || 0;
+    const val = safeEval(afterInput.value.replace(',', '.')) || 0;
     const res = (val * 110) / 95;
     afterOut.textContent = format(res);
   }
@@ -34,7 +44,6 @@
   if (beforeInput && beforeOut) {
     beforeInput.addEventListener("input", calcBefore);
 
-    // Hỗ trợ dán số có dấu phẩy
     beforeInput.addEventListener("paste", (e) => {
       const text = (e.clipboardData || window.clipboardData).getData("text");
       if (text && /,/.test(text)) {
@@ -192,7 +201,6 @@ const choicesData = [
     option1: { text: "Tưới vườn thuốc", reward: "Tăng tu vi", danger: false },
     option2: { text: "Luyện đan", reward: "Đan xanh", danger: false },
   },
-  // ... tiếp tục bổ sung theo bảng bạn gửi
 ];
 
 // ====== RENDER BẢNG CÂU HỎI ======
@@ -202,7 +210,6 @@ if (choicesBody) {
   choicesData.forEach((q) => {
     const row = document.createElement("tr");
 
-    // Lựa chọn 1
     const td1 = document.createElement("td");
     td1.innerHTML = `
       <div class="choice ${q.option1.danger ? "danger" : ""}">
@@ -211,7 +218,6 @@ if (choicesBody) {
       </div>
     `;
 
-    // Lựa chọn 2
     const td2 = document.createElement("td");
     td2.innerHTML = `
       <div class="choice ${q.option2.danger ? "danger" : ""}">
