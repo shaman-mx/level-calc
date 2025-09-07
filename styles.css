@@ -1,4 +1,4 @@
-/* ========== CSS cơ bản, thân thiện mobile & desktop ========== */
+/* ========== CSS cơ bản ========== */
 :root{
   --bg: #f8fafc;
   --text: #0f172a;
@@ -9,56 +9,61 @@
   --ring: rgba(37, 99, 235, .35);
 }
 
-@media (prefers-color-scheme: dark){
-  :root{
-    --bg: #0b1220;
-    --text: #e6edf6;
-    --muted: #9aa7b7;
-    --card: #0f172a;
-    --ring: rgba(59,130,246,.4);
-  }
+body[data-theme="dark"]{
+  --bg: #0b1220;
+  --text: #e6edf6;
+  --muted: #9aa7b7;
+  --card: #0f172a;
+  --ring: rgba(59,130,246,.4);
 }
 
 *{ box-sizing: border-box; }
-
-html, body{
-  height: 100%;
-}
+html, body{ height: 100%; }
 
 body{
   margin: 0;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
   line-height: 1.5;
   background: var(--bg);
   color: var(--text);
-  text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   padding-bottom: 48px;
 }
 
 /* Containers */
-.container{
-  width: min(1080px, 92vw);
-  margin-inline: auto;
-  padding: 16px;
-}
+.container{ width: min(1080px, 92vw); margin-inline: auto; padding: 16px; }
 
 /* Header */
-.site-header{
-  text-align: center;
-  padding-top: 32px;
+.site-header{ padding-top: 24px; margin-bottom: 12px; }
+.header-row{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
 }
-
 h1{
-  margin: 0 0 8px;
+  margin: 0 0 4px;
   font-size: clamp(24px, 3.5vw, 36px);
   color: var(--brand-blue);
 }
+.site-header p{ margin: 0; color: var(--muted); }
 
-.site-header p{
-  margin: 0 0 12px;
-  color: var(--muted);
+/* Theme toggle */
+.theme-toggle{
+  cursor: pointer;
+  background: var(--card);
+  border: 1px solid #cbd5e1;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .3s, transform .2s;
 }
+body[data-theme="dark"] .theme-toggle{ border-color: #334155; }
+.theme-toggle:hover{ transform: scale(1.05); }
 
 /* Cards grid */
 .cards{
@@ -68,14 +73,12 @@ h1{
   margin-top: 12px;
   margin-bottom: 24px;
 }
-
 .card{
   background: var(--card);
   border-radius: 16px;
   padding: 20px;
   box-shadow: 0 6px 18px rgba(0,0,0,.08);
 }
-
 .card__title{
   display: flex;
   align-items: center;
@@ -83,27 +86,15 @@ h1{
   margin: 0 0 12px;
   font-size: 18px;
 }
-
-.dot{
-  inline-size: 12px;
-  block-size: 12px;
-  border-radius: 50%;
-}
+.dot{ inline-size: 12px; block-size: 12px; border-radius: 50%; }
 .dot--before{ background: var(--brand-blue); }
 .dot--after{ background: var(--brand-green); }
 
 /* Fields */
-.field{
-  display: grid;
-  gap: 8px;
-  margin-block: 8px 2px;
-}
-.field__label{
-  font-size: 14px;
-  color: var(--muted);
-}
+.field{ display: grid; gap: 8px; margin-block: 8px 2px; }
+.field__label{ font-size: 14px; color: var(--muted); }
 .field__input{
-  padding: 12px 12px;
+  padding: 12px;
   font-size: 16px;
   border: 1px solid #cbd5e1;
   border-radius: 10px;
@@ -112,12 +103,10 @@ h1{
   outline: none;
   transition: box-shadow .15s, border-color .15s;
 }
-@media (prefers-color-scheme: dark){
-  .field__input{
-    border-color: #334155;
-    background: #0b1324;
-    color: #e6edf6;
-  }
+body[data-theme="dark"] .field__input{
+  border-color: #334155;
+  background: #0b1324;
+  color: #e6edf6;
 }
 .field__input:focus{
   border-color: var(--brand-blue);
@@ -125,11 +114,7 @@ h1{
 }
 
 /* Formula */
-.formula{
-  margin: 8px 0 12px;
-  font-size: 14px;
-  color: var(--muted);
-}
+.formula{ margin: 8px 0 12px; font-size: 14px; color: var(--muted); }
 
 /* Results */
 .result{
@@ -142,7 +127,6 @@ h1{
 }
 .result--before{ background: var(--brand-blue); }
 .result--after{ background: var(--brand-green); }
-
 .result__label{ font-size: 14px; opacity: .95; }
 .result__value{ font-size: clamp(22px, 4.5vw, 28px); font-weight: 700; }
 .result__hint{ font-size: 12px; opacity: .9; }
@@ -153,9 +137,6 @@ h1{
   border-radius: 16px;
   padding: 20px;
   box-shadow: 0 6px 18px rgba(0,0,0,.08);
-}
-.info h3{
-  margin-top: 0;
 }
 .info__list{
   padding-left: 0;
@@ -170,10 +151,7 @@ h1{
   gap: 8px;
   font-size: 14px;
 }
-.info__note{
-  color: var(--muted);
-  margin: 10px 0 0;
-}
+.info__note{ color: var(--muted); margin: 10px 0 0; }
 
 /* Footer */
 .site-footer{
