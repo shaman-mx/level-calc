@@ -204,33 +204,30 @@ if (choicesBody) {
   const main = document.querySelector("main");
   if (!main) return; // Nếu trang không có <main> thì bỏ qua
 
+  const currentPage = window.location.pathname.split("/").pop();
+
   // Tạo wrapper
   const wrapper = document.createElement("div");
   wrapper.className = "exp-link-wrapper";
 
-  // Nút Bảng EXP
-  const expBtn = document.createElement("a");
-  expBtn.href = "exp.html";
-  expBtn.className = "exp-btn";
-  expBtn.textContent = "📄 Bảng EXP";
+  // Danh sách các nút cần tạo
+  const buttons = [
+    { href: "exp.html", label: "📄 Bảng EXP", class: "exp-btn" },
+    { href: "choices.html", label: "❓ Câu hỏi", class: "exp-btn alt" },
+    { href: "index.html", label: "🏠 Trang chính", class: "exp-btn back" }
+  ];
 
-  // Nút Câu Hỏi
-  const choicesBtn = document.createElement("a");
-  choicesBtn.href = "choices.html";
-  choicesBtn.className = "exp-btn alt";
-  choicesBtn.textContent = "❓ Câu hỏi";
+  buttons.forEach(btnData => {
+    // Ẩn nút nếu đang ở đúng trang hiện tại
+    if (btnData.href === currentPage) return;
 
-  // Nút Trang Chính
-  const homeBtn = document.createElement("a");
-  homeBtn.href = "index.html";
-  homeBtn.className = "exp-btn back";
-  homeBtn.textContent = "🏠 Trang chính";
+    const btn = document.createElement("a");
+    btn.href = btnData.href;
+    btn.textContent = btnData.label;
+    btn.className = btnData.class;
+    wrapper.appendChild(btn);
+  });
 
-  // Gắn tất cả nút vào wrapper
-  wrapper.appendChild(expBtn);
-  wrapper.appendChild(choicesBtn);
-  wrapper.appendChild(homeBtn);
-
-  // Thêm wrapper vào cuối <main>
+  // Gắn wrapper vào cuối <main>
   main.appendChild(wrapper);
 })();
