@@ -6,6 +6,15 @@
   <title>Máy Tính Level – TU TIÊN WEPLAY</title>
   <meta name="description" content="Công cụ tính toán lực chiến khi thách đấu (trước/sau level 15). Hiển thị tốt trên mọi thiết bị." />
   <link rel="stylesheet" href="styles.css" />
+  <script>
+    // Đặt theme sớm nhất để tránh nháy trắng/đen
+    (() => {
+      const saved = localStorage.getItem("theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const theme = saved || (prefersDark ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
 </head>
 <body>
   <header class="site-header container">
@@ -28,16 +37,13 @@
           <span class="dot dot--before" aria-hidden="true"></span>
           Trước Level 15
         </h2>
-
         <div class="field">
           <label for="beforeInput" class="field__label">Giá trị gốc</label>
           <input type="number" inputmode="decimal" step="any" id="beforeInput" class="field__input" placeholder="Nhập số…" autocomplete="off" />
         </div>
-
         <p class="formula" aria-live="polite">
           Công thức: <strong>× 105 ÷ 95</strong>
         </p>
-
         <output class="result result--before" id="beforeResultBox" for="beforeInput">
           <div class="result__label">Kết quả</div>
           <div class="result__value" id="beforeResult">0.00</div>
@@ -51,16 +57,13 @@
           <span class="dot dot--after" aria-hidden="true"></span>
           Sau Level 15
         </h2>
-
         <div class="field">
           <label for="afterInput" class="field__label">Giá trị gốc</label>
           <input type="number" inputmode="decimal" step="any" id="afterInput" class="field__input" placeholder="Nhập số…" autocomplete="off" />
         </div>
-
         <p class="formula" aria-live="polite">
           Công thức: <strong>× 110 ÷ 95</strong>
         </p>
-
         <output class="result result--after" id="afterResultBox" for="afterInput">
           <div class="result__label">Kết quả</div>
           <div class="result__value" id="afterResult">0.00</div>
