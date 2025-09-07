@@ -338,3 +338,37 @@ html[data-theme="dark"] .table-wrapper {
     padding: 8px 4px;
   }
 }
+
+/* Nút chuyển sang bảng EXP */
+.exp-link-wrapper {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.exp-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background: var(--brand-blue);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  transition: all 0.25s ease;
+}
+
+.exp-btn:hover {
+  background: #1d4ed8;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+}
+
+html[data-theme="dark"] .exp-btn {
+  background: #3b82f6;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+html[data-theme="dark"] .exp-btn:hover {
+  background: #2563eb;
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+}
