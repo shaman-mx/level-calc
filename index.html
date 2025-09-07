@@ -4,127 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Máy Tính Level</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f8fafc;
-      text-align: center;
-      padding: 30px;
-    }
-    h1 {
-      color: #2563eb;
-      margin-bottom: 10px;
-    }
-    p {
-      color: #555;
-      margin-bottom: 30px;
-    }
-    .container {
-      display: flex;
-      flex-wrap: wrap; /* Cho phép xuống dòng khi không đủ chỗ */
-      justify-content: center;
-      gap: 20px;
-      margin-bottom: 30px;
-    }
-    .box {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      width: 100%; /* full trên mobile */
-      max-width: 320px; /* giữ gọn trên PC */
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      text-align: left;
-    }
-    .box h2 {
-      font-size: 18px;
-      margin-bottom: 15px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      display: inline-block;
-    }
-    .before-dot { background: #2563eb; }
-    .after-dot { background: #16a34a; }
-    .input-wrap {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    input {
-      flex: 1;
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      margin-bottom: 15px;
-    }
-    .formula {
-      color: #555;
-      font-size: 14px;
-      white-space: nowrap;
-    }
-    .result-box {
-      border-radius: 8px;
-      padding: 12px;
-      margin-top: 10px;
-      text-align: center;
-      color: white;
-    }
-    .result-label {
-      font-size: 14px;
-      opacity: 0.9;
-    }
-    .result-value {
-      font-size: 22px;
-      font-weight: bold;
-      margin: 5px 0;
-    }
-    .result-footer {
-      font-size: 12px;
-      opacity: 0.9;
-    }
-    .before-result { background: #2563eb; }
-    .after-result { background: #16a34a; }
-
-    .info {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      text-align: left;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-    .info h3 {
-      margin-bottom: 15px;
-    }
-    .info-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
-      font-size: 14px;
-    }
-    .info-item span {
-      font-weight: bold;
-    }
-
-    /* Responsive cho mobile */
-    @media (max-width: 600px) {
-      .container {
-        flex-direction: column;
-        align-items: center;
-      }
-      .box {
-        width: 90%;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <h1>🌙 Bao Chửng tập tành tu tiên</h1>
@@ -135,7 +15,8 @@
     <div class="box">
       <h2><span class="dot before-dot"></span> Trước Level 15</h2>
       <div class="input-wrap">
-        <input type="number" id="beforeInput" placeholder="Nhập số..." oninput="calcBefore()">
+        <input type="number" id="beforeInput" placeholder="Nhập số..." oninput="calcBefore(); toggleClear(this)">
+        <button class="clear-btn" onclick="clearInput('beforeInput')">✖</button>
         <div class="formula">× 105 ÷ 95</div>
       </div>
       <div class="result-box before-result">
@@ -149,7 +30,8 @@
     <div class="box">
       <h2><span class="dot after-dot"></span> Sau Level 15</h2>
       <div class="input-wrap">
-        <input type="number" id="afterInput" placeholder="Nhập số..." oninput="calcAfter()">
+        <input type="number" id="afterInput" placeholder="Nhập số..." oninput="calcAfter(); toggleClear(this)">
+        <button class="clear-btn" onclick="clearInput('afterInput')">✖</button>
         <div class="formula">× 110 ÷ 95</div>
       </div>
       <div class="result-box after-result">
@@ -173,22 +55,10 @@
     </div>
   </div>
 
-  <p style="margin-top:15px; font-size:13px; color:#555;">
+  <p class="note">
     Nhập số vào các ô tương ứng để xem kết quả tính toán ngay lập tức
   </p>
 
-  <script>
-    function calcBefore() {
-      let val = parseFloat(document.getElementById("beforeInput").value) || 0;
-      let res = val * 105 / 95;
-      document.getElementById("beforeResult").innerText = res.toFixed(2);
-    }
-
-    function calcAfter() {
-      let val = parseFloat(document.getElementById("afterInput").value) || 0;
-      let res = val * 110 / 95;
-      document.getElementById("afterResult").innerText = res.toFixed(2);
-    }
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
