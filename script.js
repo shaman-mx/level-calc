@@ -1,4 +1,4 @@
-// script.js — fix theme toggle mobile iOS/Android
+// script.js — fix đổi theme ngay lập tức trên mobile iOS/Android
 (function () {
   "use strict";
 
@@ -11,20 +11,18 @@
   const toggleBtn   = $("#themeToggle");
   const root = document.documentElement;
 
-  // Hàm định dạng số
-  function format(num){
+  // ===== Hàm định dạng số =====
+  function format(num) {
     return Number.isFinite(num) ? num.toFixed(2) : "0.00";
   }
 
-  // Tính trước Lv15
-  function calcBefore(){
+  function calcBefore() {
     const val = parseFloat(beforeInput.value.replace(',', '.')) || 0;
     const res = (val * 105) / 95;
     beforeOut.textContent = format(res);
   }
 
-  // Tính sau Lv15
-  function calcAfter(){
+  function calcAfter() {
     const val = parseFloat(afterInput.value.replace(',', '.')) || 0;
     const res = (val * 110) / 95;
     afterOut.textContent = format(res);
@@ -34,7 +32,7 @@
   beforeInput.addEventListener("input", calcBefore);
   afterInput.addEventListener("input", calcAfter);
 
-  // Hỗ trợ dán số có dấu phẩy
+  // Cho phép dán số có dấu phẩy
   [beforeInput, afterInput].forEach((el) => {
     el.addEventListener("paste", (e) => {
       const text = (e.clipboardData || window.clipboardData).getData("text");
@@ -47,35 +45,39 @@
     });
   });
 
-  // =================== THEME TOGGLE ===================
-  function applyTheme(theme) {
+  // ====== QUẢN LÝ THEME ======
+  function setTheme(theme) {
+    // Cập nhật attribute trên <html>
     root.setAttribute("data-theme", theme);
+    // Lưu lựa chọn
     localStorage.setItem("theme", theme);
+    // Cập nhật icon nút
     toggleBtn.textContent = theme === "dark" ? "☀️" : "🌙";
 
-    // Force repaint trên iOS Safari
-    document.body.style.display = "none";
-    document.body.offsetHeight; // trigger reflow
-    document.body.style.display = "";
+    // *** FORCE REPAINT TRÊN MOBILE ***
+    // Trick này buộc Safari & Chrome Android render lại ngay lập tức
+    document.body.style.visibility = "hidden";
+    document.body.offsetHeight; // Trigger reflow
+    document.body.style.visibility = "visible";
   }
 
-  // Ưu tiên theme từ localStorage nếu có
+  // Áp dụng theme lúc load trang
   const savedTheme = localStorage.getItem("theme");
   if (savedTheme) {
-    applyTheme(savedTheme);
+    setTheme(savedTheme);
   } else {
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    applyTheme(prefersDark ? "dark" : "light");
+    setTheme(prefersDark ? "dark" : "light");
   }
 
-  // Xử lý click nút toggle
+  // Toggle theme khi bấm nút
   toggleBtn.addEventListener("click", () => {
     const current = root.getAttribute("data-theme");
     const next = current === "dark" ? "light" : "dark";
-    applyTheme(next);
+    setTheme(next);
   });
 
-  // Khởi tạo kết quả khi tải trang
+  // Tính toán lại kết quả khi load
   window.addEventListener("DOMContentLoaded", () => {
     calcBefore();
     calcAfter();
