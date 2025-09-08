@@ -1,3 +1,32 @@
+// =============================
+// DARK / LIGHT MODE ĐỒNG BỘ VỚI INDEX
+// =============================
+const themeToggle = document.getElementById("themeToggle");
+const root = document.documentElement;
+
+// Đọc theme từ localStorage
+if (localStorage.getItem("theme")) {
+  root.setAttribute("data-theme", localStorage.getItem("theme"));
+  if (themeToggle) {
+    themeToggle.textContent =
+      localStorage.getItem("theme") === "dark" ? "🌙" : "🌞";
+  }
+}
+
+// Toggle theme khi bấm nút
+if (themeToggle) {
+  themeToggle.addEventListener("click", () => {
+    const currentTheme =
+      root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    root.setAttribute("data-theme", currentTheme);
+    localStorage.setItem("theme", currentTheme);
+    themeToggle.textContent = currentTheme === "dark" ? "🌙" : "🌞";
+  });
+}
+
+// =============================
+// DỮ LIỆU LEVEL + EXP + RATE
+// =============================
 const levelData = {
   "1 sơ": { exp: 6, rate: 1 },
   "1 trung": { exp: 8, rate: 1 },
@@ -17,48 +46,61 @@ const levelData = {
   "6 sơ": { exp: 20444, rate: 5 },
   "6 trung": { exp: 21470, rate: 5 },
   "6 hậu": { exp: 22420, rate: 5 },
-  "7 sơ": { exp: 23674, rate: 5 }
+  "7 sơ": { exp: 23674, rate: 5 },
 };
 
-// Gán option vào select
+// =============================
+// BIẾN TOÀN CỤC
+// =============================
 const levelSelect = document.getElementById("levelSelect");
-Object.keys(levelData).forEach(level => {
-  const opt = document.createElement("option");
-  opt.value = level;
-  opt.textContent = `Level ${level}`;
-  levelSelect.appendChild(opt);
-});
-
-// Các phần tử
 const suoiLinh = document.getElementById("suoiLinh");
 const thanMat = document.getElementById("thanMat");
 const chienDau = document.getElementById("chienDau");
 const keBangTam = document.getElementById("keBangTam");
-const progressBar = document.getElementById("progressBar");
-const progressText = document.getElementById("progressText");
 const expInfo = document.getElementById("expInfo");
 const speedInfo = document.getElementById("speedInfo");
 const timeInfo = document.getElementById("timeInfo");
+const progressBar = document.getElementById("progressBar");
+const progressText = document.getElementById("progressText");
 const resetBtn = document.getElementById("resetBtn");
 
 let currentExp = 0;
 let intervalId = null;
 
-// Tính tốc độ tu luyện
+// =============================
+// RENDER DROPDOWN LEVEL
+// =============================
+if (levelSelect) {
+  Object.keys(levelData).forEach((level) => {
+    const option = document.createElement("option");
+    option.value = level;
+    option.textContent = `Level ${level}`;
+    levelSelect.appendChild(option);
+  });
+}
+
+// =============================
+// TÍNH TỐC ĐỘ EXP
+// =============================
 function calcSpeed(baseRate) {
   let speed = baseRate;
-  if (suoiLinh.checked) speed *= 1.1;
-  speed *= 1 + Number(thanMat.value) * 0.05;
-  const chienVal = Number(chienDau.value);
+
+  if (suoiLinh && suoiLinh.checked) speed *= 1.1;
+  if (thanMat) speed *= 1 + Number(thanMat.value) * 0.05;
+
+  const chienVal = Number(chienDau?.value || 0);
   if (chienVal >= 1501) speed *= 1.15;
   else if (chienVal >= 1001) speed *= 1.07;
   else if (chienVal >= 501) speed *= 1.05;
   else if (chienVal >= 200) speed *= 1.03;
-  speed += Number(keBangTam.value);
+
+  speed += Number(keBangTam?.value || 0);
   return speed;
 }
 
-// Update thông tin và progress
+// =============================
+// CẬP NHẬT THÔNG SỐ + PROGRESS BAR
+// =============================
 function updateStats() {
   const selected = levelSelect.value;
   if (!selected) return;
@@ -74,6 +116,7 @@ function updateStats() {
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);
   const s = Math.floor(seconds % 60);
+
   timeInfo.textContent = `Dự kiến đầy sau: ${h} giờ ${m} phút ${s} giây`;
 
   const progress = Math.min((currentExp / exp) * 100, 100);
@@ -81,37 +124,50 @@ function updateStats() {
   progressText.textContent = `${progress.toFixed(1)}%`;
 }
 
-// Tick EXP mỗi giây
+// =============================
+// CẬP NHẬT EXP THEO THỜI GIAN
+// =============================
 function tick() {
   const selected = levelSelect.value;
   if (!selected) return;
+
   const { exp, rate } = levelData[selected];
   const speed = calcSpeed(rate);
 
   currentExp += speed;
+
   if (currentExp >= exp) {
-    clearInterval(intervalId);
     currentExp = exp;
+    clearInterval(intervalId);
     alert("🎉 Tinh thể tu vi đã đầy!");
   }
+
   updateStats();
 }
 
-// Reset
-resetBtn.addEventListener("click", () => {
-  currentExp = 0;
-  clearInterval(intervalId);
-  intervalId = setInterval(tick, 1000);
-  updateStats();
-});
-
-// Cập nhật khi thay đổi lựa chọn
-[levelSelect, suoiLinh, thanMat, chienDau, keBangTam].forEach(el => {
-  el.addEventListener("change", () => {
+// =============================
+// RESET TIẾN TRÌNH
+// =============================
+if (resetBtn) {
+  resetBtn.addEventListener("click", () => {
+    currentExp = 0;
+    clearInterval(intervalId);
+    intervalId = setInterval(tick, 1000);
     updateStats();
   });
+}
+
+// =============================
+// SỰ KIỆN REALTIME
+// =============================
+[levelSelect, suoiLinh, thanMat, chienDau, keBangTam].forEach((el) => {
+  if (el) el.addEventListener("change", updateStats);
 });
 
-// Bắt đầu đếm
-intervalId = setInterval(tick, 1000);
-updateStats();
+// =============================
+// BẮT ĐẦU TỰ ĐỘNG
+// =============================
+if (levelSelect) {
+  intervalId = setInterval(tick, 1000);
+  updateStats();
+}
