@@ -253,6 +253,24 @@ function startProgress() {
   updateInfoUI();
 
   timer = setInterval(tick, 200);         // tick mượt 5 lần/giây
+}
+function startProgress() {
+  clearInterval(timer);
+  if (!levelSelect) return;
+
+  const key = levelSelect.value;          // đã gộp Level + Giai đoạn
+  if (!crystalData[key]) return;
+
+  totalExp = crystalData[key].exp;
+  baseRate = crystalData[key].rate;
+
+  // Reset khi đổi Level hoặc bấm reset
+  accExp   = 0;
+  lastTick = Date.now();
+  updateProgressUI();
+  updateInfoUI();
+
+  timer = setInterval(tick, 200);         // tick mượt 5 lần/giây
 
 } // <-- Kết thúc startProgress() ở đây
 
@@ -281,10 +299,7 @@ if (resetBtn) {
 });
 
 // Khởi động lần đầu
-if (levelSelect) {
-  startProgress();
-  updateInfoUI();  // ✅ Thêm dòng này
-}
+if (levelSelect) startProgress();
 
 
   /** =============================
