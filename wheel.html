@@ -159,19 +159,18 @@ function spinWheel() {
   spinning = true;
   resultText.textContent = "Đang quay... 🎡";
 
-  const extraSpins = 5;
-  const randomSlice = Math.floor(Math.random() * segments.length);
-
-  // Xoay theo chiều kim đồng hồ, mũi tên luôn nằm trên cùng
-  const targetAngle = (2 * Math.PI * extraSpins) - (randomSlice * sliceAngle) - sliceAngle / 2;
+  const extraSpins = 5; // số vòng quay thêm
+  const randomAngle = Math.random() * 2 * Math.PI; // random góc
+  const targetAngle = extraSpins * 2 * Math.PI + randomAngle;
 
   let start = null;
-  const duration = 4000;
+  const duration = 4000; // ms
 
   function animate(timestamp) {
     if (!start) start = timestamp;
     const progress = Math.min((timestamp - start) / duration, 1);
 
+    // Easing cubic-out
     const easing = 1 - Math.pow(1 - progress, 3);
     currentAngle = targetAngle * easing;
 
@@ -182,14 +181,19 @@ function spinWheel() {
     } else {
       spinning = false;
 
-      // Đảo ngược index do canvas tính theo chiều kim đồng hồ
-      const resultIndex = (segments.length - randomSlice) % segments.length;
+      // Góc hiện tại tính từ mũi tên (trên đỉnh)
+      const normalizedAngle = (2 * Math.PI - (currentAngle % (2 * Math.PI)) + Math.PI / 2) % (2 * Math.PI);
+
+      // Tính index phần trúng thưởng
+      const resultIndex = Math.floor(normalizedAngle / sliceAngle) % segments.length;
+
       resultText.textContent = `🎉 Kết quả: ${segments[resultIndex].label}`;
     }
   }
 
   requestAnimationFrame(animate);
 }
+
 
 
     spinBtn.addEventListener("click", spinWheel);
