@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tính thời gian đầy Tinh thể tu vi</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-row">
+      <div>
+        <h1>Tính thời gian đầy Tinh thể tu vi</h1>
+        <p>Chọn level và tuỳ chỉnh tốc độ tu vi</p>
+      </div>
+      <button id="themeToggle" class="theme-toggle">🌙</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <a href="index.html" class="back-btn">⬅ Quay về trang chính</a>
+
+    <div class="card">
+      <div class="field">
+        <label for="levelSelect" class="field__label">Chọn Level & Giai đoạn</label>
+        <select id="levelSelect" class="field__input"></select>
+      </div>
+
+      <div class="field">
+        <label class="field__label">Dung lượng tinh thể</label>
+        <div id="crystalCapacity" class="result result--before">0 EXP</div>
+      </div>
+
+      <div class="field">
+        <label class="field__label">EXP/s gốc</label>
+        <div id="baseExp" class="result result--after">0 EXP/s</div>
+      </div>
+
+      <hr style="margin:16px 0;">
+
+      <div class="field">
+        <label class="field__label">Suối linh (+10%)</label>
+        <input type="checkbox" id="suoiLinh">
+      </div>
+
+      <div class="field">
+        <label class="field__label">Quan hệ thân mật</label>
+        <select id="thanMat" class="field__input">
+          <option value="0">Không</option>
+          <option value="1">1 người (+5%)</option>
+          <option value="2">2 người (+10%)</option>
+          <option value="3">3 người (+15%)</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="field__label">Tinh thần chiến đấu</label>
+        <select id="chienDau" class="field__input">
+          <option value="0">Không</option>
+          <option value="3">200-500 (+3%)</option>
+          <option value="5">501-1000 (+5%)</option>
+          <option value="7">1001-1500 (+7%)</option>
+          <option value="15">1501-2000 (+15%)</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="field__label">Kế Băng Tâm</label>
+        <select id="keBangTam" class="field__input">
+          <option value="0">Không</option>
+          <option value="1">Lv1 (+1 exp/s)</option>
+          <option value="2">Lv3 (+2 exp/s)</option>
+          <option value="3">Lv5 (+3 exp/s)</option>
+        </select>
+      </div>
+
+      <hr style="margin:16px 0;">
+
+      <div class="result result--after">
+        <div class="result__label">Tốc độ tu vi cuối cùng</div>
+        <div id="finalExp">0 EXP/s</div>
+      </div>
+
+      <div class="result result--before" style="margin-top:12px;">
+        <div class="result__label">Thời gian đầy tinh thể</div>
+        <div id="fullTime">0 giây</div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2025 TU TIÊN WEPLAY. All rights reserved.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
