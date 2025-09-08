@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🎡 Mật cảnh hên xui</title>
+  <title>🎡 Mật cảnh tâm linh</title>
   <link rel="stylesheet" href="styles.css" />
   <style>
-    /* CSS riêng cho vòng quay */
     .wheel-page {
       max-width: 600px;
       margin: 30px auto;
@@ -83,18 +82,13 @@
     <h1>🎡 Mật cảnh tâm linh</h1>
     <div class="wheel-container">
       <canvas id="wheel" width="300" height="300"></canvas>
-      <button id="spinBtn">🎰 Quay</button>
+      <button id="spinBtn">🎰 Quay!!!</button>
     </div>
-    <p id="resultText" class="result-text">Theo thì lên - chống thì đợi MC sau!</p>
-
-    <!-- Nút quay lại -->
+    <p id="resultText" class="result-text">Hãy thử vận may của bạn!</p>
     <a href="index.html" class="back-btn">⬅ Quay lại trang chính</a>
   </div>
 
   <script>
-    // =======================
-    // 🎡 Lucky Wheel
-    // =======================
     const wheelCanvas = document.getElementById("wheel");
     const spinBtn = document.getElementById("spinBtn");
     const resultText = document.getElementById("resultText");
@@ -103,8 +97,8 @@
     // Dữ liệu 3 phần
     const segments = [
       { label: "Thuỷ 🌊", color: "#3b82f6" },
-      { label: "Mộc 🌱", color: "#f59e0b" },
       { label: "Hoả 🔥", color: "#ef4444" },
+      { label: "Mộc 🌱", color: "#f59e0b" },
     ];
 
     const size = wheelCanvas.width;
@@ -120,7 +114,7 @@
       ctx.clearRect(0, 0, size, size);
 
       segments.forEach((segment, i) => {
-        const startAngle = currentAngle + i * sliceAngle - Math.PI / 2;
+        const startAngle = currentAngle + i * sliceAngle;
         const endAngle = startAngle + sliceAngle;
 
         // Vẽ phần
@@ -142,63 +136,74 @@
         ctx.restore();
       });
 
-      // Mũi tên trên cùng
-      ctx.beginPath();
-      ctx.moveTo(center - 10, 5);
-      ctx.lineTo(center + 10, 5);
-      ctx.lineTo(center, 30);
-      ctx.fillStyle = "#000";
-      ctx.fill();
+// === Vẽ mũi tên chỉ vào tâm (hướng 3h) ===
+const pointerSize = 18; // Kích thước mũi tên
+ctx.beginPath();
+
+// Đỉnh tam giác nằm trên viền vòng quay, hướng vào tâm
+const offset = 20; // Độ dịch trái, tăng số này thì mũi tên sát tâm hơn
+
+const tipX = center + radius - offset; 
+const tipY = center;
+
+// Hai cạnh đáy nằm ngoài vòng quay
+const baseX1 = center + radius + pointerSize;
+const baseY1 = center - pointerSize;
+
+const baseX2 = center + radius + pointerSize;
+const baseY2 = center + pointerSize;
+
+ctx.moveTo(tipX, tipY);
+ctx.lineTo(baseX1, baseY1);
+ctx.lineTo(baseX2, baseY2);
+ctx.closePath();
+
+ctx.fillStyle = "#000"; // Màu mũi tên
+ctx.fill();
     }
-    drawWheel();
-
-    // Quay vòng quay
-function spinWheel() {
-  if (spinning) return;
-
-  spinning = true;
-  resultText.textContent = "Đang quay... 🎡";
-
-  const extraSpins = 5; // số vòng quay thêm
-  const randomAngle = Math.random() * 2 * Math.PI; // random góc
-  const targetAngle = extraSpins * 2 * Math.PI + randomAngle;
-
-  let start = null;
-  const duration = 4000; // ms
-
-  function animate(timestamp) {
-    if (!start) start = timestamp;
-    const progress = Math.min((timestamp - start) / duration, 1);
-
-    // Easing cubic-out
-    const easing = 1 - Math.pow(1 - progress, 3);
-    currentAngle = targetAngle * easing;
 
     drawWheel();
 
-    if (progress < 1) {
+    // Quay vòng quay với random góc thực
+    function spinWheel() {
+      if (spinning) return;
+
+      spinning = true;
+      resultText.textContent = "Đang quay... 🎡";
+
+      // Quay ít nhất 5 vòng + random 0 -> 360 độ
+      const extraSpins = 5;
+      const randomAngle = Math.random() * 2 * Math.PI;
+      const targetAngle = 2 * Math.PI * extraSpins + randomAngle;
+
+      let start = null;
+      const duration = 4000; // ms
+
+      function animate(timestamp) {
+        if (!start) start = timestamp;
+        const progress = Math.min((timestamp - start) / duration, 1);
+
+        // Easing cubic-out
+        const easing = 1 - Math.pow(1 - progress, 3);
+        currentAngle = targetAngle * easing;
+
+        drawWheel();
+
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          spinning = false;
+
+          // Tính kết quả CHUẨN vì mũi tên ở 3h
+          const normalizedAngle = (2 * Math.PI - (currentAngle % (2 * Math.PI))) % (2 * Math.PI);
+          const resultIndex = Math.floor(normalizedAngle / sliceAngle);
+
+          resultText.textContent = `🎉 Kết quả: ${segments[resultIndex].label}`;
+        }
+      }
+
       requestAnimationFrame(animate);
-    } else {
-      spinning = false;
-
-      // Góc hiện tại, bù thêm góc của mũi tên
-      let normalizedAngle = (currentAngle + Math.PI / 2) % (2 * Math.PI);
-
-      // Đảo ngược chiều vì canvas vẽ CW
-      normalizedAngle = (2 * Math.PI - normalizedAngle) % (2 * Math.PI);
-
-      // Tính index chính xác
-      const resultIndex = Math.floor(normalizedAngle / sliceAngle) % segments.length;
-
-      resultText.textContent = `🎉 Kết quả: ${segments[resultIndex].label}`;
     }
-  }
-
-  requestAnimationFrame(animate);
-}
-
-
-
 
     spinBtn.addEventListener("click", spinWheel);
   </script>
