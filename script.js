@@ -136,7 +136,7 @@
   [levelSelect, suoiLinh, thanMat, chienDau, keBangTam].forEach(el => {
     if (el) el.addEventListener("change", () => {
       updateCrystalInfo();
-      if (progress > 0) startProgress(); // đồng bộ progress nếu đang chạy
+if (progress > 0 && !timer) startProgress();; // đồng bộ progress nếu đang chạy
     });
   });
 
