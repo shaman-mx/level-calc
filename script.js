@@ -263,7 +263,11 @@
   }
 
 if (levelSelect) {
-    levelSelect.addEventListener("change", startProgress);
+  levelSelect.addEventListener("change", startProgress);
+  levelSelect.addEventListener("click", () => {
+    // Nếu bấm lại cùng 1 option thì vẫn reset progress
+    startProgress();
+  });
 }
 
   if (resetBtn) {
