@@ -281,7 +281,10 @@ if (resetBtn) {
 });
 
 // Khởi động lần đầu
-if (levelSelect) startProgress();
+if (levelSelect) {
+  startProgress();
+  updateInfoUI();  // ✅ Thêm dòng này
+}
 
 
   /** =============================
