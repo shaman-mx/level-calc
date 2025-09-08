@@ -429,3 +429,59 @@ html[data-theme="dark"] .progress-container{ background:#475569; }
     width: 100%;
   }
 }
+/* Layout chính cho buff */
+.buff-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 8px;
+  align-items: end;
+}
+
+/* Checkbox Suối linh đẹp hơn */
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+  transform: scale(1.2);
+  cursor: pointer;
+}
+
+/* Đồng bộ select & input */
+.field__input {
+  width: 100%;
+  min-height: 36px;
+  padding: 6px 10px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-secondary);
+  color: var(--text-color);
+  transition: 0.2s ease;
+}
+
+.field__input:hover {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 6px var(--accent-color);
+}
+
+/* Label đồng bộ */
+.field__label {
+  font-size: 14px;
+  margin-bottom: 4px;
+  display: block;
+  color: var(--text-color);
+}
+
+/* Responsive cho màn hình nhỏ */
+@media (max-width: 768px) {
+  .buff-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
