@@ -255,7 +255,6 @@ const crystalData = [
   { level: "7 sơ", expPerSec: 5, capacity: 23674 },
 ];
 
-// Lấy element
 const levelSelect = document.getElementById("levelSelect");
 const crystalCapacity = document.getElementById("crystalCapacity");
 const baseExp = document.getElementById("baseExp");
@@ -268,106 +267,92 @@ const fullTime = document.getElementById("fullTime");
 const countdown = document.getElementById("countdown");
 const fullWarning = document.getElementById("fullWarning");
 const progressBar = document.getElementById("progressBar");
+const resetBtn = document.getElementById("resetBtn");
 
 let countdownTimer;
+let startTime = 0;
+let expGained = 0;
 
-// ======= Populate Dropdown =======
 function populateLevels() {
-  levelSelect.innerHTML = ""; // Xóa cũ để tránh bị trùng
-
   crystalData.forEach((item, index) => {
     const opt = document.createElement("option");
     opt.value = index;
     opt.textContent = item.level;
     levelSelect.appendChild(opt);
   });
-
-  // Chọn level đầu tiên mặc định
-  levelSelect.value = 0;
 }
 
-// ======= Tính toán thời gian đầy tinh thể =======
-function calcCrystal() {
+function calcCrystal(reset = false) {
   clearInterval(countdownTimer);
   fullWarning.style.display = "none";
 
-  const index = +levelSelect.value;
-  const data = crystalData[index];
+  const data = crystalData[+levelSelect.value];
   if (!data) return;
 
   const base = data.expPerSec;
   const capacity = data.capacity;
 
-  // Bonus %
   let bonusPercent = 0;
   if (suoiLinh.checked) bonusPercent += 10;
   bonusPercent += +thanMat.value * 5;
   bonusPercent += +chienDau.value;
 
-  // Kế Băng Tâm bonus exp/s
-  let keBangBonus = 0;
-  if (+keBangTam.value === 1) keBangBonus = 1;
-  if (+keBangTam.value === 2) keBangBonus = 2;
-  if (+keBangTam.value === 3) keBangBonus = 3;
+  let keBangBonus = +keBangTam.value === 1 ? 1 : +keBangTam.value === 2 ? 2 : +keBangTam.value === 3 ? 3 : 0;
 
-  // Exp/s cuối cùng
   const expPerSec = base * (1 + bonusPercent / 100) + keBangBonus;
-  const timeSec = capacity / expPerSec;
 
-  // Cập nhật UI
+  if (reset) {
+    startTime = Date.now();
+    expGained = 0;
+  }
+
   crystalCapacity.textContent = capacity + " EXP";
   baseExp.textContent = base + " EXP/s";
   finalExp.textContent = expPerSec.toFixed(2) + " EXP/s";
 
-  updateCountdown(timeSec);
-
-  // Countdown real-time + progress bar
-  let remaining = Math.floor(timeSec);
   countdownTimer = setInterval(() => {
-    if (remaining <= 0) {
+    const elapsedSec = (Date.now() - startTime) / 1000;
+    expGained = elapsedSec * expPerSec;
+
+    if (expGained >= capacity) {
       clearInterval(countdownTimer);
+      updateProgress(100);
       countdown.textContent = "Hoàn tất!";
       fullWarning.style.display = "block";
-      updateProgress(100);
       return;
     }
+
+    const remaining = (capacity - expGained) / expPerSec;
     updateCountdown(remaining);
-    const percent = ((capacity - remaining * expPerSec) / capacity) * 100;
-    updateProgress(percent);
-    remaining--;
+    updateProgress((expGained / capacity) * 100);
   }, 1000);
 }
 
-// ======= Cập nhật đồng hồ đếm ngược =======
 function updateCountdown(sec) {
-  const hours = Math.floor(sec / 3600);
-  const minutes = Math.floor((sec % 3600) / 60);
-  const seconds = Math.floor(sec % 60);
-  fullTime.textContent = `${hours} giờ ${minutes} phút ${seconds} giây`;
-  countdown.textContent = `⏳ Còn lại: ${hours} giờ ${minutes} phút ${seconds} giây`;
+  const h = Math.floor(sec / 3600);
+  const m = Math.floor((sec % 3600) / 60);
+  const s = Math.floor(sec % 60);
+  fullTime.textContent = `${h} giờ ${m} phút ${s} giây`;
+  countdown.textContent = `⏳ Còn lại: ${h} giờ ${m} phút ${s} giây`;
 }
 
-// ======= Cập nhật thanh tiến trình =======
 function updateProgress(percent) {
   const clamped = Math.min(100, Math.max(0, percent));
   progressBar.style.width = clamped.toFixed(1) + "%";
   progressBar.textContent = clamped.toFixed(1) + "%";
-  if (clamped >= 100) {
-    progressBar.classList.add("full");
-  } else {
-    progressBar.classList.remove("full");
-  }
+  progressBar.classList.toggle("full", clamped >= 100);
 }
 
-// ======= Khởi tạo =======
-window.addEventListener("DOMContentLoaded", () => {
-  populateLevels();
-  calcCrystal();
-
-  levelSelect.addEventListener("change", calcCrystal);
-  suoiLinh.addEventListener("change", calcCrystal);
-  thanMat.addEventListener("change", calcCrystal);
-  chienDau.addEventListener("change", calcCrystal);
-  keBangTam.addEventListener("change", calcCrystal);
+resetBtn.addEventListener("click", () => {
+  calcCrystal(true);
 });
 
+[suoiLinh, thanMat, chienDau, keBangTam, levelSelect].forEach(el => {
+  el.addEventListener("change", () => calcCrystal(false));
+});
+
+window.addEventListener("DOMContentLoaded", () => {
+  populateLevels();
+  levelSelect.value = 0;
+  calcCrystal(true);
+});
