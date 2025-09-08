@@ -96,9 +96,10 @@ function calcSpeed(baseRate) {
   return speed;
 }
 
-// =============================
-// CẬP NHẬT THÔNG SỐ + PROGRESS BAR
-// =============================
+const progressBar = document.getElementById("progressBar");
+const progressText = document.getElementById("progressText");
+
+// Cập nhật stats & progress bar
 function updateStats() {
   const selected = levelSelect.value;
   if (!selected) return;
@@ -114,9 +115,9 @@ function updateStats() {
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);
   const s = Math.floor(seconds % 60);
-
   timeInfo.textContent = `Dự kiến đầy sau: ${h} giờ ${m} phút ${s} giây`;
 
+  // Cập nhật progress bar
   const progress = Math.min((currentExp / exp) * 100, 100);
   progressBar.style.width = `${progress}%`;
   progressText.textContent = `${progress.toFixed(1)}%`;
