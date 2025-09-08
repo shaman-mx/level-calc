@@ -120,7 +120,7 @@
       ctx.clearRect(0, 0, size, size);
 
       segments.forEach((segment, i) => {
-        const startAngle = currentAngle + i * sliceAngle;
+        const startAngle = currentAngle + i * sliceAngle - Math.PI / 2;
         const endAngle = startAngle + sliceAngle;
 
         // Vẽ phần
@@ -180,8 +180,9 @@
           requestAnimationFrame(animate);
         } else {
           spinning = false;
-          const resultIndex = randomSlice % segments.length;
-          resultText.textContent = `🎉 Kết quả: ${segments[resultIndex].label}`;
+const finalAngle = (currentAngle - Math.PI / 2 + 2 * Math.PI) % (2 * Math.PI);
+const resultIndex = Math.floor(finalAngle / sliceAngle) % segments.length;
+resultText.textContent = `🎉 Kết quả: ${segments[resultIndex].label}`;
         }
       }
 
