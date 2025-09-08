@@ -140,9 +140,11 @@
   }
 
   // Lắng nghe thay đổi level & buff
-  [levelSelect, suoiLinh, thanMat, chienDau, keBangTam].forEach(el => {
+  [levelSelect, suoiLinh, thanMat, chienDau, keBangTam,
+  sachHienNhan, tamPhapAnhHung, banDoKhoBau,
+  thanChuPhepThuat, kinhDaoGiao].forEach(el => {
     if (el) el.addEventListener("change", () => {
-      updateCrystalInfo();
+        updateCrystalInfo();
 if (progress > 0 && !timer) startProgress();; // đồng bộ progress nếu đang chạy
     });
   });
