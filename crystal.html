@@ -3,82 +3,127 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tính Tinh Thể Tu Vi – TU TIÊN WEPLAY</title>
+  <title>Mô phỏng tinh thể tu vi - TU TIÊN WEPLAY</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <!-- Header -->
   <header class="site-header">
     <div class="container header-row">
       <div>
-        <h1>Tính Tinh Thể Tu Vi</h1>
-        <p>Tính toán thời gian đầy tinh thể tu vi theo level</p>
+        <h1>Mô phỏng tinh thể tu vi</h1>
+        <p>Tính toán thời gian đầy tinh thể theo level & giai đoạn</p>
       </div>
-      <!-- Nút đổi theme -->
-      <button id="themeToggle" class="theme-toggle" aria-label="Đổi giao diện">🌙</button>
+      <button id="themeToggle" class="theme-toggle">🌙</button>
     </div>
   </header>
 
   <main class="container">
-    <!-- Quay lại trang chính -->
-    <div class="nav-top">
+    <!-- Chọn Level + Giai đoạn -->
+    <section class="calc-section">
+      <label for="levelSelect">Chọn Level & Giai đoạn:</label>
+      <select id="levelSelect" class="input-field">
+        <option value="">-- Chọn level --</option>
+        <option value="1-sơ">Level 1 - Sơ kỳ</option>
+        <option value="1-trung">Level 1 - Trung kỳ</option>
+        <option value="1-hậu">Level 1 - Hậu kỳ</option>
+        <option value="2-sơ">Level 2 - Sơ kỳ</option>
+        <option value="2-trung">Level 2 - Trung kỳ</option>
+        <option value="2-hậu">Level 2 - Hậu kỳ</option>
+        <option value="3-sơ">Level 3 - Sơ kỳ</option>
+        <option value="3-trung">Level 3 - Trung kỳ</option>
+        <option value="3-hậu">Level 3 - Hậu kỳ</option>
+        <option value="4-sơ">Level 4 - Sơ kỳ</option>
+        <option value="4-trung">Level 4 - Trung kỳ</option>
+        <option value="4-hậu">Level 4 - Hậu kỳ</option>
+        <option value="5-sơ">Level 5 - Sơ kỳ</option>
+        <option value="5-trung">Level 5 - Trung kỳ</option>
+        <option value="5-hậu">Level 5 - Hậu kỳ</option>
+        <option value="6-sơ">Level 6 - Sơ kỳ</option>
+        <option value="6-trung">Level 6 - Trung kỳ</option>
+        <option value="6-hậu">Level 6 - Hậu kỳ</option>
+        <option value="7-sơ">Level 7</option>
+        <option value="8-sơ">Level 8</option>
+        <option value="9-sơ">Level 9</option>
+        <option value="10-sơ">Level 10</option>
+        <option value="11-sơ">Level 11</option>
+        <option value="12-sơ">Level 12</option>
+        <option value="13-sơ">Level 13</option>
+        <option value="14-sơ">Level 14</option>
+        <option value="15-sơ">Level 15</option>
+        <option value="16-sơ">Level 16</option>
+        <option value="17-sơ">Level 17</option>
+        <option value="18-sơ">Level 18</option>
+      </select>
+    </section>
+
+    <!-- Buff hỗ trợ -->
+    <section class="buff-section">
+      <h3>Chọn buff hỗ trợ</h3>
+      <div class="buff-options">
+        <label>
+          <input type="checkbox" id="suoiLinh" /> Suối linh (+10%)
+        </label>
+        <label>
+          Thân mật:
+          <select id="thanMat">
+            <option value="0">0 người</option>
+            <option value="1">1 người (+5%)</option>
+            <option value="2">2 người (+10%)</option>
+            <option value="3">3 người (+15%)</option>
+          </select>
+        </label>
+        <label>
+          Tinh thần chiến đấu:
+          <select id="chienDau">
+            <option value="0">0</option>
+            <option value="200">200-500 (+3%)</option>
+            <option value="501">501-1000 (+5%)</option>
+            <option value="1001">1001-1500 (+7%)</option>
+            <option value="1501">1501-2000 (+15%)</option>
+          </select>
+        </label>
+        <label>
+          Kế băng tâm:
+          <select id="keBangTam">
+            <option value="0">Lv0</option>
+            <option value="1">Lv1 (+1 EXP/s)</option>
+            <option value="3">Lv3 (+2 EXP/s)</option>
+            <option value="5">Lv5 (+3 EXP/s)</option>
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <!-- Thông tin -->
+    <section id="infoSection" class="info-section">
+      <p><strong>Dung lượng tinh thể:</strong> <span id="expCapacity">0</span> EXP</p>
+      <p><strong>Tốc độ cơ bản:</strong> <span id="baseSpeed">0</span> EXP/s</p>
+      <p><strong>Tốc độ hiện tại:</strong> <span id="currentSpeed">0</span> EXP/s</p>
+      <p><strong>Dự kiến đầy sau:</strong> <span id="timeRequired">0 giờ 0 phút 0 giây</span></p>
+      <p><strong>Còn lại:</strong> <span id="timeRemaining">0 giờ 0 phút 0 giây</span></p>
+    </section>
+
+    <!-- Progress Bar -->
+    <div class="progress-container">
+      <div id="progressBar" class="progress-bar"></div>
+    </div>
+    <div id="progressText" class="progress-text">0%</div>
+
+    <!-- Nút reset -->
+    <button id="resetBtn" class="btn primary-btn">🔄 Bắt đầu lại</button>
+
+    <!-- Điều hướng -->
+    <div class="exp-link-wrapper">
       <a href="index.html" class="exp-btn back">🏠 Trang chính</a>
       <a href="exp.html" class="exp-btn">📄 Bảng EXP</a>
       <a href="choices.html" class="exp-btn alt">❓ Câu hỏi</a>
     </div>
-
-    <!-- Form chọn level -->
-    <section class="crystal-calc">
-      <h2>Chọn Level & Giai đoạn</h2>
-      <div class="form-row">
-        <!-- Level -->
-        <div class="form-group">
-          <label for="levelSelect">Level:</label>
-          <select id="levelSelect" class="form-control">
-            <option value="" disabled selected>-- Chọn Level --</option>
-            <option value="1">Level 1</option>
-            <option value="2">Level 2</option>
-            <option value="3">Level 3</option>
-            <option value="4">Level 4</option>
-            <option value="5">Level 5</option>
-            <option value="6">Level 6</option>
-            <option value="7">Level 7</option>
-          </select>
-        </div>
-
-        <!-- Giai đoạn -->
-        <div class="form-group">
-          <label for="stageSelect">Giai đoạn:</label>
-          <select id="stageSelect" class="form-control">
-            <option value="" disabled selected>-- Chọn Giai đoạn --</option>
-            <option value="sơ">Sơ kỳ</option>
-            <option value="trung">Trung kỳ</option>
-            <option value="hậu">Hậu kỳ</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Progress bar -->
-      <div class="progress-wrapper">
-        <div class="progress-container">
-          <div id="progressBar" class="progress-bar"></div>
-        </div>
-        <div id="progressText" class="progress-text">0%</div>
-      </div>
-
-      <!-- Nút bắt đầu lại -->
-      <div class="btn-wrapper">
-        <button id="resetBtn" class="exp-btn alt">🔄 Bắt đầu lại</button>
-      </div>
-    </section>
   </main>
 
-  <!-- Footer -->
   <footer class="site-footer">
     <p>© 2025 TU TIÊN WEPLAY. All rights reserved.</p>
   </footer>
 
-  <!-- Script -->
   <script src="script.js"></script>
 </body>
 </html>
