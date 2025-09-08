@@ -7,12 +7,7 @@
   /** =============================
    *  PHẦN 1 — ĐỊNH NGHĨA BIẾN CHUNG
    ============================== */
-const sachHienNhan = $("#sachHienNhan");
-const tamPhapAnhHung = $("#tamPhapAnhHung");
-const banDoKhoBau = $("#banDoKhoBau");
-const thanChuPhepThuat = $("#thanChuPhepThuat");
-const kinhDaoGiao = $("#kinhDaoGiao");
-  
+ 
   const beforeInput = $("#beforeInput");
   const afterInput = $("#afterInput");
   const beforeOut = $("#beforeResult");
@@ -74,7 +69,7 @@ const kinhDaoGiao = $("#kinhDaoGiao");
   const timeRemainingEl = $("#timeRemaining");
 
   const suoiLinh = $("#suoiLinh");
-  const thanMat = $("#huyenminhcong");
+  const huyenminh = $("#huyenminhcong");
   const thanMat = $("#thanMat");
   const chienDau = $("#chienDau");
   const keBangTam = $("#keBangTam");
