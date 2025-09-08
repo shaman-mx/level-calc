@@ -72,6 +72,7 @@
   const thanMat = $("#thanMat");
   const chienDau = $("#chienDau");
   const keBangTam = $("#keBangTam");
+  const huyenMinhCong = $("#huyenMinhCong");
 
   function formatTime(sec) {
     if (!sec || sec <= 0) return "—";
@@ -97,11 +98,15 @@
     else if (chienVal >= 501) buffPercent += 0.05;
     else if (chienVal >= 200) buffPercent += 0.03;
 
-    // Kế băng tâm (+1 / +2 / +3 EXP/s)
-    const keBang = parseInt(keBangTam?.value || 0);
-    const extraSpeed = keBang > 0 ? Math.ceil(keBang / 2) : 0;
+// Kế băng tâm (+1 / +2 / +3 EXP/s)
+const keBang = parseInt(keBangTam?.value || 0);
+const extraSpeed = keBang > 0 ? Math.ceil(keBang / 2) : 0;
 
-    return baseSpeed * buffPercent + extraSpeed;
+// Huyền Minh Công (+1% / Lv)
+const huyenMinh = parseInt(huyenMinhCong?.value || 0);
+buffPercent += huyenMinh * 0.01;
+
+return baseSpeed * buffPercent + extraSpeed;
 }
 
   function updateCrystalInfo() {
