@@ -1,168 +1,72 @@
-/* ========== Trang tính tinh thể tu vi ========== */
-.crystal-page {
-  --brand-blue: #2563eb;
-  --brand-green: #16a34a;
-  --brand-orange: #f59e0b;
-  --brand-red: #ef4444;
-
-  max-width: 480px;
-  margin: 20px auto;
-  padding: 16px;
-  background: var(--card);
-  border-radius: 16px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-  transition: var(--transition);
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+/* ======================= THEME TOÀN TRANG ======================= */
+html[data-theme="light"] .crystal-page {
+  background-color: #f8fafc; /* nền sáng */
+  color: #111827; /* chữ tối */
 }
 
-/* Tiêu đề */
-.crystal-page h1 {
-  font-size: clamp(20px, 4vw, 28px);
-  color: var(--brand-blue);
-  text-align: center;
-  margin-bottom: 8px;
+html[data-theme="dark"] .crystal-page {
+  background-color: #0f172a; /* nền tối */
+  color: #f1f5f9; /* chữ sáng */
 }
 
-/* Form chọn */
-.crystal-page .form-group {
-  display: grid;
-  gap: 8px;
+/* ======================= TIÊU ĐỀ ======================= */
+html[data-theme="dark"] .crystal-header h1 {
+  color: #f8fafc;
 }
 
-.crystal-page label {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--muted);
+html[data-theme="light"] .crystal-header h1 {
+  color: #111827;
 }
 
-.crystal-page select,
-.crystal-page input[type="checkbox"] {
-  padding: 10px;
-  font-size: 15px;
-  border-radius: 8px;
-  border: 1px solid #cbd5e1;
-  background: var(--card);
-  color: var(--text);
-  outline: none;
-  transition: var(--transition);
+/* ======================= FORM & SELECT ======================= */
+html[data-theme="light"] select,
+html[data-theme="light"] input {
+  background-color: #ffffff;
+  color: #111827;
+  border: 1px solid #d1d5db;
 }
 
-html[data-theme="dark"] .crystal-page select {
-  border-color: #334155;
-  background: #0b1324;
-  color: #e6edf6;
+html[data-theme="dark"] select,
+html[data-theme="dark"] input {
+  background-color: #1e293b;
+  color: #f8fafc;
+  border: 1px solid #334155;
 }
 
-.crystal-page select:focus {
-  border-color: var(--brand-blue);
-  box-shadow: 0 0 0 4px var(--ring);
+/* ======================= NÚT ======================= */
+html[data-theme="light"] .reset-btn {
+  background-color: #2563eb;
+  color: #fff;
 }
 
-/* Hàng chọn nhanh */
-.crystal-page .form-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
+html[data-theme="dark"] .reset-btn {
+  background-color: #3b82f6;
+  color: #fff;
 }
 
-/* Progress container */
-.crystal-page .progress-container {
-  margin-top: 8px;
-}
-
-.crystal-page .progress-bar {
-  position: relative;
-  height: 20px;
-  background: #e5e7eb;
+/* ======================= PROGRESS BAR ======================= */
+.progress-container {
+  margin-top: 12px;
+  background-color: #e5e7eb;
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15);
-  transition: var(--transition);
+  height: 20px;
 }
 
-.crystal-page .progress-fill {
+html[data-theme="dark"] .progress-container {
+  background-color: #1e293b;
+}
+
+.progress-fill {
   height: 100%;
-  width: 0%;
-  background: var(--brand-green);
+  width: 0;
+  background-color: #2563eb;
   border-radius: 10px;
-  transition: width 0.3s ease-in-out, background-color 0.3s ease-in-out;
+  transition: width 0.3s ease;
 }
 
-.crystal-page .progress-text {
+.progress-text {
+  text-align: center;
   margin-top: 4px;
-  font-size: 13px;
-  text-align: center;
-  color: var(--muted);
-}
-
-/* Kết quả hiển thị */
-.crystal-page .result {
-  background: var(--brand-blue);
-  color: white;
-  padding: 12px;
-  border-radius: 10px;
-  text-align: center;
   font-size: 14px;
-  font-weight: 600;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-}
-
-.crystal-page .result span {
-  font-weight: 700;
-}
-
-/* Nút bắt đầu lại */
-.crystal-page .reset-btn {
-  display: block;
-  width: 100%;
-  background: var(--brand-blue);
-  color: white;
-  font-size: 15px;
-  padding: 10px;
-  border-radius: 8px;
-  font-weight: 600;
-  text-align: center;
-  border: none;
-  cursor: pointer;
-  transition: background 0.25s ease, transform 0.2s ease;
-  margin-top: 10px;
-}
-
-.crystal-page .reset-btn:hover {
-  background: #1d4ed8;
-  transform: translateY(-1px);
-}
-
-/* Dark mode cho nút reset */
-html[data-theme="dark"] .crystal-page .reset-btn {
-  background: #3b82f6;
-}
-html[data-theme="dark"] .crystal-page .reset-btn:hover {
-  background: #2563eb;
-}
-
-/* Mobile tối ưu */
-@media (max-width: 480px) {
-  .crystal-page {
-    margin: 12px;
-    padding: 14px;
-    gap: 12px;
-  }
-
-  .crystal-page h1 {
-    font-size: 22px;
-  }
-
-  .crystal-page select {
-    padding: 8px;
-    font-size: 14px;
-  }
-
-  .crystal-page .reset-btn {
-    padding: 8px;
-    font-size: 14px;
-  }
 }
