@@ -2,100 +2,76 @@
 <html lang="vi" data-theme="light">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tính thời gian đầy tinh thể tu vi</title>
-  <link rel="stylesheet" href="crystal.css" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="crystal-page">
-    <!-- Header + nút đổi theme -->
-    <header class="crystal-header">
+  <div class="container">
+    <!-- Header -->
+    <div class="site-header header-row">
       <h1>Tính thời gian đầy tinh thể tu vi</h1>
       <button id="themeToggle" class="theme-toggle">🌙</button>
-    </header>
-
-    <!-- Chọn Level & Giai đoạn -->
-    <div class="form-group">
-      <label for="level">Chọn Level & Giai đoạn</label>
-      <select id="level">
-        <option value="1-sơ">Level 1 - Sơ kỳ</option>
-        <option value="1-trung">Level 1 - Trung kỳ</option>
-        <option value="1-hậu">Level 1 - Hậu kỳ</option>
-        <option value="2-sơ">Level 2 - Sơ kỳ</option>
-        <option value="2-trung">Level 2 - Trung kỳ</option>
-        <option value="2-hậu">Level 2 - Hậu kỳ</option>
-        <option value="3-sơ">Level 3 - Sơ kỳ</option>
-        <option value="3-trung">Level 3 - Trung kỳ</option>
-        <option value="3-hậu">Level 3 - Hậu kỳ</option>
-        <option value="4-sơ">Level 4 - Sơ kỳ</option>
-        <option value="4-trung" selected>Level 4 - Trung kỳ</option>
-        <option value="4-hậu">Level 4 - Hậu kỳ</option>
-        <option value="5-sơ">Level 5 - Sơ kỳ</option>
-        <option value="5-trung">Level 5 - Trung kỳ</option>
-        <option value="5-hậu">Level 5 - Hậu kỳ</option>
-        <option value="6-sơ">Level 6 - Sơ kỳ</option>
-        <option value="6-trung">Level 6 - Trung kỳ</option>
-        <option value="6-hậu">Level 6 - Hậu kỳ</option>
-        <option value="7-sơ">Level 7 - Sơ kỳ</option>
-      </select>
     </div>
 
-    <!-- Buff hỗ trợ -->
-    <div class="form-group">
-      <label>Chọn buff hỗ trợ</label>
-      <div class="form-row">
-        <label>
-          <input type="checkbox" id="suoiLinh" /> Suối linh (+10%)
-        </label>
-        <select id="thanMat">
-          <option value="0">Thân mật: 0 người</option>
-          <option value="5">1 người (+5%)</option>
-          <option value="10">2 người (+10%)</option>
-          <option value="15">3 người (+15%)</option>
+    <!-- Card chính -->
+    <div class="card">
+      <!-- Chọn Level -->
+      <div class="field">
+        <label class="field__label">Chọn Level & Giai đoạn</label>
+        <select id="level" class="field__input"></select>
+      </div>
+
+      <!-- Buff hỗ trợ -->
+      <div class="field">
+        <label class="field__label">Chọn buff hỗ trợ</label>
+        <div class="field__wrapper" style="gap: 8px;">
+          <label><input type="checkbox" id="suoiLinh" /> Suối linh (+10%)</label>
+          <select id="thanMat" class="field__input" style="flex:1;">
+            <option value="0">Thân mật: 0 người</option>
+            <option value="1">1 người (+5%)</option>
+            <option value="2">2 người (+10%)</option>
+            <option value="3">3 người (+15%)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Tinh thần chiến đấu -->
+      <div class="field">
+        <label class="field__label">Tinh thần chiến đấu</label>
+        <select id="chienDau" class="field__input">
+          <option value="0">0</option>
+          <option value="200">200</option>
+          <option value="500">500</option>
+          <option value="1000">1000</option>
+          <option value="1500">1500</option>
+          <option value="2000">2000</option>
         </select>
       </div>
-    </div>
 
-    <!-- Tinh thần chiến đấu -->
-    <div class="form-group">
-      <label for="chienDau">Tinh thần chiến đấu</label>
-      <select id="chienDau">
-        <option value="0">0</option>
-        <option value="3">200 - 500 (+3%)</option>
-        <option value="5">501 - 1000 (+5%)</option>
-        <option value="7">1001 - 1500 (+7%)</option>
-        <option value="15">1501 - 2000 (+15%)</option>
-      </select>
-    </div>
-
-    <!-- Kế băng tâm -->
-    <div class="form-group">
-      <label for="keBangTam">Kế băng tâm</label>
-      <select id="keBangTam">
-        <option value="0">Lv0</option>
-        <option value="1">Lv1 (+1 EXP/s)</option>
-        <option value="2">Lv3 (+2 EXP/s)</option>
-        <option value="3">Lv5 (+3 EXP/s)</option>
-      </select>
-    </div>
-
-    <!-- Hiển thị thông tin -->
-    <div class="result">
-      Dung lượng tinh thể: <span id="dungLuong">9690</span> EXP<br />
-      Tốc độ hiện tại: <span id="tocDo">5</span> EXP/s<br />
-      Dự kiến đầy sau: <span id="thoiGian">0 giờ 0 phút 0 giây</span>
-    </div>
-
-    <!-- Progress bar -->
-    <div class="progress-container">
-      <div class="progress-bar">
-        <div class="progress-fill" id="progressFill"></div>
+      <!-- Kế băng tâm -->
+      <div class="field">
+        <label class="field__label">Kế băng tâm</label>
+        <select id="keBangTam" class="field__input">
+          <option value="0">Lv0</option>
+          <option value="1">Lv1 (+1 EXP/s)</option>
+          <option value="3">Lv3 (+2 EXP/s)</option>
+          <option value="5">Lv5 (+3 EXP/s)</option>
+        </select>
       </div>
-      <div class="progress-text" id="progressText">0%</div>
-    </div>
 
-    <!-- Nút reset -->
-    <button class="reset-btn" id="resetBtn">🔄 Bắt đầu lại</button>
+      <!-- Kết quả -->
+      <div id="infoBox" class="result result--before" style="margin-top: 16px; font-size: 14px; padding: 12px;"></div>
+
+      <!-- Progress bar -->
+      <div style="margin-top: 14px;">
+        <progress id="progressBar" value="0" max="100" style="width:100%;height:18px;border-radius:8px;"></progress>
+        <div id="progressText" style="text-align:center;margin-top:6px;font-weight:600;">0%</div>
+      </div>
+
+      <!-- Nút bắt đầu lại -->
+      <button id="resetBtn" class="exp-btn back" style="margin-top:16px;width:100%;">🔄 Bắt đầu lại</button>
+    </div>
   </div>
 
   <script src="crystal.js"></script>
