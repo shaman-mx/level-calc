@@ -290,12 +290,12 @@
     const wrapper = document.createElement("div");
     wrapper.className = "exp-link-wrapper";
 
-    const buttons = [
-      { href: "index.html", label: "🏠 Trang chính", class: "exp-btn back" },
-      { href: "exp.html", label: "📄 Bảng EXP", class: "exp-btn" },
-      { href: "choices.html", label: "❓ Câu hỏi", class: "exp-btn alt" },
-    ];
-
+const buttons = [
+  { href: "index.html", label: "🏠 Trang chính", class: "exp-btn back" },
+  { href: "exp.html", label: "📄 Bảng EXP", class: "exp-btn" },
+  { href: "choices.html", label: "❓ Câu hỏi", class: "exp-btn alt" },
+  { href: "crystal.html", label: "🔮 Mô phỏng tinh thể", class: "exp-btn" }, // ⬅ Nút mới
+];
     buttons.forEach((btnData) => {
       if (btnData.href === currentPage) return;
       const btn = document.createElement("a");
