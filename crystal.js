@@ -1,4 +1,4 @@
-// Dữ liệu tinh thể tu vi và tốc độ exp cơ bản theo level
+// =================== DỮ LIỆU TINH THỂ TU VI ===================
 const crystalData = {
   "1-sơ": { exp: 6, speed: 1 },
   "1-trung": { exp: 8, speed: 1 },
@@ -21,7 +21,7 @@ const crystalData = {
   "7-sơ": { exp: 23674, speed: 5 }
 };
 
-// Các phần tử HTML
+// =================== PHẦN TỬ HTML ===================
 const levelSelect = document.getElementById("level");
 const suoiLinh = document.getElementById("suoiLinh");
 const thanMat = document.getElementById("thanMat");
@@ -33,11 +33,35 @@ const thoiGianEl = document.getElementById("thoiGian");
 const progressFill = document.getElementById("progressFill");
 const progressText = document.getElementById("progressText");
 const resetBtn = document.getElementById("resetBtn");
+const themeToggle = document.getElementById("themeToggle");
+const root = document.documentElement;
 
 let interval;
 let currentExp = 0;
 
-// Hàm tính tốc độ hiện tại
+// =================== ĐỒNG BỘ DARK / LIGHT MODE ===================
+function setTheme(theme) {
+  root.setAttribute("data-theme", theme);
+  localStorage.setItem("theme", theme);
+  themeToggle.textContent = theme === "dark" ? "☀️" : "🌙";
+}
+
+// Khởi tạo theme theo localStorage hoặc hệ thống
+const savedTheme = localStorage.getItem("theme");
+if (savedTheme) {
+  setTheme(savedTheme);
+} else {
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  setTheme(prefersDark ? "dark" : "light");
+}
+
+// Bấm nút đổi theme
+themeToggle.addEventListener("click", () => {
+  const current = root.getAttribute("data-theme");
+  setTheme(current === "dark" ? "light" : "dark");
+});
+
+// =================== TÍNH TỐC ĐỘ HIỆN TẠI ===================
 function calcSpeed() {
   const level = levelSelect.value;
   const base = crystalData[level].speed;
@@ -51,7 +75,7 @@ function calcSpeed() {
   return speed;
 }
 
-// Hàm cập nhật giao diện
+// =================== CẬP NHẬT GIAO DIỆN ===================
 function updateUI() {
   const level = levelSelect.value;
   const totalExp = crystalData[level].exp;
@@ -69,7 +93,7 @@ function updateUI() {
   progressText.textContent = `${percent.toFixed(1)}%`;
 }
 
-// Hàm đếm tiến trình
+// =================== CHẠY TIẾN TRÌNH ===================
 function startProgress() {
   clearInterval(interval);
   interval = setInterval(() => {
@@ -90,19 +114,19 @@ function startProgress() {
   }, 1000);
 }
 
-// Nút reset
+// =================== NÚT RESET ===================
 resetBtn.addEventListener("click", () => {
   currentExp = 0;
   startProgress();
 });
 
-// Bắt đầu chạy
+// =================== SỰ KIỆN NGƯỜI DÙNG ===================
 [levelSelect, suoiLinh, thanMat, chienDau, keBangTam].forEach(el => {
   el.addEventListener("change", () => {
     updateUI();
   });
 });
 
-// Khởi tạo
+// =================== KHỞI TẠO ===================
 updateUI();
 startProgress();
