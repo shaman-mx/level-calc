@@ -1,132 +1,117 @@
-// =================== DỮ LIỆU TINH THỂ TU VI ===================
-const crystalData = {
-  "1-sơ": { exp: 6, speed: 1 },
-  "1-trung": { exp: 8, speed: 1 },
-  "1-hậu": { exp: 18, speed: 1 },
-  "2-sơ": { exp: 38, speed: 1 },
-  "2-trung": { exp: 160, speed: 1 },
-  "2-hậu": { exp: 320, speed: 1 },
-  "3-sơ": { exp: 1938, speed: 3 },
-  "3-trung": { exp: 5000, speed: 3 },
-  "3-hậu": { exp: 8740, speed: 3 },
-  "4-sơ": { exp: 9100, speed: 5 },
-  "4-trung": { exp: 9690, speed: 5 },
-  "4-hậu": { exp: 16150, speed: 5 },
-  "5-sơ": { exp: 17670, speed: 5 },
-  "5-trung": { exp: 18544, speed: 5 },
-  "5-hậu": { exp: 19874, speed: 5 },
-  "6-sơ": { exp: 20444, speed: 5 },
-  "6-trung": { exp: 21470, speed: 5 },
-  "6-hậu": { exp: 22420, speed: 5 },
-  "7-sơ": { exp: 23674, speed: 5 }
+"use strict";
+
+// ===== DỮ LIỆU =====
+const levels = {
+  "1 sơ": { exp: 6, rate: 1 }, "1 trung": { exp: 8, rate: 1 }, "1 hậu": { exp: 18, rate: 1 },
+  "2 sơ": { exp: 38, rate: 1 }, "2 trung": { exp: 160, rate: 1 }, "2 hậu": { exp: 320, rate: 1 },
+  "3 sơ": { exp: 1938, rate: 3 }, "3 trung": { exp: 5000, rate: 3 }, "3 hậu": { exp: 8740, rate: 3 },
+  "4 sơ": { exp: 9100, rate: 5 }, "4 trung": { exp: 9690, rate: 5 }, "4 hậu": { exp: 16150, rate: 5 },
+  "5 sơ": { exp: 17670, rate: 5 }, "5 trung": { exp: 18544, rate: 5 }, "5 hậu": { exp: 19874, rate: 5 },
+  "6 sơ": { exp: 20444, rate: 5 }, "6 trung": { exp: 21470, rate: 5 }, "6 hậu": { exp: 22420, rate: 5 },
+  "7 sơ": { exp: 23674, rate: 5 }
 };
 
-// =================== PHẦN TỬ HTML ===================
-const levelSelect = document.getElementById("level");
-const suoiLinh = document.getElementById("suoiLinh");
-const thanMat = document.getElementById("thanMat");
-const chienDau = document.getElementById("chienDau");
-const keBangTam = document.getElementById("keBangTam");
-const dungLuongEl = document.getElementById("dungLuong");
-const tocDoEl = document.getElementById("tocDo");
-const thoiGianEl = document.getElementById("thoiGian");
-const progressFill = document.getElementById("progressFill");
+// DOM elements
+const levelEl = document.getElementById("level");
+const suoiLinhEl = document.getElementById("suoiLinh");
+const thanMatEl = document.getElementById("thanMat");
+const chienDauEl = document.getElementById("chienDau");
+const keBangTamEl = document.getElementById("keBangTam");
+const infoBox = document.getElementById("infoBox");
+const progressBar = document.getElementById("progressBar");
 const progressText = document.getElementById("progressText");
 const resetBtn = document.getElementById("resetBtn");
-const themeToggle = document.getElementById("themeToggle");
-const root = document.documentElement;
 
-let interval;
-let currentExp = 0;
-
-// =================== ĐỒNG BỘ DARK / LIGHT MODE ===================
-function setTheme(theme) {
-  root.setAttribute("data-theme", theme);
-  localStorage.setItem("theme", theme);
-  themeToggle.textContent = theme === "dark" ? "☀️" : "🌙";
-}
-
-// Khởi tạo theme theo localStorage hoặc hệ thống
-const savedTheme = localStorage.getItem("theme");
-if (savedTheme) {
-  setTheme(savedTheme);
-} else {
-  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  setTheme(prefersDark ? "dark" : "light");
-}
-
-// Bấm nút đổi theme
-themeToggle.addEventListener("click", () => {
-  const current = root.getAttribute("data-theme");
-  setTheme(current === "dark" ? "light" : "dark");
+// Tạo option cho select Level
+Object.keys(levels).forEach(lv => {
+  const opt = document.createElement("option");
+  opt.value = lv;
+  opt.textContent = `Level ${lv}`;
+  levelEl.appendChild(opt);
 });
 
-// =================== TÍNH TỐC ĐỘ HIỆN TẠI ===================
-function calcSpeed() {
-  const level = levelSelect.value;
-  const base = crystalData[level].speed;
+// Biến lưu trạng thái
+let currentExp = 0;
+let totalExp = levels[levelEl.value]?.exp || 0;
+let baseRate = levels[levelEl.value]?.rate || 1;
+let interval = null;
 
-  let speed = base;
-  if (suoiLinh.checked) speed *= 1.1;
-  speed *= 1 + thanMat.value / 100;
-  speed *= 1 + chienDau.value / 100;
-  speed += parseInt(keBangTam.value);
-
-  return speed;
+// ===== TÍNH TỐC ĐỘ =====
+function calcRate() {
+  const suoi = suoiLinhEl.checked ? 0.1 : 0;
+  const than = parseInt(thanMatEl.value) * 0.05;
+  const chienVal = parseInt(chienDauEl.value);
+  const chien = chienVal >= 1501 ? 0.15 : chienVal >= 1001 ? 0.07 : chienVal >= 501 ? 0.05 : chienVal >= 200 ? 0.03 : 0;
+  const ke = parseInt(keBangTamEl.value);
+  return baseRate * (1 + suoi + than + chien) + (ke >= 1 ? (ke === 1 ? 1 : ke === 3 ? 2 : 3) : 0);
 }
 
-// =================== CẬP NHẬT GIAO DIỆN ===================
+// ===== CẬP NHẬT GIAO DIỆN =====
 function updateUI() {
-  const level = levelSelect.value;
-  const totalExp = crystalData[level].exp;
-  const speed = calcSpeed();
-  const remaining = Math.max(totalExp - currentExp, 0);
-  const seconds = Math.ceil(remaining / speed);
-
-  dungLuongEl.textContent = totalExp;
-  tocDoEl.textContent = speed.toFixed(2);
-  thoiGianEl.textContent = `${Math.floor(seconds / 3600)} giờ ${Math.floor((seconds % 3600) / 60)} phút ${seconds % 60} giây`;
-
+  totalExp = levels[levelEl.value].exp;
+  baseRate = levels[levelEl.value].rate;
+  const speed = calcRate();
+  const timeLeft = (totalExp - currentExp) / speed;
   const percent = Math.min((currentExp / totalExp) * 100, 100);
-  progressFill.style.width = `${percent}%`;
-  progressFill.style.background = percent >= 100 ? "#16a34a" : "#2563eb";
+
+  infoBox.innerHTML = `
+    <strong>Dung lượng tinh thể:</strong> ${totalExp} EXP<br>
+    <strong>Tốc độ hiện tại:</strong> ${speed.toFixed(2)} EXP/s<br>
+    <strong>Dự kiến đầy sau:</strong> ${formatTime(timeLeft)}
+  `;
+  progressBar.value = percent;
   progressText.textContent = `${percent.toFixed(1)}%`;
 }
 
-// =================== CHẠY TIẾN TRÌNH ===================
+// ===== CHẠY ĐẾM NGƯỢC =====
 function startProgress() {
   clearInterval(interval);
   interval = setInterval(() => {
-    const level = levelSelect.value;
-    const totalExp = crystalData[level].exp;
-    const speed = calcSpeed();
-
-    currentExp += speed;
-
+    currentExp += calcRate();
     if (currentExp >= totalExp) {
       currentExp = totalExp;
-      updateUI();
       clearInterval(interval);
       alert("🎉 Tinh thể đã đầy!");
-    } else {
-      updateUI();
     }
+    updateUI();
   }, 1000);
 }
 
-// =================== NÚT RESET ===================
+// ===== ĐỊNH DẠNG THỜI GIAN =====
+function formatTime(sec) {
+  if (sec <= 0) return "Đã đầy";
+  const h = Math.floor(sec / 3600);
+  const m = Math.floor((sec % 3600) / 60);
+  const s = Math.floor(sec % 60);
+  return `${h} giờ ${m} phút ${s} giây`;
+}
+
+// ===== RESET =====
 resetBtn.addEventListener("click", () => {
   currentExp = 0;
   startProgress();
 });
 
-// =================== SỰ KIỆN NGƯỜI DÙNG ===================
-[levelSelect, suoiLinh, thanMat, chienDau, keBangTam].forEach(el => {
-  el.addEventListener("change", () => {
-    updateUI();
-  });
+// Sự kiện
+[levelEl, suoiLinhEl, thanMatEl, chienDauEl, keBangTamEl].forEach(el => {
+  el.addEventListener("change", updateUI);
+  el.addEventListener("input", updateUI);
 });
 
-// =================== KHỞI TẠO ===================
+// ===== ĐỒNG BỘ THEME =====
+const root = document.documentElement;
+const toggleBtn = document.getElementById("themeToggle");
+const savedTheme = localStorage.getItem("theme");
+if (savedTheme) root.setAttribute("data-theme", savedTheme);
+toggleBtn.textContent = savedTheme === "dark" ? "☀️" : "🌙";
+toggleBtn.addEventListener("click", () => {
+  const newTheme = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+  root.setAttribute("data-theme", newTheme);
+  localStorage.setItem("theme", newTheme);
+  toggleBtn.textContent = newTheme === "dark" ? "☀️" : "🌙";
+});
+
+// Khởi tạo
+levelEl.selectedIndex = 0;
 updateUI();
 startProgress();
