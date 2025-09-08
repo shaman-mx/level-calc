@@ -2,22 +2,63 @@
   "use strict";
 
   const $ = (sel) => document.querySelector(sel);
+  const root = document.documentElement;
 
+  /** =============================
+   *  PHẦN 1 — ĐỊNH NGHĨA BIẾN CHUNG
+   ============================== */
   const beforeInput = $("#beforeInput");
   const afterInput = $("#afterInput");
   const beforeOut = $("#beforeResult");
   const afterOut = $("#afterResult");
-  const toggleBtn = $("#themeToggle");
   const clearBefore = $("#clearBefore");
   const clearAfter = $("#clearAfter");
-  const root = document.documentElement;
+  const toggleBtn = $("#themeToggle");
 
-  // ==== Hàm định dạng số ====
+  // Crystal Elements
+  const levelSelect = $("#levelSelect");
+  const stageSelect = $("#stageSelect");
+  const progressBar = $("#progressBar");
+  const progressText = $("#progressText");
+  const resetBtn = $("#resetBtn");
+
+  let progress = 0;
+  let expPerSecond = 0;
+  let totalExp = 0;
+  let timer = null;
+
+  /** =============================
+   *  PHẦN 2 — CẤU HÌNH DỮ LIỆU CRYSTAL
+   ============================== */
+  const crystalData = {
+    "1-sơ": { exp: 6, rate: 1 },
+    "1-trung": { exp: 8, rate: 1 },
+    "1-hậu": { exp: 18, rate: 1 },
+    "2-sơ": { exp: 38, rate: 1 },
+    "2-trung": { exp: 160, rate: 1 },
+    "2-hậu": { exp: 320, rate: 1 },
+    "3-sơ": { exp: 1938, rate: 3 },
+    "3-trung": { exp: 5000, rate: 3 },
+    "3-hậu": { exp: 8740, rate: 3 },
+    "4-sơ": { exp: 9100, rate: 5 },
+    "4-trung": { exp: 9690, rate: 5 },
+    "4-hậu": { exp: 16150, rate: 5 },
+    "5-sơ": { exp: 17670, rate: 5 },
+    "5-trung": { exp: 18544, rate: 5 },
+    "5-hậu": { exp: 19874, rate: 5 },
+    "6-sơ": { exp: 20444, rate: 5 },
+    "6-trung": { exp: 21470, rate: 5 },
+    "6-hậu": { exp: 22420, rate: 5 },
+    "7-sơ": { exp: 23674, rate: 5 },
+  };
+
+  /** =============================
+   *  PHẦN 3 — HÀM TIỆN ÍCH
+   ============================== */
   function format(num) {
     return Number.isFinite(num) ? num.toFixed(2) : "0.00";
   }
 
-  // ==== Hàm tính toán biểu thức ====
   function safeEval(expr) {
     if (!/^[0-9+\-*/().\s]+$/.test(expr)) return NaN;
     try {
@@ -27,7 +68,9 @@
     }
   }
 
-  // ==== Tính trước level 15 ====
+  /** =============================
+   *  PHẦN 4 — TÍNH TOÁN TRƯỚC / SAU LV15
+   ============================== */
   function calcBefore() {
     const expr = beforeInput.value.replace(",", ".");
     const val = safeEval(expr);
@@ -35,7 +78,6 @@
     beforeOut.textContent = format(res);
   }
 
-  // ==== Tính sau level 15 ====
   function calcAfter() {
     const expr = afterInput.value.replace(",", ".");
     const val = safeEval(expr);
@@ -43,23 +85,18 @@
     afterOut.textContent = format(res);
   }
 
-  // ==== Gắn sự kiện input ====
-  if (beforeInput && beforeOut) {
-    beforeInput.addEventListener("input", calcBefore);
-  }
-  if (afterInput && afterOut) {
-    afterInput.addEventListener("input", calcAfter);
-  }
+  if (beforeInput) beforeInput.addEventListener("input", calcBefore);
+  if (afterInput) afterInput.addEventListener("input", calcAfter);
 
-  // ==== Nút xoá nhanh ====
-  if (clearBefore && beforeInput) {
+  if (clearBefore) {
     clearBefore.addEventListener("click", () => {
       beforeInput.value = "";
       calcBefore();
       beforeInput.focus();
     });
   }
-  if (clearAfter && afterInput) {
+
+  if (clearAfter) {
     clearAfter.addEventListener("click", () => {
       afterInput.value = "";
       calcAfter();
@@ -67,15 +104,15 @@
     });
   }
 
-  // ==== Dark / Light Theme ====
+  /** =============================
+   *  PHẦN 5 — DARK / LIGHT THEME ĐỒNG BỘ
+   ============================== */
   function setTheme(theme) {
     root.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
     if (toggleBtn) toggleBtn.textContent = theme === "dark" ? "☀️" : "🌙";
-    document.body.style.visibility = "hidden";
-    document.body.offsetHeight;
-    document.body.style.visibility = "visible";
   }
+
   const savedTheme = localStorage.getItem("theme");
   if (savedTheme) {
     setTheme(savedTheme);
@@ -83,6 +120,7 @@
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
     setTheme(prefersDark ? "dark" : "light");
   }
+
   if (toggleBtn) {
     toggleBtn.addEventListener("click", () => {
       const current = root.getAttribute("data-theme");
@@ -90,144 +128,183 @@
     });
   }
 
-  window.addEventListener("DOMContentLoaded", () => {
-    if (beforeInput && beforeOut) calcBefore();
-    if (afterInput && afterOut) calcAfter();
-  });
-})();
-const choicesData = [
-  {
-    option1: { text: "Ăn quả", reward: "Tăng tu vi", danger: false },
-    option2: { text: "Uống nước từ suối", reward: "Tăng tu vi", danger: false },
-  },
-  {
-    option1: { text: "Bí mật điều tra", reward: "Thư thách đấu", danger: false },
-    option2: { text: "Tấn công trực diện", reward: "Không có gì", danger: true },
-  },
-  {
-    option1: { text: "Chiến đấu", reward: "Thư thách đấu", danger: false },
-    option2: { text: "Ngưỡng mộ", reward: "Tăng tu vi", danger: false },
-  },
-  {
-    option1: { text: "Cùng nhau khám phá", reward: "Trừ tu vi", danger: true },
-    option2: { text: "Tự khám phá", reward: "Đan vàng", danger: false },
-  },
-  {
-    option1: { text: "Cứu chữa", reward: "Đan xanh", danger: false },
-    option2: { text: "Rời đi", reward: "Trừ tu vi", danger: true },
-  },
-  {
-    option1: { text: "Đá thần", reward: "Tăng tu vi", danger: false },
-    option2: { text: "Đá hiếm", reward: "Tăng tu vi", danger: false },
-  },
-  {
-    option1: { text: "Đánh nhau với người đó", reward: "Đan xanh", danger: false },
-    option2: { text: "Cho lời khuyên", reward: "Tăng tu vi", danger: false },
-  },
-  {
-    option1: { text: "Đi đến hồ đen", reward: "Trừ tu vi", danger: true },
-    option2: { text: "Đi đến thôn hoa sen", reward: "Đan xanh", danger: false },
-  },
-  {
-    option1: { text: "Đi sang trái", reward: "Trừ tu vi", danger: true },
-    option2: { text: "Đi sang phải", reward: "Thư thách đấu", danger: false },
-  },
-  {
-    option1: { text: "Đi trên thuyền", reward: "Đan xanh", danger: false },
-    option2: { text: "Bay trên kiếm", reward: "Thư thách đấu", danger: false },
-  },
-  {
-    option1: { text: "Đi vào ban đêm", reward: "Đan vàng", danger: false },
-    option2: { text: "Đi vào ban ngày", reward: "Không có gì", danger: true },
-  },
-  {
-    option1: { text: "Đồng ý", reward: "Tăng tu vi", danger: false },
-    option2: { text: "Từ chối", reward: "Tăng tu vi", danger: false },
-  },
-  {
-    option1: { text: "Dũng cảm dựa vào", reward: "Tăng tu vi", danger: false },
-    option2: { text: "Đi nấp", reward: "Không có gì", danger: true },
-  },
-  {
-    option1: { text: "Khai thác bề mặt", reward: "Tăng tu vi", danger: false },
-    option2: { text: "Khai thác sâu", reward: "Không có gì", danger: true },
-  },
-  {
-    option1: { text: "Lương thiện", reward: "Tăng tu vi", danger: false },
-    option2: { text: "Lớn mạnh", reward: "Đan vàng", danger: false },
-  },
-  {
-    option1: { text: "Tặng thuốc", reward: "Đan xanh", danger: false },
-    option2: { text: "Cứu chữa", reward: "Đan vàng", danger: false },
-  },
-  {
-    option1: { text: "Tiên thảo", reward: "Tăng tu vi", danger: false },
-    option2: { text: "Đan dược", reward: "Đan xanh", danger: false },
-  },
-  {
-    option1: { text: "Trợ giúp chim loan", reward: "Đan xanh", danger: false },
-    option2: { text: "Trợ giúp chuột vàng", reward: "Đan vàng", danger: false },
-  },
-  {
-    option1: { text: "Tưới vườn thuốc", reward: "Tăng tu vi", danger: false },
-    option2: { text: "Luyện đan", reward: "Đan xanh", danger: false },
-  },
-];
-const choicesBody = document.getElementById("choicesBody");
-if (choicesBody) {
-  choicesData.forEach((q) => {
-    const row = document.createElement("tr");
+  /** =============================
+   *  PHẦN 6 — PROGRESS BAR CRYSTAL
+   ============================== */
+  function startProgress() {
+    clearInterval(timer);
+    if (!levelSelect || !stageSelect || !progressBar || !progressText) return;
 
-    const td1 = document.createElement("td");
-    td1.innerHTML = `
-      <div class="choice ${q.option1.danger ? "danger" : ""}">
-        <span>${q.option1.text}</span>
-        <span class="reward">(${q.option1.reward})</span>
-      </div>
-    `;
+    const level = levelSelect.value;
+    const stage = stageSelect.value;
+    const key = `${level}-${stage}`;
 
-    const td2 = document.createElement("td");
-    td2.innerHTML = `
-      <div class="choice ${q.option2.danger ? "danger" : ""}">
-        <span>${q.option2.text}</span>
-        <span class="reward">(${q.option2.reward})</span>
-      </div>
-    `;
+    if (!crystalData[key]) return;
 
-    row.appendChild(td1);
-    row.appendChild(td2);
-    choicesBody.appendChild(row);
-  });
-}
-// ====== THÊM NÚT ĐIỀU HƯỚNG TỰ ĐỘNG ======
-(function addNavButtons() {
-  const main = document.querySelector("main");
-  if (!main) return; // Nếu trang không có <main> thì bỏ qua
+    totalExp = crystalData[key].exp;
+    expPerSecond = crystalData[key].rate;
 
-  const currentPage = window.location.pathname.split("/").pop();
+    progress = 0;
+    updateProgressUI();
 
-  // Tạo wrapper
-  const wrapper = document.createElement("div");
-  wrapper.className = "exp-link-wrapper";
+    timer = setInterval(() => {
+      progress += (expPerSecond / totalExp) * 100;
+      if (progress >= 100) {
+        progress = 100;
+        clearInterval(timer);
+        updateProgressUI();
+        alert("✨ Tinh thể tu vi đã đầy!");
+      } else {
+        updateProgressUI();
+      }
+    }, 1000);
+  }
 
-  // Danh sách các nút cần tạo
-  const buttons = [
-    { href: "exp.html", label: "📄 Bảng EXP", class: "exp-btn" },
-    { href: "choices.html", label: "❓ Câu hỏi", class: "exp-btn alt" },
-    { href: "index.html", label: "🏠 Trang chính", class: "exp-btn back" }
+  function updateProgressUI() {
+    progressBar.style.width = `${progress}%`;
+    progressText.textContent = `${Math.floor(progress)}%`;
+  }
+
+  if (levelSelect && stageSelect) {
+    levelSelect.addEventListener("change", startProgress);
+    stageSelect.addEventListener("change", startProgress);
+  }
+
+  if (resetBtn) {
+    resetBtn.addEventListener("click", startProgress);
+  }
+
+  /** =============================
+   *  PHẦN 7 — BẢNG CÂU HỎI choicesData ĐẦY ĐỦ
+   ============================== */
+  const choicesData = [
+    {
+      option1: { text: "Ăn quả", reward: "Tăng tu vi", danger: false },
+      option2: { text: "Uống nước từ suối", reward: "Tăng tu vi", danger: false },
+    },
+    {
+      option1: { text: "Bí mật điều tra", reward: "Thư thách đấu", danger: false },
+      option2: { text: "Tấn công trực diện", reward: "Không có gì", danger: true },
+    },
+    {
+      option1: { text: "Chiến đấu", reward: "Thư thách đấu", danger: false },
+      option2: { text: "Ngưỡng mộ", reward: "Tăng tu vi", danger: false },
+    },
+    {
+      option1: { text: "Cùng nhau khám phá", reward: "Trừ tu vi", danger: true },
+      option2: { text: "Tự khám phá", reward: "Đan vàng", danger: false },
+    },
+    {
+      option1: { text: "Cứu chữa", reward: "Đan xanh", danger: false },
+      option2: { text: "Rời đi", reward: "Trừ tu vi", danger: true },
+    },
+    {
+      option1: { text: "Đá thần", reward: "Tăng tu vi", danger: false },
+      option2: { text: "Đá hiếm", reward: "Tăng tu vi", danger: false },
+    },
+    {
+      option1: { text: "Đánh nhau với người đó", reward: "Đan xanh", danger: false },
+      option2: { text: "Cho lời khuyên", reward: "Tăng tu vi", danger: false },
+    },
+    {
+      option1: { text: "Đi đến hồ đen", reward: "Trừ tu vi", danger: true },
+      option2: { text: "Đi đến thôn hoa sen", reward: "Đan xanh", danger: false },
+    },
+    {
+      option1: { text: "Đi sang trái", reward: "Trừ tu vi", danger: true },
+      option2: { text: "Đi sang phải", reward: "Thư thách đấu", danger: false },
+    },
+    {
+      option1: { text: "Đi trên thuyền", reward: "Đan xanh", danger: false },
+      option2: { text: "Bay trên kiếm", reward: "Thư thách đấu", danger: false },
+    },
+    {
+      option1: { text: "Đi vào ban đêm", reward: "Đan vàng", danger: false },
+      option2: { text: "Đi vào ban ngày", reward: "Không có gì", danger: true },
+    },
+    {
+      option1: { text: "Đồng ý", reward: "Tăng tu vi", danger: false },
+      option2: { text: "Từ chối", reward: "Tăng tu vi", danger: false },
+    },
+    {
+      option1: { text: "Dũng cảm dựa vào", reward: "Tăng tu vi", danger: false },
+      option2: { text: "Đi nấp", reward: "Không có gì", danger: true },
+    },
+    {
+      option1: { text: "Khai thác bề mặt", reward: "Tăng tu vi", danger: false },
+      option2: { text: "Khai thác sâu", reward: "Không có gì", danger: true },
+    },
+    {
+      option1: { text: "Lương thiện", reward: "Tăng tu vi", danger: false },
+      option2: { text: "Lớn mạnh", reward: "Đan vàng", danger: false },
+    },
+    {
+      option1: { text: "Tặng thuốc", reward: "Đan xanh", danger: false },
+      option2: { text: "Cứu chữa", reward: "Đan vàng", danger: false },
+    },
+    {
+      option1: { text: "Tiên thảo", reward: "Tăng tu vi", danger: false },
+      option2: { text: "Đan dược", reward: "Đan xanh", danger: false },
+    },
+    {
+      option1: { text: "Trợ giúp chim loan", reward: "Đan xanh", danger: false },
+      option2: { text: "Trợ giúp chuột vàng", reward: "Đan vàng", danger: false },
+    },
+    {
+      option1: { text: "Tưới vườn thuốc", reward: "Tăng tu vi", danger: false },
+      option2: { text: "Luyện đan", reward: "Đan xanh", danger: false },
+    },
   ];
 
-  buttons.forEach(btnData => {
-    // Ẩn nút nếu đang ở đúng trang hiện tại
-    if (btnData.href === currentPage) return;
+  const choicesBody = document.getElementById("choicesBody");
+  if (choicesBody) {
+    choicesData.forEach((q) => {
+      const row = document.createElement("tr");
+      const td1 = document.createElement("td");
+      td1.innerHTML = `
+        <div class="choice ${q.option1.danger ? "danger" : ""}">
+          <span>${q.option1.text}</span>
+          <span class="reward">(${q.option1.reward})</span>
+        </div>`;
+      const td2 = document.createElement("td");
+      td2.innerHTML = `
+        <div class="choice ${q.option2.danger ? "danger" : ""}">
+          <span>${q.option2.text}</span>
+          <span class="reward">(${q.option2.reward})</span>
+        </div>`;
+      row.appendChild(td1);
+      row.appendChild(td2);
+      choicesBody.appendChild(row);
+    });
+  }
 
-    const btn = document.createElement("a");
-    btn.href = btnData.href;
-    btn.textContent = btnData.label;
-    btn.className = btnData.class;
-    wrapper.appendChild(btn);
-  });
+  /** =============================
+   *  PHẦN 8 — NÚT ĐIỀU HƯỚNG
+   ============================== */
+  (function addNavButtons() {
+    const main = document.querySelector("main");
+    if (!main) return;
 
-  // Gắn wrapper vào cuối <main>
-  main.appendChild(wrapper);
+    const currentPage = window.location.pathname.split("/").pop();
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "exp-link-wrapper";
+
+    const buttons = [
+      { href: "index.html", label: "🏠 Trang chính", class: "exp-btn back" },
+      { href: "exp.html", label: "📄 Bảng EXP", class: "exp-btn" },
+      { href: "choices.html", label: "❓ Câu hỏi", class: "exp-btn alt" },
+    ];
+
+    buttons.forEach((btnData) => {
+      if (btnData.href === currentPage) return;
+      const btn = document.createElement("a");
+      btn.href = btnData.href;
+      btn.textContent = btnData.label;
+      btn.className = btnData.class;
+      wrapper.appendChild(btn);
+    });
+
+    main.appendChild(wrapper);
+  })();
 })();
