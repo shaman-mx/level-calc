@@ -26,18 +26,6 @@
   let expPerSecond = 0;
   let totalExp = 0;
   let timer = null;
-  
-// === Buff elements (crystal.html) ===
-const suoiLinhEl  = $("#suoiLinh");
-const thanMatEl   = $("#thanMat");
-const chienDauEl  = $("#chienDau");
-const keBangTamEl = $("#keBangTam");
-
-// === Crystal runtime state ===
-let baseRate = 0;      // tốc độ cơ bản theo level
-let accExp   = 0;      // EXP đã tích luỹ
-let lastTick = 0;      // mốc thời gian tick trước
-
 
   /** =============================
    *  PHẦN 2 — CẤU HÌNH DỮ LIỆU CRYSTAL
@@ -140,167 +128,47 @@ let lastTick = 0;      // mốc thời gian tick trước
     });
   }
 
-/** =============================
- *  PHẦN 6 — PROGRESS BAR CRYSTAL
- ============================== */
-
-// % từ "Tinh thần chiến đấu"
-function getChienDauPct(val) {
-  if (val >= 1501) return 0.15;
-  if (val >= 1001) return 0.07;
-  if (val >= 501)  return 0.05;
-  if (val >= 200)  return 0.03;
-  return 0;
-}
-
-// Tốc độ hiện tại sau khi áp dụng buff
-function getBuffedSpeed() {
-  let pct = 0;
-
-  // Suối linh & Thân mật: % theo "tốc độ gốc"
-  if (suoiLinhEl && suoiLinhEl.checked) pct += 0.10;
-
-  if (thanMatEl) {
-    const tm = Number(thanMatEl.value);
-    if (tm === 1) pct += 0.05;
-    else if (tm === 2) pct += 0.10;
-    else if (tm === 3) pct += 0.15;
-  }
-
-  // Tinh thần chiến đấu: % cộng dồn
-  if (chienDauEl) pct += getChienDauPct(Number(chienDauEl.value));
-
-  // Kế băng tâm: cộng thẳng EXP/s
-  let flat = 0;
-  if (keBangTamEl) {
-    const lv = Number(keBangTamEl.value);
-    if (lv === 1) flat = 1;
-    else if (lv === 3) flat = 2;
-    else if (lv === 5) flat = 3;
-  }
-
-  return baseRate * (1 + pct) + flat;
-}
-
-function formatTime(sec) {
-  if (!isFinite(sec) || sec <= 0) return "—";
-  const s = Math.floor(sec % 60);
-  const m = Math.floor((sec / 60) % 60);
-  const h = Math.floor(sec / 3600);
-  const p1 = h ? `${h} giờ ` : "";
-  const p2 = m ? `${m} phút ` : "";
-  const p3 = `${s} giây`;
-  return (p1 + p2 + p3).trim();
-}
-
-function updateInfoUI() {
-  const expCapEl  = $("#expCapacity");
-  const baseEl    = $("#baseSpeed");
-  const curEl     = $("#currentSpeed");
-  const fullEl    = $("#timeRequired");
-  const remainEl  = $("#timeRemaining");
-
-  const speed = getBuffedSpeed();
-
-  if (expCapEl) expCapEl.textContent = Math.round(totalExp).toLocaleString("vi-VN");
-  if (baseEl)   baseEl.textContent   = baseRate.toFixed(2);
-  if (curEl)    curEl.textContent    = speed.toFixed(2);
-
-  if (fullEl)   fullEl.textContent   = speed > 0 ? formatTime(totalExp / speed) : "—";
-  if (remainEl) remainEl.textContent = speed > 0 ? formatTime((totalExp - accExp) / speed) : "—";
-}
-
-function updateProgressUI() {
-  if (!progressBar || !progressText) return;
-  const pct = Math.min(100, (accExp / totalExp) * 100);
-  progressBar.style.width = `${pct}%`;
-  progressText.textContent = `${Math.floor(pct)}%`;
-}
-
-function tick() {
-  const now = Date.now();
-  const dt  = (now - lastTick) / 1000; // giây
-  lastTick  = now;
-
-  const speed = getBuffedSpeed();      // đọc buff mỗi tick → đổi buff không reset
-
-  accExp = Math.min(totalExp, accExp + speed * dt);
-  updateProgressUI();
-  updateInfoUI();
-
-  if (accExp >= totalExp) {
+  /** =============================
+   *  PHẦN 6 — PROGRESS BAR CRYSTAL
+   ============================== */
+  function startProgress() {
     clearInterval(timer);
-    timer = null;
+if (!levelSelect || !progressBar || !progressText) return;
+const key = levelSelect.value;
+
+    if (!crystalData[key]) return;
+
+    totalExp = crystalData[key].exp;
+    expPerSecond = crystalData[key].rate;
+
+    progress = 0;
     updateProgressUI();
-    alert("✨ Tinh thể tu vi đã đầy!");
+
+    timer = setInterval(() => {
+      progress += (expPerSecond / totalExp) * 100;
+      if (progress >= 100) {
+        progress = 100;
+        clearInterval(timer);
+        updateProgressUI();
+        alert("✨ Tinh thể tu vi đã đầy!");
+      } else {
+        updateProgressUI();
+      }
+    }, 1000);
   }
-}
 
-function startProgress() {
-  clearInterval(timer);
-  if (!levelSelect) return;
+  function updateProgressUI() {
+    progressBar.style.width = `${progress}%`;
+    progressText.textContent = `${Math.floor(progress)}%`;
+  }
 
-  const key = levelSelect.value;          // đã gộp Level + Giai đoạn
-  if (!crystalData[key]) return;
-
-  totalExp = crystalData[key].exp;
-  baseRate = crystalData[key].rate;
-
-  // Reset khi đổi Level hoặc bấm reset
-  accExp   = 0;
-  lastTick = Date.now();
-  updateProgressUI();
-  updateInfoUI();
-
-  timer = setInterval(tick, 200);         // tick mượt 5 lần/giây
-}
-function startProgress() {
-  clearInterval(timer);
-  if (!levelSelect) return;
-
-  const key = levelSelect.value;          // đã gộp Level + Giai đoạn
-  if (!crystalData[key]) return;
-
-  totalExp = crystalData[key].exp;
-  baseRate = crystalData[key].rate;
-
-  // Reset khi đổi Level hoặc bấm reset
-  accExp   = 0;
-  lastTick = Date.now();
-  updateProgressUI();
-  updateInfoUI();
-
-  timer = setInterval(tick, 200);         // tick mượt 5 lần/giây
-
-} // <-- Kết thúc startProgress() ở đây
-
-
-// Đổi Level & Giai đoạn → chạy lại từ đầu
 if (levelSelect) {
-  levelSelect.addEventListener("change", startProgress);
+    levelSelect.addEventListener("change", startProgress);
 }
 
-// Đổi buff → KHÔNG reset, chỉ cập nhật tốc độ & thời gian
-[suoiLinhEl, thanMatEl, chienDauEl, keBangTamEl].forEach(el => {
-  if (!el) return;
-  el.addEventListener("change", () => {
-    updateInfoUI();   // cập nhật ngay
-  });
-});
-
-// Nút reset → quay về 0 ở level đang chọn
-if (resetBtn) {
-  resetBtn.addEventListener("click", () => {
-    accExp   = 0;
-    lastTick = Date.now();
-    updateProgressUI();
-    updateInfoUI();
-  });
-});
-
-// Khởi động lần đầu
-if (levelSelect) startProgress();
-
+  if (resetBtn) {
+    resetBtn.addEventListener("click", startProgress);
+  }
 
   /** =============================
    *  PHẦN 7 — BẢNG CÂU HỎI choicesData ĐẦY ĐỦ
