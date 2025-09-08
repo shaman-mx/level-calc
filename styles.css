@@ -377,3 +377,55 @@ html[data-theme="dark"] .progress-container{ background:#475569; }
   font-weight: 600;
   color: var(--muted);
 }
+/* Wrapper chứa Kế Băng Tâm và HMC */
+.buff-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+/* Mỗi field đồng bộ với UI hiện tại */
+.buff-wrapper .field {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 180px;
+}
+
+/* Label đồng bộ */
+.buff-wrapper .field__label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text-color);
+}
+
+/* Select đồng bộ với UI */
+.buff-wrapper .field__input {
+  background-color: var(--bg-secondary);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.buff-wrapper .field__input:hover {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 6px var(--accent-color);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .buff-wrapper {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .buff-wrapper .field {
+    width: 100%;
+  }
+}
