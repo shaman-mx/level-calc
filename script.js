@@ -96,12 +96,19 @@
     else if (chienVal >= 501) buffPercent += 0.05;
     else if (chienVal >= 200) buffPercent += 0.03;
 
+    // 📜 Vật phẩm mới
+    if (sachHienNhan?.checked) buffPercent += 0.05;
+    if (tamPhapAnhHung?.checked) buffPercent += 0.05;
+    if (banDoKhoBau?.checked) buffPercent += 0.15;
+    if (thanChuPhepThuat?.checked) buffPercent += 0.30;
+    if (kinhDaoGiao?.checked) buffPercent += 0.70;
+
     // Kế băng tâm (+1 / +2 / +3 EXP/s)
     const keBang = parseInt(keBangTam?.value || 0);
     const extraSpeed = keBang > 0 ? Math.ceil(keBang / 2) : 0;
 
     return baseSpeed * buffPercent + extraSpeed;
-  }
+}
 
   function updateCrystalInfo() {
     if (!levelSelect || !expCapacityEl) return;
