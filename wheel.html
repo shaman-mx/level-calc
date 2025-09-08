@@ -153,41 +153,44 @@
     drawWheel();
 
     // Quay vòng quay
-    function spinWheel() {
-      if (spinning) return;
+function spinWheel() {
+  if (spinning) return;
 
-      spinning = true;
-      resultText.textContent = "Đang quay... 🎡";
+  spinning = true;
+  resultText.textContent = "Đang quay... 🎡";
 
-      const extraSpins = 5; // số vòng quay thêm
-      const randomSlice = Math.floor(Math.random() * segments.length);
-      const targetAngle = (2 * Math.PI * extraSpins) + (randomSlice * sliceAngle) + sliceAngle / 2;
+  const extraSpins = 5;
+  const randomSlice = Math.floor(Math.random() * segments.length);
 
-      let start = null;
-      const duration = 4000; // ms
+  // Xoay theo chiều kim đồng hồ, mũi tên luôn nằm trên cùng
+  const targetAngle = (2 * Math.PI * extraSpins) - (randomSlice * sliceAngle) - sliceAngle / 2;
 
-      function animate(timestamp) {
-        if (!start) start = timestamp;
-        const progress = Math.min((timestamp - start) / duration, 1);
+  let start = null;
+  const duration = 4000;
 
-        // Easing cubic-out
-        const easing = 1 - Math.pow(1 - progress, 3);
-        currentAngle = targetAngle * easing;
+  function animate(timestamp) {
+    if (!start) start = timestamp;
+    const progress = Math.min((timestamp - start) / duration, 1);
 
-        drawWheel();
+    const easing = 1 - Math.pow(1 - progress, 3);
+    currentAngle = targetAngle * easing;
 
-        if (progress < 1) {
-          requestAnimationFrame(animate);
-        } else {
-          spinning = false;
-const finalAngle = (currentAngle - Math.PI / 2 + 2 * Math.PI) % (2 * Math.PI);
-const resultIndex = Math.floor(finalAngle / sliceAngle) % segments.length;
-resultText.textContent = `🎉 Kết quả: ${segments[resultIndex].label}`;
-        }
-      }
+    drawWheel();
 
+    if (progress < 1) {
       requestAnimationFrame(animate);
+    } else {
+      spinning = false;
+
+      // Đảo ngược index do canvas tính theo chiều kim đồng hồ
+      const resultIndex = (segments.length - randomSlice) % segments.length;
+      resultText.textContent = `🎉 Kết quả: ${segments[resultIndex].label}`;
     }
+  }
+
+  requestAnimationFrame(animate);
+}
+
 
     spinBtn.addEventListener("click", spinWheel);
   </script>
