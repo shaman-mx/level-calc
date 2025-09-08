@@ -69,7 +69,6 @@
   const timeRemainingEl = $("#timeRemaining");
 
   const suoiLinh = $("#suoiLinh");
-  const huyenminh = $("#huyenminhcong");
   const thanMat = $("#thanMat");
   const chienDau = $("#chienDau");
   const keBangTam = $("#keBangTam");
