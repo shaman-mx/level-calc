@@ -485,3 +485,56 @@ html[data-theme="dark"] .progress-container{ background:#475569; }
     gap: 12px;
   }
 }
+
+/* Style chung cho tất cả select */
+select,
+.field__input {
+  width: 100%;
+  min-height: 36px;
+  padding: 6px 10px;
+  font-size: 14px;
+  border: 1px solid #888; /* ✅ Thêm border mặc định */
+  border-radius: 6px;
+  background-color: var(--bg-secondary, #1e1e1e);
+  color: var(--text-color, #fff);
+  appearance: none;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+/* Hover & Focus cho select */
+select:hover,
+.field__input:hover {
+  border-color: #00bcd4; /* ✅ Xanh nhấn */
+  box-shadow: 0 0 6px rgba(0, 188, 212, 0.5);
+}
+
+select:focus,
+.field__input:focus {
+  outline: none;
+  border-color: #00bcd4;
+  box-shadow: 0 0 6px rgba(0, 188, 212, 0.7);
+}
+
+/* Style cho option bên trong select */
+select option {
+  background-color: #1e1e1e; /* ✅ Màu nền khi mở dropdown */
+  color: #fff;
+  padding: 6px 10px;
+  border: none;
+}
+
+/* Dark mode hỗ trợ */
+[data-theme="dark"] select,
+[data-theme="dark"] .field__input {
+  background-color: #1e1e1e;
+  border-color: #666;
+  color: #fff;
+}
+
+[data-theme="light"] select,
+[data-theme="light"] .field__input {
+  background-color: #fff;
+  border-color: #ccc;
+  color: #222;
+}
