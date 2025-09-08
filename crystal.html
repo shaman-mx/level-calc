@@ -1,153 +1,99 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" data-theme="light">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Tính thời gian đầy tinh thể tu vi</title>
-  <link rel="stylesheet" href="styles.css">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 10px;
-      background-color: var(--bg, #f9f9f9);
-      color: var(--text, #222);
-    }
-    .container {
-      max-width: 480px;
-      margin: auto;
-      background: #fff;
-      padding: 15px;
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 10px;
-    }
-    select, input, button {
-      padding: 6px;
-      font-size: 14px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      outline: none;
-      width: 100%;
-    }
-    .options-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-    label {
-      display: flex;
-      align-items: center;
-      font-size: 13px;
-      gap: 4px;
-      white-space: nowrap;
-    }
-    .progress-container {
-      margin-top: 10px;
-    }
-    .progress-bar-wrapper {
-      background: #e0e0e0;
-      border-radius: 8px;
-      overflow: hidden;
-      height: 24px;
-      margin-top: 6px;
-    }
-    .progress-bar {
-      height: 100%;
-      background: linear-gradient(90deg, #4caf50, #81c784);
-      width: 0%;
-      text-align: center;
-      color: #fff;
-      font-weight: bold;
-      transition: width 0.3s linear;
-    }
-    .full {
-      background: linear-gradient(90deg, #ff5722, #ff9800) !important;
-    }
-    #fullWarning {
-      display: none;
-      text-align: center;
-      margin-top: 5px;
-      color: #e53935;
-      font-weight: bold;
-    }
-    #resetBtn {
-      margin-top: 8px;
-      width: 100%;
-      padding: 8px;
-      font-size: 14px;
-      background: #2196f3;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
-    #resetBtn:hover {
-      background: #1976d2;
-    }
-    @media (max-width: 480px) {
-      .options-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="crystal.css" />
 </head>
 <body>
-  <div class="container">
-    <h2>Tính thời gian đầy tinh thể tu vi</h2>
-    
-    <!-- Chọn level -->
-    <label for="levelSelect">Chọn Level & Giai đoạn:</label>
-    <select id="levelSelect"></select>
-    
-    <div class="options-grid">
-      <label><input type="checkbox" id="suoiLinh"> Suối linh (+10%)</label>
-      <label>Thân mật:
-        <select id="thanMat">
-          <option value="0">0 người</option>
-          <option value="1">1 người (+5%)</option>
-          <option value="2">2 người (+10%)</option>
-          <option value="3">3 người (+15%)</option>
-        </select>
-      </label>
-      <label>Tinh thần chiến đấu:
-        <select id="chienDau">
-          <option value="0">0</option>
-          <option value="3">200-500 (+3%)</option>
-          <option value="5">501-1000 (+5%)</option>
-          <option value="7">1001-1500 (+7%)</option>
-          <option value="15">1501-2000 (+15%)</option>
-        </select>
-      </label>
-      <label>Kế băng tâm:
-        <select id="keBangTam">
-          <option value="0">Không</option>
-          <option value="1">Lv1 (+1 EXP/s)</option>
-          <option value="2">Lv3 (+2 EXP/s)</option>
-          <option value="3">Lv5 (+3 EXP/s)</option>
-        </select>
-      </label>
+  <div class="crystal-page">
+    <h1>Tính thời gian đầy tinh thể tu vi</h1>
+
+    <!-- Chọn Level & Giai đoạn -->
+    <div class="form-group">
+      <label for="level">Chọn Level & Giai đoạn</label>
+      <select id="level">
+        <option value="1-sơ">Level 1 - Sơ kỳ</option>
+        <option value="1-trung">Level 1 - Trung kỳ</option>
+        <option value="1-hậu">Level 1 - Hậu kỳ</option>
+        <option value="2-sơ">Level 2 - Sơ kỳ</option>
+        <option value="2-trung">Level 2 - Trung kỳ</option>
+        <option value="2-hậu">Level 2 - Hậu kỳ</option>
+        <option value="3-sơ">Level 3 - Sơ kỳ</option>
+        <option value="3-trung">Level 3 - Trung kỳ</option>
+        <option value="3-hậu">Level 3 - Hậu kỳ</option>
+        <option value="4-sơ">Level 4 - Sơ kỳ</option>
+        <option value="4-trung" selected>Level 4 - Trung kỳ</option>
+        <option value="4-hậu">Level 4 - Hậu kỳ</option>
+        <option value="5-sơ">Level 5 - Sơ kỳ</option>
+        <option value="5-trung">Level 5 - Trung kỳ</option>
+        <option value="5-hậu">Level 5 - Hậu kỳ</option>
+        <option value="6-sơ">Level 6 - Sơ kỳ</option>
+        <option value="6-trung">Level 6 - Trung kỳ</option>
+        <option value="6-hậu">Level 6 - Hậu kỳ</option>
+        <option value="7-sơ">Level 7 - Sơ kỳ</option>
+      </select>
     </div>
 
-    <p><strong>Dung lượng tinh thể:</strong> <span id="crystalCapacity">0</span></p>
-    <p><strong>Tốc độ cơ bản:</strong> <span id="baseExp">0</span></p>
-    <p><strong>Tốc độ hiện tại:</strong> <span id="finalExp">0</span></p>
-    <p><strong>Thời gian đầy:</strong> <span id="fullTime">0</span></p>
-    <p id="countdown">⏳ Còn lại: 0</p>
-    
-    <div class="progress-container">
-      <div class="progress-bar-wrapper">
-        <div id="progressBar" class="progress-bar">0%</div>
+    <!-- Các buff hỗ trợ -->
+    <div class="form-group">
+      <label>Chọn buff hỗ trợ</label>
+      <div class="form-row">
+        <label>
+          <input type="checkbox" id="suoiLinh" /> Suối linh (+10%)
+        </label>
+        <select id="thanMat">
+          <option value="0">Thân mật: 0 người</option>
+          <option value="5">1 người (+5%)</option>
+          <option value="10">2 người (+10%)</option>
+          <option value="15">3 người (+15%)</option>
+        </select>
       </div>
-      <p id="fullWarning">✨ Tinh thể đã đầy!</p>
-      <button id="resetBtn">🔄 Bắt đầu lại</button>
     </div>
+
+    <!-- Tinh thần chiến đấu -->
+    <div class="form-group">
+      <label for="chienDau">Tinh thần chiến đấu</label>
+      <select id="chienDau">
+        <option value="0">0</option>
+        <option value="3">200 - 500 (+3%)</option>
+        <option value="5">501 - 1000 (+5%)</option>
+        <option value="7">1001 - 1500 (+7%)</option>
+        <option value="15">1501 - 2000 (+15%)</option>
+      </select>
+    </div>
+
+    <!-- Kế băng tâm -->
+    <div class="form-group">
+      <label for="keBangTam">Kế băng tâm</label>
+      <select id="keBangTam">
+        <option value="0">Lv0</option>
+        <option value="1">Lv1 (+1 EXP/s)</option>
+        <option value="2">Lv3 (+2 EXP/s)</option>
+        <option value="3">Lv5 (+3 EXP/s)</option>
+      </select>
+    </div>
+
+    <!-- Hiển thị thông tin -->
+    <div class="result">
+      Dung lượng tinh thể: <span id="dungLuong">9690</span> EXP<br />
+      Tốc độ hiện tại: <span id="tocDo">5</span> EXP/s<br />
+      Dự kiến đầy sau: <span id="thoiGian">0 giờ 0 phút 0 giây</span>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="progress-text" id="progressText">0%</div>
+    </div>
+
+    <!-- Nút reset -->
+    <button class="reset-btn" id="resetBtn">🔄 Bắt đầu lại</button>
   </div>
-  
-  <script src="script.js"></script>
+
+  <script src="crystal.js"></script>
 </body>
 </html>
