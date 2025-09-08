@@ -4,13 +4,11 @@
 const themeToggle = document.getElementById("themeToggle");
 const root = document.documentElement;
 
-// Đọc theme từ localStorage
-if (localStorage.getItem("theme")) {
-  root.setAttribute("data-theme", localStorage.getItem("theme"));
-  if (themeToggle) {
-    themeToggle.textContent =
-      localStorage.getItem("theme") === "dark" ? "🌙" : "🌞";
-  }
+// Load theme từ localStorage
+const savedTheme = localStorage.getItem("theme") || "light";
+root.setAttribute("data-theme", savedTheme);
+if (themeToggle) {
+  themeToggle.textContent = savedTheme === "dark" ? "🌙" : "🌞";
 }
 
 // Toggle theme khi bấm nút
@@ -120,7 +118,7 @@ function updateStats() {
   timeInfo.textContent = `Dự kiến đầy sau: ${h} giờ ${m} phút ${s} giây`;
 
   const progress = Math.min((currentExp / exp) * 100, 100);
-  progressBar.value = progress;
+  progressBar.style.width = `${progress}%`;
   progressText.textContent = `${progress.toFixed(1)}%`;
 }
 
