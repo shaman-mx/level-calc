@@ -142,6 +142,7 @@
 
   // Khởi tạo ban đầu
   updateCrystalInfo();
+  startProgress();
 
 
   
