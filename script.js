@@ -51,7 +51,80 @@
     "6-hậu": { exp: 22420, rate: 5 },
     "7-sơ": { exp: 23674, rate: 5 },
   };
+/** =============================
+   *  PHẦN 6.2 — TÍNH TOÁN TỐC ĐỘ & THỜI GIAN CRYSTAL
+   ============================== */
+  const expCapacityEl = $("#expCapacity");
+  const baseSpeedEl = $("#baseSpeed");
+  const currentSpeedEl = $("#currentSpeed");
+  const timeRequiredEl = $("#timeRequired");
+  const timeRemainingEl = $("#timeRemaining");
 
+  const suoiLinh = $("#suoiLinh");
+  const thanMat = $("#thanMat");
+  const chienDau = $("#chienDau");
+  const keBangTam = $("#keBangTam");
+
+  function updateCrystalInfo() {
+    const key = levelSelect?.value;
+    if (!key || !crystalData[key]) return;
+
+    // 1. Lấy dung lượng & tốc độ cơ bản
+    const expCapacity = crystalData[key].exp;
+    const baseSpeed = crystalData[key].rate;
+
+    // 2. Tính buff %
+    let buffPercent = 1;
+    if (suoiLinh?.checked) buffPercent += 0.1; // +10%
+    buffPercent += parseInt(thanMat?.value || 0) * 0.05; // 5% mỗi người
+    const chienVal = parseInt(chienDau?.value || 0);
+    if (chienVal >= 1501) buffPercent += 0.15;
+    else if (chienVal >= 1001) buffPercent += 0.07;
+    else if (chienVal >= 501) buffPercent += 0.05;
+    else if (chienVal >= 200) buffPercent += 0.03;
+
+    // 3. Kế băng tâm (thêm tốc độ thẳng)
+    const keBang = parseInt(keBangTam?.value || 0);
+    const extraSpeed = keBang > 0 ? Math.ceil(keBang / 2) : 0; // Lv1=1, Lv3=2, Lv5=3
+
+    // 4. Tính tốc độ hiện tại
+    const currentSpeed = baseSpeed * buffPercent + extraSpeed;
+
+    // 5. Thời gian cần thiết (giây)
+    const timeRequiredSec = currentSpeed > 0 ? expCapacity / currentSpeed : 0;
+
+    // 6. Định dạng thời gian đầy
+    function formatTime(sec) {
+      if (!sec || sec <= 0) return "—";
+      const h = Math.floor(sec / 3600);
+      const m = Math.floor((sec % 3600) / 60);
+      const s = Math.floor(sec % 60);
+      return `${h}h ${m}m ${s}s`;
+    }
+
+    // 7. Cập nhật UI
+    expCapacityEl.textContent = expCapacity.toLocaleString();
+    baseSpeedEl.textContent = baseSpeed.toFixed(2);
+    currentSpeedEl.textContent = currentSpeed.toFixed(2);
+    timeRequiredEl.textContent = formatTime(timeRequiredSec);
+
+    // 8. Nếu progress đang chạy thì tính luôn thời gian còn lại
+    if (progress > 0 && currentSpeed > 0) {
+      const expRemaining = expCapacity * (1 - progress / 100);
+      const timeRemainingSec = expRemaining / currentSpeed;
+      timeRemainingEl.textContent = formatTime(timeRemainingSec);
+    } else {
+      timeRemainingEl.textContent = "—";
+    }
+  }
+
+  // Gọi lại khi thay đổi bất kỳ buff nào
+  [levelSelect, suoiLinh, thanMat, chienDau, keBangTam].forEach(el => {
+    if (el) el.addEventListener("change", updateCrystalInfo);
+  });
+
+  // Khởi tạo ban đầu
+  updateCrystalInfo();
   /** =============================
    *  PHẦN 3 — HÀM TIỆN ÍCH
    ============================== */
