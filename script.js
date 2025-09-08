@@ -206,19 +206,22 @@
    ============================== */
   function startProgress() {
     clearInterval(timer);
-if (!levelSelect || !progressBar || !progressText) return;
-const key = levelSelect.value;
+    if (!levelSelect || !progressBar || !progressText) return;
 
+    const key = levelSelect.value;
     if (!crystalData[key]) return;
 
     totalExp = crystalData[key].exp;
-    expPerSecond = crystalData[key].rate;
+
+    // 🔹 Lấy tốc độ hiện tại thay vì tốc độ cơ bản
+    expPerSecond = getCurrentSpeed(crystalData[key].rate);
 
     progress = 0;
     updateProgressUI();
 
     timer = setInterval(() => {
       progress += (expPerSecond / totalExp) * 100;
+
       if (progress >= 100) {
         progress = 100;
         clearInterval(timer);
@@ -227,8 +230,12 @@ const key = levelSelect.value;
       } else {
         updateProgressUI();
       }
+
+      // Cập nhật thời gian còn lại trong quá trình chạy
+      updateCrystalInfo();
     }, 1000);
   }
+
 
   function updateProgressUI() {
     progressBar.style.width = `${progress}%`;
