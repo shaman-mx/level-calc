@@ -1,142 +1,153 @@
 <!DOCTYPE html>
-<html lang="vi" data-theme="light">
+<html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Tính thời gian đầy Tinh thể tu vi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tính thời gian đầy tinh thể tu vi</title>
   <link rel="stylesheet" href="styles.css">
   <style>
-    .countdown {
-      font-size: 1.2rem;
-      font-weight: bold;
-      margin-top: 10px;
-      color: #4CAF50;
-      text-align: center;
+    body {
+      font-family: Arial, sans-serif;
+      padding: 10px;
+      background-color: var(--bg, #f9f9f9);
+      color: var(--text, #222);
     }
-    .full-warning {
-      color: #e74c3c;
-      font-weight: bold;
-      font-size: 1.2rem;
-      display: none;
+    .container {
+      max-width: 480px;
+      margin: auto;
+      background: #fff;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    h2 {
       text-align: center;
-      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+    select, input, button {
+      padding: 6px;
+      font-size: 14px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      outline: none;
+      width: 100%;
+    }
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    label {
+      display: flex;
+      align-items: center;
+      font-size: 13px;
+      gap: 4px;
+      white-space: nowrap;
     }
     .progress-container {
-      width: 100%;
-      background-color: var(--bg-secondary, #eee);
-      border-radius: 20px;
-      height: 25px;
-      margin-top: 16px;
+      margin-top: 10px;
+    }
+    .progress-bar-wrapper {
+      background: #e0e0e0;
+      border-radius: 8px;
       overflow: hidden;
-      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.2);
+      height: 24px;
+      margin-top: 6px;
     }
     .progress-bar {
       height: 100%;
+      background: linear-gradient(90deg, #4caf50, #81c784);
       width: 0%;
-      background: linear-gradient(90deg, #00b09b, #96c93d);
       text-align: center;
-      line-height: 25px;
       color: #fff;
       font-weight: bold;
-      transition: width 0.2s linear;
+      transition: width 0.3s linear;
     }
-    .progress-bar.full {
-      background: linear-gradient(90deg, #4CAF50, #2ecc71);
+    .full {
+      background: linear-gradient(90deg, #ff5722, #ff9800) !important;
+    }
+    #fullWarning {
+      display: none;
+      text-align: center;
+      margin-top: 5px;
+      color: #e53935;
+      font-weight: bold;
+    }
+    #resetBtn {
+      margin-top: 8px;
+      width: 100%;
+      padding: 8px;
+      font-size: 14px;
+      background: #2196f3;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    #resetBtn:hover {
+      background: #1976d2;
+    }
+    @media (max-width: 480px) {
+      .options-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
-  <header class="site-header">
-    <div class="container header-row">
-      <div>
-        <h1>Tính thời gian đầy Tinh thể tu vi</h1>
-        <p>Chọn level và tuỳ chỉnh tốc độ tu vi</p>
-      </div>
-      <button id="themeToggle" class="theme-toggle">🌙</button>
-    </div>
-  </header>
-
-  <main class="container">
-    <a href="index.html" class="back-btn">⬅ Quay về trang chính</a>
-
-    <div class="card">
-      <div class="field">
-        <label for="levelSelect" class="field__label">Chọn Level & Giai đoạn</label>
-        <select id="levelSelect" class="field__input"></select>
-      </div>
-
-      <div class="field">
-        <label class="field__label">Dung lượng tinh thể</label>
-        <div id="crystalCapacity" class="result result--before">0 EXP</div>
-      </div>
-
-      <div class="field">
-        <label class="field__label">EXP/s gốc</label>
-        <div id="baseExp" class="result result--after">0 EXP/s</div>
-      </div>
-
-      <hr style="margin:16px 0;">
-
-      <div class="field">
-        <label class="field__label">Suối linh (+10%)</label>
-        <input type="checkbox" id="suoiLinh">
-      </div>
-
-      <div class="field">
-        <label class="field__label">Quan hệ thân mật</label>
-        <select id="thanMat" class="field__input">
-          <option value="0">Không</option>
+  <div class="container">
+    <h2>Tính thời gian đầy tinh thể tu vi</h2>
+    
+    <!-- Chọn level -->
+    <label for="levelSelect">Chọn Level & Giai đoạn:</label>
+    <select id="levelSelect"></select>
+    
+    <div class="options-grid">
+      <label><input type="checkbox" id="suoiLinh"> Suối linh (+10%)</label>
+      <label>Thân mật:
+        <select id="thanMat">
+          <option value="0">0 người</option>
           <option value="1">1 người (+5%)</option>
           <option value="2">2 người (+10%)</option>
           <option value="3">3 người (+15%)</option>
         </select>
-      </div>
-
-      <div class="field">
-        <label class="field__label">Tinh thần chiến đấu</label>
-        <select id="chienDau" class="field__input">
-          <option value="0">Không</option>
+      </label>
+      <label>Tinh thần chiến đấu:
+        <select id="chienDau">
+          <option value="0">0</option>
           <option value="3">200-500 (+3%)</option>
           <option value="5">501-1000 (+5%)</option>
           <option value="7">1001-1500 (+7%)</option>
           <option value="15">1501-2000 (+15%)</option>
         </select>
-      </div>
-
-      <div class="field">
-        <label class="field__label">Kế Băng Tâm</label>
-        <select id="keBangTam" class="field__input">
+      </label>
+      <label>Kế băng tâm:
+        <select id="keBangTam">
           <option value="0">Không</option>
-          <option value="1">Lv1 (+1 exp/s)</option>
-          <option value="2">Lv3 (+2 exp/s)</option>
-          <option value="3">Lv5 (+3 exp/s)</option>
+          <option value="1">Lv1 (+1 EXP/s)</option>
+          <option value="2">Lv3 (+2 EXP/s)</option>
+          <option value="3">Lv5 (+3 EXP/s)</option>
         </select>
-      </div>
+      </label>
+    </div>
 
-      <hr style="margin:16px 0;">
-
-      <div class="result result--after">
-        <div class="result__label">Tốc độ tu vi cuối cùng</div>
-        <div id="finalExp">0 EXP/s</div>
-      </div>
-
-      <div class="result result--before" style="margin-top:12px;">
-        <div class="result__label">Thời gian đầy tinh thể</div>
-        <div id="fullTime">0 giây</div>
-        <div id="countdown" class="countdown"></div>
-        <div id="fullWarning" class="full-warning">🎉 Tinh thể tu vi đã đầy!</div>
-      </div>
-
-      <div class="progress-container">
+    <p><strong>Dung lượng tinh thể:</strong> <span id="crystalCapacity">0</span></p>
+    <p><strong>Tốc độ cơ bản:</strong> <span id="baseExp">0</span></p>
+    <p><strong>Tốc độ hiện tại:</strong> <span id="finalExp">0</span></p>
+    <p><strong>Thời gian đầy:</strong> <span id="fullTime">0</span></p>
+    <p id="countdown">⏳ Còn lại: 0</p>
+    
+    <div class="progress-container">
+      <div class="progress-bar-wrapper">
         <div id="progressBar" class="progress-bar">0%</div>
       </div>
+      <p id="fullWarning">✨ Tinh thể đã đầy!</p>
+      <button id="resetBtn">🔄 Bắt đầu lại</button>
     </div>
-  </main>
-
-  <footer class="site-footer">
-    <p>© 2025 TU TIÊN WEPLAY. All rights reserved.</p>
-  </footer>
-
+  </div>
+  
   <script src="script.js"></script>
 </body>
 </html>
