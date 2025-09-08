@@ -139,7 +139,7 @@ return baseSpeed * buffPercent + extraSpeed;
   }
 
   // Lắng nghe thay đổi level & buff
-  [levelSelect, suoiLinh, thanMat, chienDau, keBangTam,].forEach(el => {
+  [levelSelect, suoiLinh, thanMat, chienDau, keBangTam, huyenMinhCong,].forEach(el => {
     if (el) el.addEventListener("change", () => {
         updateCrystalInfo();
 if (progress > 0 && !timer) startProgress();; // đồng bộ progress nếu đang chạy
