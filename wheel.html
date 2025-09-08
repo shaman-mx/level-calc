@@ -181,10 +181,13 @@ function spinWheel() {
     } else {
       spinning = false;
 
-      // Góc hiện tại tính từ mũi tên (trên đỉnh)
-      const normalizedAngle = (2 * Math.PI - (currentAngle % (2 * Math.PI)) + Math.PI / 2) % (2 * Math.PI);
+      // Góc hiện tại, bù thêm góc của mũi tên
+      let normalizedAngle = (currentAngle + Math.PI / 2) % (2 * Math.PI);
 
-      // Tính index phần trúng thưởng
+      // Đảo ngược chiều vì canvas vẽ CW
+      normalizedAngle = (2 * Math.PI - normalizedAngle) % (2 * Math.PI);
+
+      // Tính index chính xác
       const resultIndex = Math.floor(normalizedAngle / sliceAngle) % segments.length;
 
       resultText.textContent = `🎉 Kết quả: ${segments[resultIndex].label}`;
@@ -193,6 +196,7 @@ function spinWheel() {
 
   requestAnimationFrame(animate);
 }
+
 
 
 
