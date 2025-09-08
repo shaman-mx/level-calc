@@ -255,6 +255,7 @@ const crystalData = [
   { level: "7 sơ", expPerSec: 5, capacity: 23674 },
 ];
 
+// Lấy element
 const levelSelect = document.getElementById("levelSelect");
 const crystalCapacity = document.getElementById("crystalCapacity");
 const baseExp = document.getElementById("baseExp");
@@ -270,16 +271,22 @@ const progressBar = document.getElementById("progressBar");
 
 let countdownTimer;
 
-// Populate dropdown
-if (levelSelect) {
+// ======= Populate Dropdown =======
+function populateLevels() {
+  levelSelect.innerHTML = ""; // Xóa cũ để tránh bị trùng
+
   crystalData.forEach((item, index) => {
     const opt = document.createElement("option");
     opt.value = index;
     opt.textContent = item.level;
     levelSelect.appendChild(opt);
   });
+
+  // Chọn level đầu tiên mặc định
+  levelSelect.value = 0;
 }
 
+// ======= Tính toán thời gian đầy tinh thể =======
 function calcCrystal() {
   clearInterval(countdownTimer);
   fullWarning.style.display = "none";
@@ -331,6 +338,7 @@ function calcCrystal() {
   }, 1000);
 }
 
+// ======= Cập nhật đồng hồ đếm ngược =======
 function updateCountdown(sec) {
   const hours = Math.floor(sec / 3600);
   const minutes = Math.floor((sec % 3600) / 60);
@@ -339,6 +347,7 @@ function updateCountdown(sec) {
   countdown.textContent = `⏳ Còn lại: ${hours} giờ ${minutes} phút ${seconds} giây`;
 }
 
+// ======= Cập nhật thanh tiến trình =======
 function updateProgress(percent) {
   const clamped = Math.min(100, Math.max(0, percent));
   progressBar.style.width = clamped.toFixed(1) + "%";
@@ -350,11 +359,15 @@ function updateProgress(percent) {
   }
 }
 
-if (levelSelect) {
+// ======= Khởi tạo =======
+window.addEventListener("DOMContentLoaded", () => {
+  populateLevels();
+  calcCrystal();
+
   levelSelect.addEventListener("change", calcCrystal);
   suoiLinh.addEventListener("change", calcCrystal);
   thanMat.addEventListener("change", calcCrystal);
   chienDau.addEventListener("change", calcCrystal);
   keBangTam.addEventListener("change", calcCrystal);
-  window.addEventListener("DOMContentLoaded", calcCrystal);
-}
+});
+
