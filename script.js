@@ -133,11 +133,8 @@
    ============================== */
   function startProgress() {
     clearInterval(timer);
-    if (!levelSelect || !stageSelect || !progressBar || !progressText) return;
-
-    const level = levelSelect.value;
-    const stage = stageSelect.value;
-    const key = `${level}-${stage}`;
+if (!levelSelect || !progressBar || !progressText) return;
+const key = levelSelect.value;
 
     if (!crystalData[key]) return;
 
@@ -165,10 +162,9 @@
     progressText.textContent = `${Math.floor(progress)}%`;
   }
 
-  if (levelSelect && stageSelect) {
+if (levelSelect) {
     levelSelect.addEventListener("change", startProgress);
-    stageSelect.addEventListener("change", startProgress);
-  }
+}
 
   if (resetBtn) {
     resetBtn.addEventListener("click", startProgress);
