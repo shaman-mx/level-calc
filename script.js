@@ -231,3 +231,130 @@ if (choicesBody) {
   // Gắn wrapper vào cuối <main>
   main.appendChild(wrapper);
 })();
+
+// ========================== CRYSTAL CALCULATOR ==========================
+const crystalData = [
+  { level: "1 sơ", expPerSec: 1, capacity: 6 },
+  { level: "1 trung", expPerSec: 1, capacity: 8 },
+  { level: "1 hậu", expPerSec: 1, capacity: 18 },
+  { level: "2 sơ", expPerSec: 1, capacity: 38 },
+  { level: "2 trung", expPerSec: 1, capacity: 160 },
+  { level: "2 hậu", expPerSec: 1, capacity: 320 },
+  { level: "3 sơ", expPerSec: 3, capacity: 1938 },
+  { level: "3 trung", expPerSec: 3, capacity: 5000 },
+  { level: "3 hậu", expPerSec: 3, capacity: 8740 },
+  { level: "4 sơ", expPerSec: 5, capacity: 9100 },
+  { level: "4 trung", expPerSec: 5, capacity: 9690 },
+  { level: "4 hậu", expPerSec: 5, capacity: 16150 },
+  { level: "5 sơ", expPerSec: 5, capacity: 17670 },
+  { level: "5 trung", expPerSec: 5, capacity: 18544 },
+  { level: "5 hậu", expPerSec: 5, capacity: 19874 },
+  { level: "6 sơ", expPerSec: 5, capacity: 20444 },
+  { level: "6 trung", expPerSec: 5, capacity: 21470 },
+  { level: "6 hậu", expPerSec: 5, capacity: 22420 },
+  { level: "7 sơ", expPerSec: 5, capacity: 23674 },
+];
+
+const levelSelect = document.getElementById("levelSelect");
+const crystalCapacity = document.getElementById("crystalCapacity");
+const baseExp = document.getElementById("baseExp");
+const suoiLinh = document.getElementById("suoiLinh");
+const thanMat = document.getElementById("thanMat");
+const chienDau = document.getElementById("chienDau");
+const keBangTam = document.getElementById("keBangTam");
+const finalExp = document.getElementById("finalExp");
+const fullTime = document.getElementById("fullTime");
+const countdown = document.getElementById("countdown");
+const fullWarning = document.getElementById("fullWarning");
+const progressBar = document.getElementById("progressBar");
+
+let countdownTimer;
+
+// Populate dropdown
+if (levelSelect) {
+  crystalData.forEach((item, index) => {
+    const opt = document.createElement("option");
+    opt.value = index;
+    opt.textContent = item.level;
+    levelSelect.appendChild(opt);
+  });
+}
+
+function calcCrystal() {
+  clearInterval(countdownTimer);
+  fullWarning.style.display = "none";
+
+  const index = +levelSelect.value;
+  const data = crystalData[index];
+  if (!data) return;
+
+  const base = data.expPerSec;
+  const capacity = data.capacity;
+
+  // Bonus %
+  let bonusPercent = 0;
+  if (suoiLinh.checked) bonusPercent += 10;
+  bonusPercent += +thanMat.value * 5;
+  bonusPercent += +chienDau.value;
+
+  // Kế Băng Tâm bonus exp/s
+  let keBangBonus = 0;
+  if (+keBangTam.value === 1) keBangBonus = 1;
+  if (+keBangTam.value === 2) keBangBonus = 2;
+  if (+keBangTam.value === 3) keBangBonus = 3;
+
+  // Exp/s cuối cùng
+  const expPerSec = base * (1 + bonusPercent / 100) + keBangBonus;
+  const timeSec = capacity / expPerSec;
+
+  // Cập nhật UI
+  crystalCapacity.textContent = capacity + " EXP";
+  baseExp.textContent = base + " EXP/s";
+  finalExp.textContent = expPerSec.toFixed(2) + " EXP/s";
+
+  updateCountdown(timeSec);
+
+  // Countdown real-time + progress bar
+  let remaining = Math.floor(timeSec);
+  countdownTimer = setInterval(() => {
+    if (remaining <= 0) {
+      clearInterval(countdownTimer);
+      countdown.textContent = "Hoàn tất!";
+      fullWarning.style.display = "block";
+      updateProgress(100);
+      return;
+    }
+    updateCountdown(remaining);
+    const percent = ((capacity - remaining * expPerSec) / capacity) * 100;
+    updateProgress(percent);
+    remaining--;
+  }, 1000);
+}
+
+function updateCountdown(sec) {
+  const hours = Math.floor(sec / 3600);
+  const minutes = Math.floor((sec % 3600) / 60);
+  const seconds = Math.floor(sec % 60);
+  fullTime.textContent = `${hours} giờ ${minutes} phút ${seconds} giây`;
+  countdown.textContent = `⏳ Còn lại: ${hours} giờ ${minutes} phút ${seconds} giây`;
+}
+
+function updateProgress(percent) {
+  const clamped = Math.min(100, Math.max(0, percent));
+  progressBar.style.width = clamped.toFixed(1) + "%";
+  progressBar.textContent = clamped.toFixed(1) + "%";
+  if (clamped >= 100) {
+    progressBar.classList.add("full");
+  } else {
+    progressBar.classList.remove("full");
+  }
+}
+
+if (levelSelect) {
+  levelSelect.addEventListener("change", calcCrystal);
+  suoiLinh.addEventListener("change", calcCrystal);
+  thanMat.addEventListener("change", calcCrystal);
+  chienDau.addEventListener("change", calcCrystal);
+  keBangTam.addEventListener("change", calcCrystal);
+  window.addEventListener("DOMContentLoaded", calcCrystal);
+}
