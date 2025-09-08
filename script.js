@@ -74,6 +74,7 @@ const kinhDaoGiao = $("#kinhDaoGiao");
   const timeRemainingEl = $("#timeRemaining");
 
   const suoiLinh = $("#suoiLinh");
+  const thanMat = $("#huyenminhcong");
   const thanMat = $("#thanMat");
   const chienDau = $("#chienDau");
   const keBangTam = $("#keBangTam");
