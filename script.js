@@ -56,6 +56,9 @@
     "8-sơ": { exp: 27398, rate: 10 },
     "8-trung": { exp: 28766, rate: 10 },
     "8-hậu": { exp: 60420, rate: 10 },
+    "9-sơ": { exp: 63460, rate: 10 },
+    "9-trung": { exp: 66500, rate: 10 },
+    "9-hậu": { exp: 69920, rate: 10 },
   };
 
   
