@@ -364,11 +364,20 @@ html[data-theme="dark"] .exp-btn.alt:hover { background: #16a34a; }
 }
 html[data-theme="dark"] .progress-container{ background:#475569; }
 
+.progress-bar.glow {
+  box-shadow:
+    0 0 12px rgba(250, 204, 21, 0.8),
+    0 0 24px rgba(252, 211, 77, 0.6),
+    0 0 36px rgba(253, 224, 71, 0.5);
+}
+
 .progress-bar{
   height: 100%;
   width: 0; /* JS sẽ thay đổi */
   border-radius: 999px;
-  background: linear-gradient(90deg,#3b82f6,#06b6d4);
+  background: linear-gradient(120deg, #facc15, #fcd34d, #fde047);
+  background-size: 300% 300%;
+  animation: energyFlow 3s linear infinite;
   transition: width .2s ease;
 }
 .progress-text{
@@ -537,4 +546,216 @@ select option {
   background-color: #fff;
   border-color: #ccc;
   color: #222;
+}
+/* ==== BỐ CỤC BUFF ==== */
+.buff-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 14px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.buff-row.top-row {
+  margin-top: 6px;
+  margin-bottom: 14px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-color);
+  cursor: pointer;
+  user-select: none;
+}
+
+.buff-option {
+  display: flex;
+  flex-direction: column;
+  min-width: 160px;
+}
+
+/* ==== RESPONSIVE ==== */
+
+/* Tablet: tối đa 2 cột */
+@media (max-width: 992px) {
+  .buff-row.bottom-row {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .buff-option {
+    min-width: 45%;
+  }
+}
+
+/* Mobile: mỗi option 1 hàng */
+@media (max-width: 600px) {
+  .buff-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .buff-option {
+    width: 100%;
+  }
+}
+.progress-message {
+  margin-top: 8px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: #ff4d4f; /* Đỏ cảnh báo */
+  text-shadow: 0 0 8px rgba(255, 77, 79, 0.8);
+  animation: pulseDanger 1s infinite;
+  transition: all 0.3s ease;
+}
+
+/* Hiệu ứng nhấp nháy + rung nhẹ */
+@keyframes pulseDanger {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.08); opacity: 0.6; }
+  100% { transform: scale(1); opacity: 1; }
+}
+/* ===== BỐ CỤC BUFF ===== */
+.buff-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 10px;
+  width: 100%;
+}
+
+/* Hàng 1: Suối Linh + Đan Tụ Linh */
+.buff-checkbox-group {
+  display: flex;
+  justify-content: flex-start; /* ✅ Luôn sát bên trái */
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+/* Hàng 2: 4 option trải đều */
+.buff-options {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  width: 100%;
+}
+
+/* Responsive tablet: 2 cột */
+@media (max-width: 992px) {
+  .buff-options {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Responsive mobile: 1 cột */
+@media (max-width: 600px) {
+  .buff-options {
+    grid-template-columns: 1fr;
+  }
+
+  .buff-checkbox-group {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}
+#customSpeed {
+  width: 100px;
+  padding: 4px 6px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-left: 6px;
+  background-color: var(--card);
+  color: var(--text);
+  transition: all 0.2s ease-in-out;
+}
+
+#customSpeed:focus {
+  border-color: var(--brand-blue);
+  box-shadow: 0 0 6px var(--ring);
+  outline: none;
+}
+/* Wrapper ô nhập tốc độ tùy chỉnh */
+.custom-speed-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+#customSpeed {
+  width: 120px;
+  padding: 6px 28px 6px 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: var(--card);
+  color: var(--text);
+  transition: all 0.2s ease-in-out;
+}
+
+/* Nút xoá bên trong ô input */
+#clearCustomSpeed {
+  position: absolute;
+  right: 6px;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 16px;
+  cursor: pointer;
+  display: none;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+#clearCustomSpeed:hover {
+  color: var(--brand-blue);
+}
+
+/* Hiển thị nút xoá khi có giá trị */
+#customSpeed:not(:placeholder-shown) ~ #clearCustomSpeed {
+  display: block;
+}
+/* === Nút Reset chuyên nghiệp === */
+.reset-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.reset-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #3b82f6;  /* ✅ Xanh gốc */
+  color: #fff; 
+  font-weight: 600;
+  font-size: 13px;
+  padding: 5px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.25s ease, transform 0.15s ease;
+  box-shadow: none;               /* ✅ Bỏ shadow */
+}
+
+.reset-btn:hover {
+  background-color: #2563eb;;
+  transform: translateY(-1px);
+}
+
+.reset-btn:active {
+  background-color: #1e40af;
+  transform: scale(0.96);
+}
+
+.reset-btn .icon {
+  font-size: 14px;
+  line-height: 1;
 }
