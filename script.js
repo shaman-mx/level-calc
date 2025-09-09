@@ -1,13 +1,11 @@
 (function () {
   "use strict";
 
+  // ===== Helpers =====
   const $ = (sel) => document.querySelector(sel);
   const root = document.documentElement;
 
-  /** =============================
-   *  PHẦN 1 — ĐỊNH NGHĨA BIẾN CHUNG
-   ============================== */
- 
+  // ===== Elements (Calculator) =====
   const beforeInput = $("#beforeInput");
   const afterInput = $("#afterInput");
   const beforeOut = $("#beforeResult");
@@ -16,21 +14,39 @@
   const clearAfter = $("#clearAfter");
   const toggleBtn = $("#themeToggle");
 
-  // Crystal Elements
+  // ===== Elements (Crystal) =====
   const levelSelect = $("#levelSelect");
-  const stageSelect = $("#stageSelect");
   const progressBar = $("#progressBar");
   const progressText = $("#progressText");
   const resetBtn = $("#resetBtn");
+  const progressMessage = $("#progressMessage");
 
+  // Info box
+  const expCapacityEl = $("#expCapacity");
+  const baseSpeedEl = $("#baseSpeed");
+  const currentSpeedEl = $("#currentSpeed");
+  const timeRequiredEl = $("#timeRequired");
+  const timeRemainingEl = $("#timeRemaining");
+  const customSpeedInput = $("#customSpeed");
+  const clearCustomSpeed = $("#clearCustomSpeed")
+
+  // Buff controls
+  const suoiLinh = $("#suoiLinh");
+  const danTuLinh = $("#danTuLinh") || $("#dantulinh");
+  const thanMat = $("#thanMat");
+  const chienDau = $("#chienDau");
+  const keBangTam = $("#keBangTam");
+  const huyenMinhCong = $("#huyenMinhCong");
+
+
+
+  // ===== State =====
   let progress = 0;
   let expPerSecond = 0;
   let totalExp = 0;
   let timer = null;
 
-  /** =============================
-   *  PHẦN 2 — CẤU HÌNH DỮ LIỆU CRYSTAL
-   ============================== */
+  // ===== Data =====
   const crystalData = {
     "1-sơ": { exp: 6, rate: 1 },
     "1-trung": { exp: 8, rate: 1 },
@@ -61,360 +77,294 @@
     "9-hậu": { exp: 69920, rate: 10 },
   };
 
-  
-  /** =============================
-   *  PHẦN 6.2 — CẬP NHẬT THÔNG TIN CRYSTAL
-   ============================== */
-  const expCapacityEl = $("#expCapacity");
-  const baseSpeedEl = $("#baseSpeed");
-  const currentSpeedEl = $("#currentSpeed");
-  const timeRequiredEl = $("#timeRequired");
-  const timeRemainingEl = $("#timeRemaining");
-
-  const suoiLinh = $("#suoiLinh");
-  const thanMat = $("#thanMat");
-  const chienDau = $("#chienDau");
-  const keBangTam = $("#keBangTam");
-  const huyenMinhCong = $("#huyenMinhCong");
-
-  function formatTime(sec) {
+  // ===== Utils =====
+  const fmt = (n) => (Number.isFinite(n) ? n.toFixed(2) : "0.00");
+  const safeEval = (expr) => {
+    if (!/^[0-9+\-*/().\s]+$/.test(expr)) return NaN;
+    try { return new Function(`return (${expr})`)(); } catch { return NaN; }
+  };
+  const formatTime = (sec) => {
     if (!sec || sec <= 0) return "—";
     const h = Math.floor(sec / 3600);
     const m = Math.floor((sec % 3600) / 60);
     const s = Math.floor(sec % 60);
     return `${h}h ${m}m ${s}s`;
-  }
+  };
 
+  // ===== Speed with Buffs =====
   function getCurrentSpeed(baseSpeed) {
+    // Nếu có tốc độ tuỳ chỉnh → bỏ buff
+    if (customSpeedInput && customSpeedInput.value !== "") {
+      return parseFloat(customSpeedInput.value) || 0;
+    }
+
     let buffPercent = 1;
 
-    // Suối linh (+10%)
     if (suoiLinh?.checked) buffPercent += 0.1;
+    if (danTuLinh?.checked) buffPercent += 0.2;
+    buffPercent += parseInt(thanMat?.value || 0, 10) * 0.05;
 
-    // Thân mật (+5% mỗi người)
-    buffPercent += parseInt(thanMat?.value || 0) * 0.05;
+    const cd = parseInt(chienDau?.value || 0, 10);
+    if (cd >= 1501) buffPercent += 0.15;
+    else if (cd >= 1001) buffPercent += 0.07;
+    else if (cd >= 501) buffPercent += 0.05;
+    else if (cd >= 200) buffPercent += 0.03;
 
-    // Tinh thần chiến đấu
-    const chienVal = parseInt(chienDau?.value || 0);
-    if (chienVal >= 1501) buffPercent += 0.15;
-    else if (chienVal >= 1001) buffPercent += 0.07;
-    else if (chienVal >= 501) buffPercent += 0.05;
-    else if (chienVal >= 200) buffPercent += 0.03;
+    const keBang = parseInt(keBangTam?.value || 0, 10);
+    const extra = keBang > 0 ? Math.ceil(keBang / 2) : 0;
 
-// Kế băng tâm (+1 / +2 / +3 EXP/s)
-const keBang = parseInt(keBangTam?.value || 0);
-const extraSpeed = keBang > 0 ? Math.ceil(keBang / 2) : 0;
+    const hmc = parseInt(huyenMinhCong?.value || 0, 10);
+    buffPercent += hmc * 0.01;
 
-// Huyền Minh Công (+1% / Lv)
-const huyenMinh = parseInt(huyenMinhCong?.value || 0);
-buffPercent += huyenMinh * 0.01;
+    return baseSpeed * buffPercent + extra;
+  }
 
-return baseSpeed * buffPercent + extraSpeed;
-}
+// ===== Xoá tốc độ tuỳ chỉnh =====
+clearCustomSpeed?.addEventListener("click", () => {
+  customSpeedInput.value = "";
+  updateCrystalInfo();
+});
 
+  // ===== Info box update =====
   function updateCrystalInfo() {
     if (!levelSelect || !expCapacityEl) return;
-
     const key = levelSelect.value;
-    if (!crystalData[key]) return;
+    const data = crystalData[key];
+    if (!data) return;
 
-    const expCapacity = crystalData[key].exp;
-    const baseSpeed = crystalData[key].rate;
+    const expCapacity = data.exp;
+    const baseSpeed = data.rate;
     const currentSpeed = getCurrentSpeed(baseSpeed);
-
-    // Tính thời gian cần thiết để đầy
     const timeRequiredSec = currentSpeed > 0 ? expCapacity / currentSpeed : 0;
 
-    // Cập nhật UI
     expCapacityEl.textContent = expCapacity.toLocaleString();
     baseSpeedEl.textContent = baseSpeed.toFixed(2);
     currentSpeedEl.textContent = currentSpeed.toFixed(2);
     timeRequiredEl.textContent = formatTime(timeRequiredSec);
 
-    // Nếu progress đang chạy → tính thời gian còn lại
     if (progress > 0 && currentSpeed > 0) {
       const expRemaining = expCapacity * (1 - progress / 100);
-      const timeRemainingSec = expRemaining / currentSpeed;
-      timeRemainingEl.textContent = formatTime(timeRemainingSec);
+      timeRemainingEl.textContent = formatTime(expRemaining / currentSpeed);
     } else {
       timeRemainingEl.textContent = "—";
     }
   }
 
-  // Lắng nghe thay đổi level & buff
-  [levelSelect, suoiLinh, thanMat, chienDau, keBangTam, huyenMinhCong,].forEach(el => {
-    if (el) el.addEventListener("change", () => {
-        updateCrystalInfo();
-if (progress > 0 && !timer) startProgress();; // đồng bộ progress nếu đang chạy
-    });
-  });
-
-  // Khởi tạo ban đầu
-  updateCrystalInfo();
-  startProgress();
-
-
+  // ===== Progress simulation =====
+function updateProgressUI() {
+  if (!progressBar || !progressText) return;
   
-  /** =============================
-   *  PHẦN 3 — HÀM TIỆN ÍCH
-   ============================== */
-  function format(num) {
-    return Number.isFinite(num) ? num.toFixed(2) : "0.00";
+
+  // ✅ Cập nhật width của bar
+  progressBar.style.width = `${progress}%`;
+
+  // ✅ Tính toán vị trí chữ theo barWidth
+  const containerWidth = document.querySelector(".progress-container").offsetWidth;
+  const barWidth = progressBar.offsetWidth;
+  const textWidth = progressText.offsetWidth;
+
+  // ✅ Luôn trừ đi 6px để giả lập padding-right
+  let pos = barWidth - 6 - textWidth / 2;
+
+  // ✅ Giữ text luôn trong bar, tránh tràn ra ngoài
+  if (pos < textWidth / 2) pos = textWidth / 2;
+  if (pos > containerWidth - textWidth / 2 - 6) pos = containerWidth - textWidth / 2 - 6;
+
+  // ✅ Luôn hiển thị đủ 100%
+  const displayPercent = progress >= 99.5 ? 100 : Math.floor(progress);
+
+  // ✅ Gán vị trí và nội dung
+  progressText.style.left = `${pos}px`;
+  progressText.textContent = `${displayPercent}%`;
+}
+
+
+
+
+
+
+function startProgress() {
+  cancelAnimationFrame(timer); // Dừng nếu đang chạy
+
+  if (!levelSelect || !progressBar || !progressText) return;
+
+  const key = levelSelect.value;
+  const data = crystalData[key];
+  if (!data) return;
+
+  totalExp = data.exp;
+  progress = 0;
+  updateProgressUI();
+  if (progressMessage) {
+    progressMessage.textContent = "";
+    progressMessage.classList.remove("danger-glow");
   }
 
-  function safeEval(expr) {
-    if (!/^[0-9+\-*/().\s]+$/.test(expr)) return NaN;
-    try {
-      return new Function(`return (${expr})`)();
-    } catch {
-      return NaN;
+  let lastTime = performance.now();
+
+  function animate(now) {
+    const delta = (now - lastTime) / 1000; // thời gian đã trôi qua, đơn vị giây
+    lastTime = now;
+
+    expPerSecond = getCurrentSpeed(data.rate);
+    progress += (expPerSecond / totalExp) * 100 * delta; // tăng liên tục theo delta time
+
+    if (progress >= 100) {
+      progress = 100;
+      updateProgressUI();
+      if (progressMessage) {
+        progressMessage.textContent = "✨ Tinh thể tu vi đã đầy!";
+        progressMessage.classList.add("danger-glow");
+      }
+      cancelAnimationFrame(timer);
+      return;
     }
+
+    updateProgressUI();
+    updateCrystalInfo();
+    timer = requestAnimationFrame(animate);
   }
 
-  /** =============================
-   *  PHẦN 4 — TÍNH TOÁN TRƯỚC / SAU LV15
-   ============================== */
+  timer = requestAnimationFrame(animate);
+}
+
+
+  // ===== Calculator (before/after Lv15) =====
   function calcBefore() {
-    const expr = beforeInput.value.replace(",", ".");
+    const expr = (beforeInput?.value || "").replace(",", ".");
     const val = safeEval(expr);
     const res = (val * 105) / 95;
-    beforeOut.textContent = format(res);
+    if (beforeOut) beforeOut.textContent = fmt(res);
   }
-
   function calcAfter() {
-    const expr = afterInput.value.replace(",", ".");
+    const expr = (afterInput?.value || "").replace(",", ".");
     const val = safeEval(expr);
     const res = (val * 110) / 95;
-    afterOut.textContent = format(res);
+    if (afterOut) afterOut.textContent = fmt(res);
   }
 
-  if (beforeInput) beforeInput.addEventListener("input", calcBefore);
-  if (afterInput) afterInput.addEventListener("input", calcAfter);
+  beforeInput?.addEventListener("input", calcBefore);
+  afterInput?.addEventListener("input", calcAfter);
+  clearBefore?.addEventListener("click", () => { if (!beforeInput) return; beforeInput.value = ""; calcBefore(); beforeInput.focus(); });
+  clearAfter?.addEventListener("click", () => { if (!afterInput) return; afterInput.value = ""; calcAfter(); afterInput.focus(); });
 
-  if (clearBefore) {
-    clearBefore.addEventListener("click", () => {
-      beforeInput.value = "";
-      calcBefore();
-      beforeInput.focus();
-    });
-  }
-
-  if (clearAfter) {
-    clearAfter.addEventListener("click", () => {
-      afterInput.value = "";
-      calcAfter();
-      afterInput.focus();
-    });
-  }
-
-  /** =============================
-   *  PHẦN 5 — DARK / LIGHT THEME ĐỒNG BỘ
-   ============================== */
+  // ===== Theme (single, stable) =====
   function setTheme(theme) {
     root.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
     if (toggleBtn) toggleBtn.textContent = theme === "dark" ? "☀️" : "🌙";
   }
-
-  const savedTheme = localStorage.getItem("theme");
-  if (savedTheme) {
-    setTheme(savedTheme);
-  } else {
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    setTheme(prefersDark ? "dark" : "light");
-  }
-
-  if (toggleBtn) {
-    toggleBtn.addEventListener("click", () => {
-      const current = root.getAttribute("data-theme");
-      setTheme(current === "dark" ? "light" : "dark");
+  (function initTheme() {
+    const saved = localStorage.getItem("theme");
+    if (saved) setTheme(saved);
+    else setTheme(window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    toggleBtn?.addEventListener("click", () => {
+      const cur = root.getAttribute("data-theme");
+      setTheme(cur === "dark" ? "light" : "dark");
     });
-  }
+  })();
 
-  /** =============================
-   *  PHẦN 6 — PROGRESS BAR CRYSTAL
-   ============================== */
-  function startProgress() {
-    clearInterval(timer);
-    if (!levelSelect || !progressBar || !progressText) return;
-
-    const key = levelSelect.value;
-    if (!crystalData[key]) return;
-
-    totalExp = crystalData[key].exp;
-
-    // 🔹 Lấy tốc độ hiện tại thay vì tốc độ cơ bản
-    expPerSecond = getCurrentSpeed(crystalData[key].rate);
-
-    progress = 0;
-    updateProgressUI();
-
-    timer = setInterval(() => {
-      progress += (expPerSecond / totalExp) * 100;
-
-      if (progress >= 100) {
-        progress = 100;
-        clearInterval(timer);
-        updateProgressUI();
-        alert("✨ Tinh thể tu vi đã đầy!");
-      } else {
-        updateProgressUI();
-      }
-
-      // Cập nhật thời gian còn lại trong quá trình chạy
-      updateCrystalInfo();
-    }, 1000);
-  }
-
-
-  function updateProgressUI() {
-    progressBar.style.width = `${progress}%`;
-    progressText.textContent = `${Math.floor(progress)}%`;
-  }
-
-if (levelSelect) {
-  levelSelect.addEventListener("change", startProgress);
-  levelSelect.addEventListener("click", () => {
-    // Nếu bấm lại cùng 1 option thì vẫn reset progress
-    startProgress();
-  });
-}
-
-  if (resetBtn) {
-    resetBtn.addEventListener("click", startProgress);
-  }
-
-  /** =============================
-   *  PHẦN 7 — BẢNG CÂU HỎI choicesData ĐẦY ĐỦ
-   ============================== */
+  // ===== Choices table =====
   const choicesData = [
-    {
-      option1: { text: "Ăn quả", reward: "Tăng tu vi", danger: false },
-      option2: { text: "Uống nước từ suối", reward: "Tăng tu vi", danger: false },
-    },
-    {
-      option1: { text: "Bí mật điều tra", reward: "Thư thách đấu", danger: false },
-      option2: { text: "Tấn công trực diện", reward: "Không có gì", danger: true },
-    },
-    {
-      option1: { text: "Chiến đấu", reward: "Thư thách đấu", danger: false },
-      option2: { text: "Ngưỡng mộ", reward: "Tăng tu vi", danger: false },
-    },
-    {
-      option1: { text: "Cùng nhau khám phá", reward: "Trừ tu vi", danger: true },
-      option2: { text: "Tự khám phá", reward: "Đan vàng", danger: false },
-    },
-    {
-      option1: { text: "Cứu chữa", reward: "Đan xanh", danger: false },
-      option2: { text: "Rời đi", reward: "Trừ tu vi", danger: true },
-    },
-    {
-      option1: { text: "Đá thần", reward: "Tăng tu vi", danger: false },
-      option2: { text: "Đá hiếm", reward: "Tăng tu vi", danger: false },
-    },
-    {
-      option1: { text: "Đánh nhau với người đó", reward: "Đan xanh", danger: false },
-      option2: { text: "Cho lời khuyên", reward: "Tăng tu vi", danger: false },
-    },
-    {
-      option1: { text: "Đi đến hồ đen", reward: "Trừ tu vi", danger: true },
-      option2: { text: "Đi đến thôn hoa sen", reward: "Đan xanh", danger: false },
-    },
-    {
-      option1: { text: "Đi sang trái", reward: "Trừ tu vi", danger: true },
-      option2: { text: "Đi sang phải", reward: "Thư thách đấu", danger: false },
-    },
-    {
-      option1: { text: "Đi trên thuyền", reward: "Đan xanh", danger: false },
-      option2: { text: "Bay trên kiếm", reward: "Thư thách đấu", danger: false },
-    },
-    {
-      option1: { text: "Đi vào ban đêm", reward: "Đan vàng", danger: false },
-      option2: { text: "Đi vào ban ngày", reward: "Không có gì", danger: true },
-    },
-    {
-      option1: { text: "Đồng ý", reward: "Tăng tu vi", danger: false },
-      option2: { text: "Từ chối", reward: "Tăng tu vi", danger: false },
-    },
-    {
-      option1: { text: "Dũng cảm dựa vào", reward: "Tăng tu vi", danger: false },
-      option2: { text: "Đi nấp", reward: "Không có gì", danger: true },
-    },
-    {
-      option1: { text: "Khai thác bề mặt", reward: "Tăng tu vi", danger: false },
-      option2: { text: "Khai thác sâu", reward: "Không có gì", danger: true },
-    },
-    {
-      option1: { text: "Lương thiện", reward: "Tăng tu vi", danger: false },
-      option2: { text: "Lớn mạnh", reward: "Đan vàng", danger: false },
-    },
-    {
-      option1: { text: "Tặng thuốc", reward: "Đan xanh", danger: false },
-      option2: { text: "Cứu chữa", reward: "Đan vàng", danger: false },
-    },
-    {
-      option1: { text: "Tiên thảo", reward: "Tăng tu vi", danger: false },
-      option2: { text: "Đan dược", reward: "Đan xanh", danger: false },
-    },
-    {
-      option1: { text: "Trợ giúp chim loan", reward: "Đan xanh", danger: false },
-      option2: { text: "Trợ giúp chuột vàng", reward: "Đan vàng", danger: false },
-    },
-    {
-      option1: { text: "Tưới vườn thuốc", reward: "Tăng tu vi", danger: false },
-      option2: { text: "Luyện đan", reward: "Đan xanh", danger: false },
-    },
+    { option1: { text: "Ăn quả", reward: "Tăng tu vi", danger: false }, option2: { text: "Uống nước từ suối", reward: "Tăng tu vi", danger: false } },
+    { option1: { text: "Bí mật điều tra", reward: "Thư thách đấu", danger: false }, option2: { text: "Tấn công trực diện", reward: "Không có gì", danger: true } },
+    { option1: { text: "Chiến đấu", reward: "Thư thách đấu", danger: false }, option2: { text: "Ngưỡng mộ", reward: "Tăng tu vi", danger: false } },
+    { option1: { text: "Cùng nhau khám phá", reward: "Trừ tu vi", danger: true }, option2: { text: "Tự khám phá", reward: "Đan vàng", danger: false } },
+    { option1: { text: "Cứu chữa", reward: "Đan xanh", danger: false }, option2: { text: "Rời đi", reward: "Trừ tu vi", danger: true } },
+    { option1: { text: "Đá thần", reward: "Tăng tu vi", danger: false }, option2: { text: "Đá hiếm", reward: "Tăng tu vi", danger: false } },
+    { option1: { text: "Đánh nhau với người đó", reward: "Đan xanh", danger: false }, option2: { text: "Cho lời khuyên", reward: "Tăng tu vi", danger: false } },
+    { option1: { text: "Đi đến hồ đen", reward: "Trừ tu vi", danger: true }, option2: { text: "Đi đến thôn hoa sen", reward: "Đan xanh", danger: false } },
+    { option1: { text: "Đi sang trái", reward: "Trừ tu vi", danger: true }, option2: { text: "Đi sang phải", reward: "Thư thách đấu", danger: false } },
+    { option1: { text: "Đi trên thuyền", reward: "Đan xanh", danger: false }, option2: { text: "Bay trên kiếm", reward: "Thư thách đấu", danger: false } },
+    { option1: { text: "Đi vào ban đêm", reward: "Đan vàng", danger: false }, option2: { text: "Đi vào ban ngày", reward: "Không có gì", danger: true } },
+    { option1: { text: "Đồng ý", reward: "Tăng tu vi", danger: false }, option2: { text: "Từ chối", reward: "Tăng tu vi", danger: false } },
+    { option1: { text: "Dũng cảm dựa vào", reward: "Tăng tu vi", danger: false }, option2: { text: "Đi nấp", reward: "Không có gì", danger: true } },
+    { option1: { text: "Khai thác bề mặt", reward: "Tăng tu vi", danger: false }, option2: { text: "Khai thác sâu", reward: "Không có gì", danger: true } },
+    { option1: { text: "Lương thiện", reward: "Tăng tu vi", danger: false }, option2: { text: "Lớn mạnh", reward: "Đan vàng", danger: false } },
+    { option1: { text: "Tặng thuốc", reward: "Đan xanh", danger: false }, option2: { text: "Cứu chữa", reward: "Đan vàng", danger: false } },
+    { option1: { text: "Tiên thảo", reward: "Tăng tu vi", danger: false }, option2: { text: "Đan dược", reward: "Đan xanh", danger: false } },
+    { option1: { text: "Trợ giúp chim loan", reward: "Đan xanh", danger: false }, option2: { text: "Trợ giúp chuột vàng", reward: "Đan vàng", danger: false } },
+    { option1: { text: "Tưới vườn thuốc", reward: "Tăng tu vi", danger: false }, option2: { text: "Luyện đan", reward: "Đan xanh", danger: false } },
   ];
-
-  const choicesBody = document.getElementById("choicesBody");
-  if (choicesBody) {
+  (function buildChoices() {
+    const choicesBody = document.getElementById("choicesBody");
+    if (!choicesBody) return;
     choicesData.forEach((q) => {
       const row = document.createElement("tr");
       const td1 = document.createElement("td");
-      td1.innerHTML = `
-        <div class="choice ${q.option1.danger ? "danger" : ""}">
-          <span>${q.option1.text}</span>
-          <span class="reward">(${q.option1.reward})</span>
-        </div>`;
+      td1.innerHTML = `<div class="choice ${q.option1.danger ? "danger" : ""}">
+        <span>${q.option1.text}</span><span class="reward">(${q.option1.reward})</span></div>`;
       const td2 = document.createElement("td");
-      td2.innerHTML = `
-        <div class="choice ${q.option2.danger ? "danger" : ""}">
-          <span>${q.option2.text}</span>
-          <span class="reward">(${q.option2.reward})</span>
-        </div>`;
-      row.appendChild(td1);
-      row.appendChild(td2);
+      td2.innerHTML = `<div class="choice ${q.option2.danger ? "danger" : ""}">
+        <span>${q.option2.text}</span><span class="reward">(${q.option2.reward})</span></div>`;
+      row.append(td1, td2);
       choicesBody.appendChild(row);
     });
-  }
+  })();
 
-  /** =============================
-   *  PHẦN 8 — NÚT ĐIỀU HƯỚNG
-   ============================== */
+  // ===== Nav buttons =====
   (function addNavButtons() {
     const main = document.querySelector("main");
     if (!main) return;
-
     const currentPage = window.location.pathname.split("/").pop();
-
     const wrapper = document.createElement("div");
     wrapper.className = "exp-link-wrapper";
-
-const buttons = [
-  { href: "index.html", label: "🏠 Trang chính", class: "exp-btn back" },
-  { href: "exp.html", label: "📄 Bảng EXP", class: "exp-btn" },
-  { href: "choices.html", label: "❓ Câu hỏi", class: "exp-btn alt" },
-  { href: "crystal.html", label: "🔮 Mô phỏng tinh thể", class: "exp-btn" }, // ⬅ Nút mới
-];
-    buttons.forEach((btnData) => {
-      if (btnData.href === currentPage) return;
-      const btn = document.createElement("a");
-      btn.href = btnData.href;
-      btn.textContent = btnData.label;
-      btn.className = btnData.class;
-      wrapper.appendChild(btn);
+    const buttons = [
+      { href: "index.html", label: "🏠 Trang chính", class: "exp-btn back" },
+      { href: "exp.html", label: "📄 Bảng EXP", class: "exp-btn" },
+      { href: "choices.html", label: "❓ Câu hỏi", class: "exp-btn alt" },
+      { href: "crystal.html", label: "🔮 Mô phỏng tinh thể", class: "exp-btn" },
+    ];
+    buttons.forEach((b) => {
+      if (b.href === currentPage) return;
+      const a = document.createElement("a");
+      a.href = b.href; a.textContent = b.label; a.className = b.class;
+      wrapper.appendChild(a);
     });
-
     main.appendChild(wrapper);
   })();
+
+  // ===== Events =====
+  levelSelect?.addEventListener("change", startProgress);
+  levelSelect?.addEventListener("click", startProgress);
+  resetBtn?.addEventListener("click", startProgress);
+
+  // Khi buff thay đổi → cập nhật ngay tốc độ
+  [levelSelect, suoiLinh, danTuLinh, thanMat, chienDau, keBangTam, huyenMinhCong].forEach(el => {
+    if (el) el.addEventListener("change", () => {
+      updateCrystalInfo();
+      const key = levelSelect.value;
+      if (crystalData[key]) {
+        expPerSecond = getCurrentSpeed(crystalData[key].rate);
+      }
+    });
+  });
+
+// ===== Tốc độ tùy chỉnh =====
+customSpeedInput?.addEventListener("input", () => {
+  const val = parseFloat(customSpeedInput.value);
+  if (!isNaN(val) && val >= 0 && customSpeedInput.value !== "") {
+    // Reset tất cả buff về mặc định
+    suoiLinh.checked = false;
+    danTuLinh.checked = false;
+    thanMat.value = "0";
+    chienDau.value = "0";
+    keBangTam.value = "0";
+    huyenMinhCong.value = "0";
+  }
+  updateCrystalInfo();
+});
+
+// ===== Nút xoá tốc độ tùy chỉnh =====
+clearCustomSpeed?.addEventListener("click", () => {
+  customSpeedInput.value = "";
+  updateCrystalInfo();
+});
+
+
+  // ===== Init =====
+  updateCrystalInfo();
+  startProgress();
+  calcBefore();
+  calcAfter();
 })();
