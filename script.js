@@ -38,8 +38,6 @@
   const keBangTam = $("#keBangTam");
   const huyenMinhCong = $("#huyenMinhCong");
 
-
-
   // ===== State =====
   let progress = 0;
   let expPerSecond = 0;
@@ -119,11 +117,11 @@
     return baseSpeed * buffPercent + extra;
   }
 
-// ===== Xoá tốc độ tuỳ chỉnh =====
-clearCustomSpeed?.addEventListener("click", () => {
-  customSpeedInput.value = "";
-  updateCrystalInfo();
-});
+  // ===== Xoá tốc độ tuỳ chỉnh =====
+  clearCustomSpeed?.addEventListener("click", () => {
+    customSpeedInput.value = "";
+    updateCrystalInfo();
+  });
 
   // ===== Info box update =====
   function updateCrystalInfo() {
@@ -151,83 +149,79 @@ clearCustomSpeed?.addEventListener("click", () => {
   }
 
   // ===== Progress simulation =====
-function updateProgressUI() {
-  if (!progressBar || !progressText) return;
-  
+  function updateProgressUI() {
+    if (!progressBar || !progressText) return;
 
-  // ✅ Cập nhật width của bar
-  progressBar.style.width = `${progress}%`;
+    progressBar.style.width = `${progress}%`;
 
-  // ✅ Tính toán vị trí chữ theo barWidth
-  const containerWidth = document.querySelector(".progress-container").offsetWidth;
-  const barWidth = progressBar.offsetWidth;
-  const textWidth = progressText.offsetWidth;
+    // Compute container and text sizes safely (may be 0 if not rendered)
+    const container = document.querySelector(".progress-container");
+    const containerWidth = container ? container.clientWidth : (progressBar.parentElement ? progressBar.parentElement.clientWidth : 0);
+    const barWidth = progressBar.offsetWidth || Math.round(containerWidth * (progress/100));
+    const textWidth = progressText.offsetWidth || 36;
 
-  // ✅ Luôn trừ đi 6px để giả lập padding-right
-  let pos = barWidth - 6 - textWidth / 2;
+    // position center-ish inside the filled area, but keep it visible
+    const padding = 8;
+    let pos = barWidth - padding - textWidth / 2;
+    if (pos < textWidth / 2) pos = textWidth / 2;
+    if (pos > containerWidth - textWidth / 2 - padding) pos = containerWidth - textWidth / 2 - padding;
 
-  // ✅ Giữ text luôn trong bar, tránh tràn ra ngoài
-  if (pos < textWidth / 2) pos = textWidth / 2;
-  if (pos > containerWidth - textWidth / 2 - 6) pos = containerWidth - textWidth / 2 - 6;
-
-  // ✅ Luôn hiển thị đủ 100%
-  const displayPercent = progress >= 99.5 ? 100 : Math.floor(progress);
-
-  // ✅ Gán vị trí và nội dung
-  progressText.style.left = `${pos}px`;
-  progressText.textContent = `${displayPercent}%`;
-}
-
-
-
-
-
-
-function startProgress() {
-  cancelAnimationFrame(timer); // Dừng nếu đang chạy
-
-  if (!levelSelect || !progressBar || !progressText) return;
-
-  const key = levelSelect.value;
-  const data = crystalData[key];
-  if (!data) return;
-
-  totalExp = data.exp;
-  progress = 0;
-  updateProgressUI();
-  if (progressMessage) {
-    progressMessage.textContent = "";
-    progressMessage.classList.remove("danger-glow");
+    progressText.style.left = `${pos}px`;
+    progressText.textContent = `${progress >= 99.5 ? 100 : Math.floor(progress)}%`;
   }
 
-  let lastTime = performance.now();
+  // Recalculate text on resize to keep it placed correctly
+  let resizeTimer = null;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(updateProgressUI, 80);
+  });
 
-  function animate(now) {
-    const delta = (now - lastTime) / 1000; // thời gian đã trôi qua, đơn vị giây
-    lastTime = now;
+  function startProgress() {
+    if (timer) cancelAnimationFrame(timer);
 
-    expPerSecond = getCurrentSpeed(data.rate);
-    progress += (expPerSecond / totalExp) * 100 * delta; // tăng liên tục theo delta time
+    if (!levelSelect || !progressBar || !progressText) return;
 
-    if (progress >= 100) {
-      progress = 100;
-      updateProgressUI();
-      if (progressMessage) {
-        progressMessage.textContent = "✨ Tinh thể tu vi đã đầy!";
-        progressMessage.classList.add("danger-glow");
-      }
-      cancelAnimationFrame(timer);
-      return;
+    const key = levelSelect.value;
+    const data = crystalData[key];
+    if (!data) return;
+
+    totalExp = data.exp;
+    progress = 0;
+    updateProgressUI();
+    if (progressMessage) {
+      progressMessage.textContent = "";
+      progressMessage.classList.remove("danger-glow");
     }
 
-    updateProgressUI();
-    updateCrystalInfo();
+    let lastTime = performance.now();
+
+    function animate(now) {
+      const delta = (now - lastTime) / 1000;
+      lastTime = now;
+
+      expPerSecond = getCurrentSpeed(data.rate);
+      progress += (expPerSecond / totalExp) * 100 * delta;
+
+      if (progress >= 100) {
+        progress = 100;
+        updateProgressUI();
+        if (progressMessage) {
+          progressMessage.textContent = "✨ Tinh thể tu vi đã đầy!";
+          progressMessage.classList.add("danger-glow");
+        }
+        cancelAnimationFrame(timer);
+        timer = null;
+        return;
+      }
+
+      updateProgressUI();
+      updateCrystalInfo();
+      timer = requestAnimationFrame(animate);
+    }
+
     timer = requestAnimationFrame(animate);
   }
-
-  timer = requestAnimationFrame(animate);
-}
-
 
   // ===== Calculator (before/after Lv15) =====
   function calcBefore() {
@@ -289,6 +283,7 @@ function startProgress() {
   (function buildChoices() {
     const choicesBody = document.getElementById("choicesBody");
     if (!choicesBody) return;
+    choicesBody.innerHTML = "";
     choicesData.forEach((q) => {
       const row = document.createElement("tr");
       const td1 = document.createElement("td");
@@ -329,7 +324,7 @@ function startProgress() {
   levelSelect?.addEventListener("click", startProgress);
   resetBtn?.addEventListener("click", startProgress);
 
-  // Khi buff thay đổi → cập nhật ngay tốc độ
+  // When buffs change update info
   [levelSelect, suoiLinh, danTuLinh, thanMat, chienDau, keBangTam, huyenMinhCong].forEach(el => {
     if (el) el.addEventListener("change", () => {
       updateCrystalInfo();
@@ -340,27 +335,26 @@ function startProgress() {
     });
   });
 
-// ===== Tốc độ tùy chỉnh =====
-customSpeedInput?.addEventListener("input", () => {
-  const val = parseFloat(customSpeedInput.value);
-  if (!isNaN(val) && val >= 0 && customSpeedInput.value !== "") {
-    // Reset tất cả buff về mặc định
-    suoiLinh.checked = false;
-    danTuLinh.checked = false;
-    thanMat.value = "0";
-    chienDau.value = "0";
-    keBangTam.value = "0";
-    huyenMinhCong.value = "0";
-  }
-  updateCrystalInfo();
-});
+  // custom speed input behavior
+  customSpeedInput?.addEventListener("input", () => {
+    const val = parseFloat(customSpeedInput.value);
+    if (!isNaN(val) && val >= 0 && customSpeedInput.value !== "") {
+      // Reset buffs to default to avoid confusion
+      if (suoiLinh) suoiLinh.checked = false;
+      if (danTuLinh) danTuLinh.checked = false;
+      if (thanMat) thanMat.value = "0";
+      if (chienDau) chienDau.value = "0";
+      if (keBangTam) keBangTam.value = "0";
+      if (huyenMinhCong) huyenMinhCong.value = "0";
+    }
+    updateCrystalInfo();
+  });
 
-// ===== Nút xoá tốc độ tùy chỉnh =====
-clearCustomSpeed?.addEventListener("click", () => {
-  customSpeedInput.value = "";
-  updateCrystalInfo();
-});
-
+  // clear custom speed handler (defensive)
+  clearCustomSpeed?.addEventListener("click", () => {
+    if (customSpeedInput) customSpeedInput.value = "";
+    updateCrystalInfo();
+  });
 
   // ===== Init =====
   updateCrystalInfo();
