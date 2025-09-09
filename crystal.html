@@ -60,60 +60,73 @@
   </select>
 </div>
   
-<!-- Buff gọn -->
-<div class="buff-grid">
-  <!-- Suối linh -->
-  <label class="field__label checkbox-label">
-    <input type="checkbox" id="suoiLinh"> Suối linh (+10%)
-  </label>
+<!-- ====== KHỐI BUFF ====== -->
+<div class="buff-container">
 
-  <!-- Thân mật -->
-  <div class="field">
-    <label class="field__label" for="thanMat">Thân mật</label>
-    <select id="thanMat" class="field__input">
-      <option value="0">0 người</option>
-      <option value="1">1 người (+5%)</option>
-      <option value="2">2 người (+10%)</option>
-      <option value="3">3 người (+15%)</option>
-    </select>
+  <!-- Hàng 1: Suối Linh + Đan Tụ Linh -->
+  <div class="buff-checkbox-group">
+    <label class="field__label checkbox-label">
+      <input type="checkbox" id="suoiLinh" />
+      Suối linh (+10%)
+    </label>
+    <label class="field__label checkbox-label">
+      <input type="checkbox" id="danTuLinh" />
+      Đan tụ linh (+20%)
+    </label>
   </div>
 
-  <!-- Tinh thần chiến đấu -->
-  <div class="field">
-    <label class="field__label" for="chienDau">Tinh thần chiến đấu</label>
-    <select id="chienDau" class="field__input">
-      <option value="0">0</option>
-      <option value="200">200–500 (+3%)</option>
-      <option value="501">501–1000 (+5%)</option>
-      <option value="1001">1001–1500 (+7%)</option>
-      <option value="1501">1501–2000 (+15%)</option>
-    </select>
-  </div>
+  <!-- Hàng 2: 4 option -->
+  <div class="buff-options">
+    <!-- Thân mật -->
+    <div class="field">
+      <label class="field__label" for="thanMat">Thân mật</label>
+      <select id="thanMat" class="field__input">
+        <option value="0">0 người</option>
+        <option value="1">1 người (+5%)</option>
+        <option value="2">2 người (+10%)</option>
+        <option value="3">3 người (+15%)</option>
+      </select>
+    </div>
 
-  <!-- Kế Băng Tâm -->
-  <div class="field">
-    <label class="field__label" for="keBangTam">Kế băng tâm</label>
-    <select id="keBangTam" class="field__input">
-      <option value="0">Không có</option>
-      <option value="1">Level 1 (+1 EXP/s)</option>
-      <option value="2">Level 2 (+2 EXP/s)</option>
-      <option value="3">Level 3 (+3 EXP/s)</option>
-    </select>
-  </div>
+    <!-- Tinh thần chiến đấu -->
+    <div class="field">
+      <label class="field__label" for="chienDau">Tinh thần chiến đấu</label>
+      <select id="chienDau" class="field__input">
+        <option value="0">0</option>
+        <option value="200">200–500 (+3%)</option>
+        <option value="501">501–1000 (+5%)</option>
+        <option value="1001">1001–1500 (+7%)</option>
+        <option value="1501">1501–2000 (+15%)</option>
+      </select>
+    </div>
 
-  <!-- Huyền Minh Công -->
-  <div class="field">
-    <label class="field__label" for="huyenMinhCong">Huyền Minh Công</label>
-    <select id="huyenMinhCong" class="field__input">
-      <option value="0">Không có</option>
-      <option value="1">Level 1 (+1%)</option>
-      <option value="2">Level 2 (+2%)</option>
-      <option value="3">Level 3 (+3%)</option>
-      <option value="4">Level 4 (+4%)</option>
-      <option value="5">Level 5 (+5%)</option>
-    </select>
+    <!-- Kế băng tâm -->
+    <div class="field">
+      <label class="field__label" for="keBangTam">Kế băng tâm</label>
+      <select id="keBangTam" class="field__input">
+        <option value="0">Không có</option>
+        <option value="1">Level 1 (+1 EXP/s)</option>
+        <option value="2">Level 2 (+2 EXP/s)</option>
+        <option value="3">Level 3 (+3 EXP/s)</option>
+      </select>
+    </div>
+
+    <!-- Huyền Minh Công -->
+    <div class="field">
+      <label class="field__label" for="huyenMinhCong">Huyền Minh Công</label>
+      <select id="huyenMinhCong" class="field__input">
+        <option value="0">Không có</option>
+        <option value="1">Level 1 (+1%)</option>
+        <option value="2">Level 2 (+2%)</option>
+        <option value="3">Level 3 (+3%)</option>
+        <option value="4">Level 4 (+4%)</option>
+        <option value="5">Level 5 (+5%)</option>
+      </select>
+    </div>
   </div>
 </div>
+
+
 
 
 
@@ -125,22 +138,47 @@
   <div class="info__list">
     <div><b>Dung lượng tinh thể:</b> <span id="expCapacity">0</span> EXP</div>
     <div><b>Tốc độ cơ bản:</b> <span id="baseSpeed">0.00</span> EXP/s</div>
-    <div><b>Tốc độ hiện tại:</b> <span id="currentSpeed">0.00</span> EXP/s</div>
+
+    <!-- Ô nhập tốc độ tùy chỉnh -->
+    <div style="display: flex; align-items: center; gap: 8px; margin-top: 10px;">
+      <b>Tốc độ hiện tại:</b>
+      <div class="custom-speed-wrapper">
+	       <span id="currentSpeed">0.00</span> EXP/s
+        <input
+          type="number"
+          id="customSpeed"
+          class="field__input"
+          placeholder="Nhập EXP/s..."
+          min="0"
+          step="0.01"
+        />
+        <button id="clearCustomSpeed" class="clear-btn" title="Xoá tốc độ">✖</button>
+      </div>
+ 
+    </div>
+
+
     <div><b>Thời gian đầy:</b> <span id="timeRequired">—</span></div>
     <div>⏳ <b>Còn lại:</b> <span id="timeRemaining">—</span></div>
   </div>
 </div>
 
+
 <!-- Progress Bar -->
-<div class="progress-container" style="margin:12px 0">
+<div class="progress-container">
   <div id="progressBar" class="progress-bar"></div>
 </div>
 <div id="progressText" class="progress-text">0%</div>
+<div id="progressMessage" class="progress-message"></div>
 
 <!-- Reset -->
-<div style="margin-top:10px">
-  <button id="resetBtn" class="exp-btn"><span>🔄</span> Bắt đầu lại</button>
+<div class="reset-container">
+  <button id="resetBtn" class="reset-btn">
+    <span class="icon">▶</span>
+    Bắt đầu lại
+  </button>
 </div>
+
 
   </main>
 
