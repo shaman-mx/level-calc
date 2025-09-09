@@ -759,3 +759,84 @@ select option {
   font-size: 14px;
   line-height: 1;
 }
+/* ===================== */
+/* RESPONSIVE NÂNG CẤP   */
+/* ===================== */
+
+/* Tablet */
+@media (max-width: 768px) {
+  .container {
+    width: 96%;
+    padding: 12px;
+  }
+
+  /* Ô tốc độ */
+  .custom-speed-wrapper {
+    flex-direction: row;
+    width: 100%;
+  }
+  #customSpeed {
+    width: 100%;
+    max-width: 140px;
+  }
+
+  /* Buff options: 2 cột */
+  .buff-options {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  /* Tiêu đề nhỏ lại */
+  h1 {
+    font-size: 20px;
+    text-align: center;
+  }
+
+  /* Input tốc độ và nút xoá */
+  .custom-speed-wrapper {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  #customSpeed {
+    width: 100%;
+    max-width: 180px;
+    font-size: 14px;
+  }
+  #clearCustomSpeed {
+    top: 8px;
+    right: 8px;
+    font-size: 14px;
+  }
+
+  /* Buff options: 1 cột */
+  .buff-options {
+    grid-template-columns: 1fr;
+  }
+
+  /* Progress bar full width */
+  .progress-container {
+    height: 18px;
+    border-radius: 12px;
+  }
+
+  /* Progress text căn giữa */
+  .progress-text {
+    font-size: 13px;
+    margin-top: 6px;
+    text-align: center;
+  }
+
+  /* Nút reset */
+  .reset-container {
+    margin-top: 10px;
+  }
+  .reset-btn {
+    padding: 6px 14px;
+    font-size: 13px;
+  }
+}
