@@ -1,157 +1,293 @@
-<!DOCTYPE html>
-<html lang="vi" data-theme="light">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Mô phỏng tinh thể tu vi - TU TIÊN WEPLAY</title>
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <header class="site-header">
-    <div class="container header-row">
-      <div>
-        <h1>Mô phỏng tinh thể tu vi</h1>
-        <p>Tính toán thời gian đầy tinh thể theo level &amp; giai đoạn</p>
-      </div>
-      <button id="themeToggle" class="theme-toggle" aria-label="Chuyển đổi theme">🌙</button>
-    </div>
-  </header>
+/* Responsive-updated styles.css
+   Goal: Preserve PC layout as canonical, allow smooth downscaling on tablets & mobiles
+   Author: ChatGPT edits for user
+*/
 
-  <main class="container">
-    <!-- Level selector -->
-    <div class="field">
-      <label class="field__label" for="levelSelect">Chọn Level &amp; Giai đoạn</label>
-      <select id="levelSelect" class="field__input" aria-label="Chọn level">
-        <option value="1-sơ">Level 1 – Sơ kỳ</option>
-        <option value="1-trung">Level 1 – Trung kỳ</option>
-        <option value="1-hậu">Level 1 – Hậu kỳ</option>
-        <option value="2-sơ">Level 2 – Sơ kỳ</option>
-        <option value="2-trung">Level 2 – Trung kỳ</option>
-        <option value="2-hậu">Level 2 – Hậu kỳ</option>
-        <option value="3-sơ">Level 3 – Sơ kỳ</option>
-        <option value="3-trung">Level 3 – Trung kỳ</option>
-        <option value="3-hậu">Level 3 – Hậu kỳ</option>
-        <option value="4-sơ">Level 4 – Sơ kỳ</option>
-        <option value="4-trung">Level 4 – Trung kỳ</option>
-        <option value="4-hậu">Level 4 – Hậu kỳ</option>
-        <option value="5-sơ">Level 5 – Sơ kỳ</option>
-        <option value="5-trung">Level 5 – Trung kỳ</option>
-        <option value="5-hậu">Level 5 – Hậu kỳ</option>
-        <option value="6-sơ">Level 6 – Sơ kỳ</option>
-        <option value="6-trung">Level 6 – Trung kỳ</option>
-        <option value="6-hậu">Level 6 – Hậu kỳ</option>
-        <option value="7-sơ">Level 7 – Sơ kỳ</option>
-        <option value="7-trung">Level 7 – Trung kỳ</option>
-        <option value="7-hậu">Level 7 – Hậu kỳ</option>
-        <option value="8-sơ">Level 8 – Sơ kỳ</option>
-        <option value="8-trung">Level 8 – Trung kỳ</option>
-        <option value="8-hậu">Level 8 – Hậu kỳ</option>
-        <option value="9-sơ">Level 9 – Sơ kỳ</option>
-        <option value="9-trung">Level 9 – Trung kỳ</option>
-        <option value="9-hậu">Level 9 – Hậu kỳ</option>
-      </select>
-    </div>
+/* ========== Màu và biến ========== */
+:root{
+  --bg: #f8fafc;
+  --text: #0f172a;
+  --muted: #64748b;
+  --brand-blue: #2563eb;
+  --brand-green: #16a34a;
+  --card: #ffffff;
+  --ring: rgba(37, 99, 235, .35);
+  --transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+  --content-max: 1200px; /* PC baseline */
+  --gutter: 16px;
+}
 
-    <!-- Buff controls -->
-    <div class="buff-container">
-      <div class="buff-checkbox-group" aria-hidden="false">
-        <label class="field__label checkbox-label">
-          <input type="checkbox" id="suoiLinh" />
-          Suối linh (+10%)
-        </label>
-        <label class="field__label checkbox-label">
-          <input type="checkbox" id="danTuLinh" />
-          Đan tụ linh (+20%)
-        </label>
-      </div>
+/* Dark mode */
+html[data-theme="dark"]{
+  --bg: #0b1220;
+  --text: #e6edf6;
+  --muted: #9aa7b7;
+  --card: #0f172a;
+  --ring: rgba(59,130,246,.4);
+}
 
-      <div class="buff-options" role="group" aria-label="Buff options">
-        <div class="field">
-          <label class="field__label" for="thanMat">Thân mật</label>
-          <select id="thanMat" class="field__input">
-            <option value="0">0 người</option>
-            <option value="1">1 người (+5%)</option>
-            <option value="2">2 người (+10%)</option>
-            <option value="3">3 người (+15%)</option>
-          </select>
-        </div>
+/* Smooth transitions */
+*{box-sizing:border-box}
+html,body,.card,.info,.field__input{transition:var(--transition)}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  line-height:1.45;
+  background:var(--bg);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  padding-bottom:48px;
+  font-size: clamp(15px, 1.35vw, 16px); /* fluid base font */
+}
 
-        <div class="field">
-          <label class="field__label" for="chienDau">Tinh thần chiến đấu</label>
-          <select id="chienDau" class="field__input">
-            <option value="0">0</option>
-            <option value="200">200–500 (+3%)</option>
-            <option value="501">501–1000 (+5%)</option>
-            <option value="1001">1001–1500 (+7%)</option>
-            <option value="1501">1501–2000 (+15%)</option>
-          </select>
-        </div>
+/* Container keeps PC width as canonical, but fluid */
+.container{
+  width: min(var(--content-max), 94vw);
+  margin-inline:auto;
+  padding: calc(var(--gutter) * 1);
+}
 
-        <div class="field">
-          <label class="field__label" for="keBangTam">Kế băng tâm</label>
-          <select id="keBangTam" class="field__input">
-            <option value="0">Không có</option>
-            <option value="1">Level 1 (+1 EXP/s)</option>
-            <option value="2">Level 2 (+2 EXP/s)</option>
-            <option value="3">Level 3 (+3 EXP/s)</option>
-          </select>
-        </div>
+/* Header */
+.site-header{padding-top:20px;margin-bottom:12px}
+.header-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+}
+h1{
+  margin:0 0 4px;
+  font-size: clamp(20px, 2.6vw, 32px);
+  color:var(--brand-blue);
+}
+.site-header p{margin:0;color:var(--muted)}
 
-        <div class="field">
-          <label class="field__label" for="huyenMinhCong">Huyền Minh Công</label>
-          <select id="huyenMinhCong" class="field__input">
-            <option value="0">Không có</option>
-            <option value="1">Level 1 (+1%)</option>
-            <option value="2">Level 2 (+2%)</option>
-            <option value="3">Level 3 (+3%)</option>
-            <option value="4">Level 4 (+4%)</option>
-            <option value="5">Level 5 (+5%)</option>
-          </select>
-        </div>
-      </div>
-    </div>
+/* Theme toggle */
+.theme-toggle{
+  cursor:pointer;
+  background:var(--card);
+  border:1px solid #cbd5e1;
+  border-radius:10px;
+  width:44px;height:44px;
+  font-size:18px;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .2s, transform .15s;
+}
+html[data-theme="dark"] .theme-toggle{border-color:#334155}
+.theme-toggle:hover{transform:translateY(-2px)}
 
-    <!-- Info -->
-    <div class="info" style="margin-top:10px">
-      <div class="info__list">
-        <div><b>Dung lượng tinh thể:</b> <span id="expCapacity">0</span> EXP</div>
-        <div><b>Tốc độ cơ bản:</b> <span id="baseSpeed">0.00</span> EXP/s</div>
+/* Cards grid */
+.cards{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap:20px;
+  margin-top:12px;margin-bottom:24px;
+}
+.card{
+  background:var(--card);
+  border-radius:14px;
+  padding:18px;
+  box-shadow:0 6px 18px rgba(0,0,0,.06);
+}
+.card__title{display:flex;align-items:center;gap:10px;margin:0 0 12px;font-size:18px}
+.dot{width:12px;height:12px;border-radius:50%}
 
-        <div style="display:flex;align-items:center;gap:8px;margin-top:10px">
-          <b>Tốc độ hiện tại:</b>
-          <div class="custom-speed-wrapper">
-            <span id="currentSpeed">0.00</span> EXP/s
-            <input type="number" id="customSpeed" class="field__input" placeholder="Nhập EXP/s..." min="0" step="0.01" />
-            <button id="clearCustomSpeed" class="clear-btn" title="Xoá tốc độ">✖</button>
-          </div>
-        </div>
+/* Fields */
+.field{display:grid;gap:8px;margin-block:8px 2px}
+.field__label{font-size:0.92rem;color:var(--muted)}
+.field__wrapper{position:relative;display:flex;align-items:center}
+.field__input{
+  width:100%;
+  padding:12px;
+  font-size:1rem;
+  border:1px solid #cbd5e1;
+  border-radius:10px;
+  background:#fff;color:#0f172a;
+  outline:none;
+  transition:var(--transition);
+}
+html[data-theme="dark"] .field__input{border-color:#334155;background:#0b1324;color:#e6edf6}
+.field__input:focus{border-color:var(--brand-blue);box-shadow:0 0 0 4px var(--ring)}
+.input-error{border:2px solid #e63946;background:#ffe5e5}
 
-        <div><b>Thời gian đầy:</b> <span id="timeRequired">—</span></div>
-        <div>⏳ <b>Còn lại:</b> <span id="timeRemaining">—</span></div>
-      </div>
-    </div>
+/* Clear button inside inputs */
+.clear-btn{
+  position:absolute;right:10px;background:transparent;border:none;color:var(--muted);
+  font-size:16px;cursor:pointer;display:none;padding:0;
+}
+.clear-btn:hover{color:var(--brand-blue)}
+.field__input:not(:placeholder-shown) ~ .clear-btn{display:block}
 
-    <!-- Progress Bar -->
-    <div class="progress-container" aria-hidden="false">
-      <div id="progressBar" class="progress-bar"></div>
-    </div>
-    <div id="progressText" class="progress-text" style="position:relative;left:0">0%</div>
-    <div id="progressMessage" class="progress-message" aria-live="polite"></div>
+/* Formula */
+.formula{margin:8px 0 12px;font-size:0.94rem;color:var(--muted)}
 
-    <!-- Reset -->
-    <div class="reset-container">
-      <button id="resetBtn" class="reset-btn" aria-label="Bắt đầu lại">
-        <span class="icon">▶</span>
-        Bắt đầu lại
-      </button>
-    </div>
+/* Results */
+.result{display:grid;gap:6px;text-align:center;border-radius:12px;padding:14px;color:#fff}
+.result--before{background:var(--brand-blue)}
+.result--after{background:var(--brand-green)}
+.result__label{font-size:0.95rem;opacity:.95}
+.result__value{font-size:clamp(22px, 3.6vw, 30px);font-weight:700}
+.result__hint{font-size:0.9rem;opacity:.9}
 
-  </main>
+/* Info card */
+.info{
+  background:var(--card);
+  border-radius:12px;padding:16px;
+  box-shadow:0 6px 18px rgba(0,0,0,.06);
+}
+.info__list{padding-left:0;list-style:none;display:grid;gap:10px;margin:10px 0 6px}
+.info__item{display:flex;align-items:center;gap:8px;font-size:0.95rem}
+.info__note{color:var(--muted);margin:10px 0 0}
 
-  <footer class="site-footer">
-    <p>© 2025 TU TIÊN WEPLAY. 🌙 Bao Chửng</p>
-  </footer>
+/* Footer */
+.site-footer{margin-top:24px;text-align:center;color:var(--muted);font-size:0.9rem}
 
-  <script src="script.js"></script>
-</body>
-</html>
+/* Table wrapper */
+.table-wrapper{
+  overflow:auto;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.06);
+  background:var(--card);padding:8px;transition:var(--transition)
+}
+.exp-table{width:100%;border-collapse:collapse;min-width:720px;font-size:0.95rem}
+.exp-table thead{background:var(--brand-blue);color:#fff;position:sticky;top:0;z-index:5}
+.exp-table thead th{padding:12px 8px;font-weight:600;text-align:center;font-size:0.95rem}
+.exp-table tbody td{padding:10px 6px;text-align:center;border-bottom:1px solid rgba(0,0,0,.06)}
+.exp-table tbody tr:nth-child(odd){background:rgba(37,99,235,0.04)}
+.exp-table tbody tr:hover{background:rgba(37,99,235,0.08);transition:background .15s}
+
+/* Choices */
+.choices-wrapper{margin-top:20px;background:var(--card);padding:16px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.06);overflow:auto}
+.choices-table{width:100%;border-collapse:collapse;text-align:left}
+.choices-table th,.choices-table td{padding:12px 16px;border-bottom:1px solid #e2e8f0}
+html[data-theme="dark"] .choices-table th,html[data-theme="dark"] .choices-table td{border-color:#334155}
+.choices-table th{background:var(--brand-blue);color:#fff;font-size:1rem;font-weight:600;text-align:center}
+.choice{display:flex;flex-direction:column;gap:4px}
+.choice span{font-size:0.98rem}
+.reward{color:var(--brand-green);font-size:0.88rem}
+html[data-theme="dark"] .reward{color:#4ade80}
+.choice.danger span,.choice.danger .reward{color:#ef4444!important;font-weight:600}
+
+/* Links/buttons */
+.exp-link-wrapper{display:flex;justify-content:center;gap:16px;margin:24px 0;flex-wrap:wrap}
+.exp-btn{display:inline-block;padding:10px 20px;font-size:1rem;font-weight:600;border-radius:10px;text-decoration:none;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.12);transition:all .2s}
+.exp-btn{background:var(--brand-blue)}
+.exp-btn:hover{background:#1d4ed8;transform:translateY(-2px)}
+.exp-btn.alt{background:var(--brand-green)}
+.exp-btn.alt:hover{background:#15803d}
+.exp-btn.back{background:#6b7280}
+
+/* Progress bar - keep look but scale */
+.progress-container{height:18px;background:#e2e8f0;border-radius:999px;box-shadow:inset 0 2px 5px rgba(0,0,0,.08)}
+html[data-theme="dark"] .progress-container{background:#475569}
+.progress-bar{
+  height:100%;
+  width:0;
+  border-radius:999px;
+  background:linear-gradient(120deg,#facc15,#fcd34d,#fde047);
+  background-size:300% 300%;
+  animation:energyFlow 3s linear infinite;
+  transition:width .18s linear, box-shadow .2s;
+  will-change:width;
+}
+@keyframes energyFlow{0%{background-position:0% 50%}100%{background-position:100% 50%}}
+
+/* Glow variants */
+.progress-bar.glow{box-shadow:0 0 10px rgba(250,204,21,0.9),0 0 20px rgba(252,211,77,0.6)}
+.progress-text{margin-top:8px;font-weight:700;color:var(--muted);position:relative}
+
+/* Buff layout */
+.buff-wrapper{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:16px}
+.buff-wrapper .field{display:flex;flex-direction:column;flex:1;min-width:180px}
+.buff-wrapper .field__label{font-size:0.92rem;font-weight:600;margin-bottom:6px;color:var(--text)}
+.buff-wrapper .field__input{padding:8px 10px;border-radius:8px;min-height:36px}
+.buff-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:8px;align-items:end}
+
+/* checkbox tweaks */
+.checkbox-label{display:flex;align-items:center;font-size:0.95rem;gap:8px;cursor:pointer}
+.checkbox-label input[type="checkbox"]{transform:scale(1.15);cursor:pointer}
+
+/* custom speed field */
+.custom-speed-wrapper{position:relative;display:inline-flex;align-items:center;gap:8px}
+#customSpeed{width:140px;padding:6px 8px;border:1px solid #ccc;border-radius:6px;background:var(--card);color:var(--text)}
+#clearCustomSpeed{position:absolute;right:6px;background:transparent;border:none;color:var(--muted);font-size:16px;cursor:pointer;display:none}
+#customSpeed:not(:placeholder-shown) ~ #clearCustomSpeed{display:block}
+
+/* Reset button styles */
+.reset-container{display:flex;justify-content:center;margin-top:12px}
+.reset-btn{display:inline-flex;align-items:center;gap:8px;background:#3b82f6;color:#fff;font-weight:700;font-size:0.95rem;padding:8px 12px;border-radius:8px;border:none;cursor:pointer;transition:transform .12s}
+.reset-btn:hover{transform:translateY(-2px)}
+.reset-btn:active{transform:scale(.98)}
+
+/* Progress message */
+.progress-message{margin-top:8px;text-align:center;font-size:1rem;font-weight:700;color:#ff4d4f;text-shadow:0 0 8px rgba(255,77,79,.7);animation:pulseDanger 1s infinite}
+@keyframes pulseDanger{0%{transform:scale(1);opacity:1}50%{transform:scale(1.05);opacity:.65}100%{transform:scale(1);opacity:1}}
+
+/* Layout for buff checkboxes and options */
+.buff-container{display:flex;flex-direction:column;gap:16px;margin-top:10px;width:100%}
+.buff-checkbox-group{display:flex;justify-content:flex-start;align-items:center;gap:18px;flex-wrap:wrap}
+.buff-options{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;width:100%}
+
+/* Responsive behavior: keep PC look but scale content sizes */
+@media (max-width: 1200px){
+  :root{--content-max:1100px}
+  .exp-table{min-width:680px}
+  .buff-options{grid-template-columns:repeat(3,1fr)}
+}
+@media (max-width: 992px){
+  :root{--content-max:980px}
+  .buff-options{grid-template-columns:repeat(2,1fr)}
+  .field__input{padding:10px}
+  .custom-speed-wrapper{width:100%}
+  #customSpeed{width:160px;max-width:40%}
+  .exp-table{min-width:640px}
+}
+@media (max-width: 720px){
+  :root{--content-max:700px}
+  .buff-options{grid-template-columns:repeat(2,1fr)}
+  .exp-table{min-width:620px}
+  h1{font-size:20px}
+  .header-row{align-items:flex-start}
+}
+@media (max-width: 480px){
+  /* Keep PC layout scale but stack some small elements to avoid overflow */
+  :root{--content-max:520px}
+  body{font-size:15px}
+  .header-row{flex-direction:column;align-items:flex-start;gap:8px}
+  .theme-toggle{align-self:flex-end}
+  .cards{grid-template-columns:1fr}
+  .buff-options{grid-template-columns:1fr}
+  .buff-checkbox-group{flex-direction:column;align-items:flex-start;gap:8px}
+  /* Allow tables to remain horizontally scrollable, but scale header fonts */
+  .exp-table{min-width:520px;font-size:0.95rem}
+  .progress-container{height:16px}
+  .progress-text{font-size:13px;margin-top:6px;text-align:center}
+  .reset-btn{padding:6px 10px;font-size:0.92rem}
+}
+
+/* smaller devices (very small) */
+@media (max-width:360px){
+  :root{--content-max:340px}
+  #customSpeed{width:120px}
+  .exp-table{min-width:480px}
+}
+
+/* Accessibility: focus */
+.field__input:focus{outline-offset:2px}
+/* Ẩn nút tăng/giảm trong input number (mọi trình duyệt) */
+
+/* Chrome, Safari, Edge, Opera */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Đảm bảo trên tất cả */
+input[type=number] {
+  appearance: textfield;
+}
