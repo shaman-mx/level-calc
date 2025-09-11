@@ -33,6 +33,7 @@
   // Buff controls
   const suoiLinh = $("#suoiLinh");
   const danTuLinh = $("#danTuLinh") || $("#dantulinh");
+  const buffmagic = $("#buffmagic");
   const thanMat = $("#thanMat");
   const chienDau = $("#chienDau");
   const keBangTam = $("#keBangTam");
