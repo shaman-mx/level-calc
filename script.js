@@ -107,7 +107,7 @@
 
     if (suoiLinh?.checked) buffPercent += 0.1;
     if (danTuLinh?.checked) buffPercent += 0.2;
-    if (thanchu?.checked) buffPercent += 1.3;
+    if (thanchu?.checked) buffPercent += 0.3;
     buffPercent += parseInt(thanMat?.value || 0, 10) * 0.05;
 
     const cd = parseInt(chienDau?.value || 0, 10);
