@@ -33,7 +33,7 @@
   // Buff controls
   const suoiLinh = $("#suoiLinh");
   const danTuLinh = $("#danTuLinh") || $("#dantulinh");
-  const buffmagic = $("#buffmagic");
+  const thanchu = $("#thanchu");
   const thanMat = $("#thanMat");
   const chienDau = $("#chienDau");
   const keBangTam = $("#keBangTam");
@@ -107,6 +107,7 @@
 
     if (suoiLinh?.checked) buffPercent += 0.1;
     if (danTuLinh?.checked) buffPercent += 0.2;
+    if (thanchu?.checked) buffPercent += 1.3;
     buffPercent += parseInt(thanMat?.value || 0, 10) * 0.05;
 
     const cd = parseInt(chienDau?.value || 0, 10);
@@ -332,7 +333,7 @@
   resetBtn?.addEventListener("click", startProgress);
 
   // When buffs change update info
-  [levelSelect, suoiLinh, danTuLinh, thanMat, chienDau, keBangTam, huyenMinhCong].forEach(el => {
+  [levelSelect, suoiLinh, danTuLinh, thanchu, thanMat, chienDau, keBangTam, huyenMinhCong].forEach(el => {
     if (el) el.addEventListener("change", () => {
       updateCrystalInfo();
       const key = levelSelect.value;
@@ -349,6 +350,7 @@
       // Reset buffs to default to avoid confusion
       if (suoiLinh) suoiLinh.checked = false;
       if (danTuLinh) danTuLinh.checked = false;
+      if (thanchu) thanchu.checked = false;
       if (thanMat) thanMat.value = "0";
       if (chienDau) chienDau.value = "0";
       if (keBangTam) keBangTam.value = "0";
