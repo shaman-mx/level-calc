@@ -346,7 +346,7 @@ input[type=number] {
   white-space: nowrap;
   font-size: 0.9rem;
   font-weight: 600;
-  color: var(--brand);
+  color: var(--brand-blue);
   transition: left 0.2s ease;
   pointer-events: none;
 }
