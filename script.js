@@ -187,11 +187,6 @@ function updateProgressUI() {
 
   // đặt nội dung text
   progressText.textContent = `(${curDisplay}/${capDisplay} – ${pctDisplay})`;
-
-  // luôn canh giữa
-  progressText.style.left = "50%";
-  progressText.style.top = "50%";
-  progressText.style.transform = "translate(-50%, -50%)";
 }
 
 
