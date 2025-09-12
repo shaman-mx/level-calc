@@ -63,6 +63,8 @@
         <option value="14-sơ">Level 14 – Sơ kỳ</option>
         <option value="14-trung">Level 14 – Trung kỳ</option>
         <option value="14-hậu">Level 14 – Hậu kỳ</option>
+		<option value="15-trung">Level 15 – Trung kỳ</option>
+		<option value="15-hậu">Level 15 – Hậu kỳ</option>
       </select>
     </div>
 
@@ -149,20 +151,16 @@
       </div>
     </div>
 
-    <!-- Progress Bar -->
-<div class="progress-container" aria-hidden="false">
-  <div id="progressBar" class="progress-bar"></div>
-  <div id="progressText" class="progress-text">0%</div>
+   <!-- Progress Bar + Reset button -->
+<div class="progress-wrapper">
+  <div class="progress-container" aria-hidden="false">
+    <div id="progressBar" class="progress-bar"></div>
+    <div id="progressText" class="progress-text">0%</div>
+  </div>
+  <button id="resetBtn" class="reset-btn" aria-label="Bắt đầu lại">Bắt đầu lại</button>
 </div>
 <div id="progressMessage" class="progress-message" aria-live="polite"></div>
 
-    <!-- Reset -->
-    <div class="reset-container">
-      <button id="resetBtn" class="reset-btn" aria-label="Bắt đầu lại">
-        <span class="icon">▶</span>
-        Bắt đầu lại
-      </button>
-    </div>
 
   </main>
 
