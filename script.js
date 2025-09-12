@@ -169,40 +169,31 @@
   }
 
   // ===== Progress simulation & UI =====
-  function updateProgressUI() {
-    if (!progressBar || !progressText) return;
+function updateProgressUI() {
+  if (!progressBar || !progressText) return;
 
-    // clamp progress
-    const p = Math.max(0, Math.min(100, progress));
-    progressBar.style.width = `${p}%`;
+  // clamp progress
+  const p = Math.max(0, Math.min(100, progress));
+  progressBar.style.width = `${p}%`;
 
-    // determine capacity and current EXP
-    const capacity = totalExp || 0;
-    const currentExp = Math.round((p / 100) * capacity);
+  // determine capacity and current EXP
+  const capacity = totalExp || 0;
+  const currentExp = Math.round((p / 100) * capacity);
 
-    // build display strings
-    const capDisplay = capacity ? capacity.toLocaleString() : "—";
-    const curDisplay = capacity ? currentExp.toLocaleString() : "—";
-    const pctDisplay = `${p >= 99.5 ? 100 : Math.floor(p)}%`;
-    const message = `(${curDisplay}/${capDisplay} – ${pctDisplay})`;
+  // build display strings
+  const capDisplay = capacity ? capacity.toLocaleString() : "—";
+  const curDisplay = capacity ? currentExp.toLocaleString() : "—";
+  const pctDisplay = `${p >= 99.5 ? 100 : Math.floor(p)}%`;
 
-    // set content first so we can measure its width
-    progressText.textContent = message;
+  // đặt nội dung text
+  progressText.textContent = `(${curDisplay}/${capDisplay} – ${pctDisplay})`;
 
-    // Compute container and text sizes safely (may be 0 if not rendered)
-    const container = document.querySelector(".progress-container");
-    const containerWidth = container ? container.clientWidth : (progressBar.parentElement ? progressBar.parentElement.clientWidth : 0);
-    const barWidth = progressBar.offsetWidth || Math.round(containerWidth * (p/100));
-    const textWidth = progressText.offsetWidth || 36;
+  // luôn canh giữa
+  progressText.style.left = "50%";
+  progressText.style.top = "50%";
+  progressText.style.transform = "translate(-50%, -50%)";
+}
 
-    // position center-ish inside the filled area, but keep it visible
-    const padding = 8;
-    let pos = barWidth - padding - textWidth / 2;
-    if (pos < textWidth / 2) pos = textWidth / 2;
-    if (pos > containerWidth - textWidth / 2 - padding) pos = containerWidth - textWidth / 2 - padding;
-
-    progressText.style.left = `${pos}px`;
-  }
 
   // Recalculate text on resize to keep it placed correctly
   let resizeTimer = null;
