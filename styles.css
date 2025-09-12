@@ -340,15 +340,13 @@ input[type=number] {
 }
 
 .progress-text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  margin-top: 3px;          /* cách progress bar một chút */
+  display: block; 
+  width: 100%; 
+  text-align: center;       /* căn giữa */
   font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--brand-blue); /* hoặc màu bạn muốn */
-  white-space: nowrap;
-  pointer-events: none;
+  font-weight: 700;
+  
 }
 
 
