@@ -21,7 +21,7 @@
   const resetBtn = $("#resetBtn");
   const progressMessage = $("#progressMessage");
 
-  // Info box (may be absent in HTML — we handle nulls)
+  // Info box
   const expCapacityEl = $("#expCapacity");
   const baseSpeedEl = $("#baseSpeed");
   const currentSpeedEl = $("#currentSpeed");
@@ -135,13 +135,13 @@
 
   // ===== Xoá tốc độ tuỳ chỉnh =====
   clearCustomSpeed?.addEventListener("click", () => {
-    if (customSpeedInput) customSpeedInput.value = "";
+    customSpeedInput.value = "";
     updateCrystalInfo();
   });
 
   // ===== Info box update =====
   function updateCrystalInfo() {
-    if (!levelSelect) return;
+    if (!levelSelect || !expCapacityEl) return;
     const key = levelSelect.value;
     const data = crystalData[key];
     if (!data) return;
@@ -151,48 +151,29 @@
     const currentSpeed = getCurrentSpeed(baseSpeed);
     const timeRequiredSec = currentSpeed > 0 ? expCapacity / currentSpeed : 0;
 
-    // Update only elements that exist in DOM (we support case when expCapacityEl is removed)
-    if (expCapacityEl) expCapacityEl.textContent = expCapacity.toLocaleString();
-    if (baseSpeedEl) baseSpeedEl.textContent = baseSpeed.toFixed(2);
-    if (currentSpeedEl) currentSpeedEl.textContent = currentSpeed.toFixed(2);
-    if (timeRequiredEl) timeRequiredEl.textContent = formatTime(timeRequiredSec);
+    expCapacityEl.textContent = expCapacity.toLocaleString();
+    baseSpeedEl.textContent = baseSpeed.toFixed(2);
+    currentSpeedEl.textContent = currentSpeed.toFixed(2);
+    timeRequiredEl.textContent = formatTime(timeRequiredSec);
 
     if (progress > 0 && currentSpeed > 0) {
       const expRemaining = expCapacity * (1 - progress / 100);
-      if (timeRemainingEl) timeRemainingEl.textContent = formatTime(expRemaining / currentSpeed);
+      timeRemainingEl.textContent = formatTime(expRemaining / currentSpeed);
     } else {
-      if (timeRemainingEl) timeRemainingEl.textContent = "—";
+      timeRemainingEl.textContent = "—";
     }
-
-    // sync totalExp so updateProgressUI can display current/capacity
-    totalExp = expCapacity;
   }
 
-  // ===== Progress simulation & UI =====
+  // ===== Progress simulation =====
   function updateProgressUI() {
     if (!progressBar || !progressText) return;
 
-    // clamp progress
-    const p = Math.max(0, Math.min(100, progress));
-    progressBar.style.width = `${p}%`;
-
-    // determine capacity and current EXP
-    const capacity = totalExp || 0;
-    const currentExp = Math.round((p / 100) * capacity);
-
-    // build display strings
-    const capDisplay = capacity ? capacity.toLocaleString() : "—";
-    const curDisplay = capacity ? currentExp.toLocaleString() : "—";
-    const pctDisplay = `${p >= 99.5 ? 100 : Math.floor(p)}%`;
-    const message = `(${curDisplay}/${capDisplay} – ${pctDisplay})`;
-
-    // set content first so we can measure its width
-    progressText.textContent = message;
+    progressBar.style.width = `${progress}%`;
 
     // Compute container and text sizes safely (may be 0 if not rendered)
     const container = document.querySelector(".progress-container");
     const containerWidth = container ? container.clientWidth : (progressBar.parentElement ? progressBar.parentElement.clientWidth : 0);
-    const barWidth = progressBar.offsetWidth || Math.round(containerWidth * (p/100));
+    const barWidth = progressBar.offsetWidth || Math.round(containerWidth * (progress/100));
     const textWidth = progressText.offsetWidth || 36;
 
     // position center-ish inside the filled area, but keep it visible
@@ -202,6 +183,7 @@
     if (pos > containerWidth - textWidth / 2 - padding) pos = containerWidth - textWidth / 2 - padding;
 
     progressText.style.left = `${pos}px`;
+    progressText.textContent = `${progress >= 99.5 ? 100 : Math.floor(progress)}%`;
   }
 
   // Recalculate text on resize to keep it placed correctly
