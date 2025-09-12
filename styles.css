@@ -342,14 +342,15 @@ input[type=number] {
 .progress-text {
   position: absolute;
   top: 50%;
-  transform: translateY(-50%);
-  white-space: nowrap;
+  left: 50%;
+  transform: translate(-50%, -50%);
   font-size: 0.9rem;
   font-weight: 600;
-  color: var(--brand-blue);
-  transition: left 0.2s ease;
+  color: var(--brand-blue); /* hoặc màu bạn muốn */
+  white-space: nowrap;
   pointer-events: none;
 }
+
 
 /* Khi màn hình nhỏ, cho text auto xuống dòng nếu quá dài */
 @media (max-width: 480px) {
