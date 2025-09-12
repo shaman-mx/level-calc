@@ -333,3 +333,32 @@ input[type=number] {
 input[type=number] {
   appearance: textfield;
 }
+/* Progress text positioning */
+.progress-container {
+  position: relative;
+  width: 100%;
+}
+
+.progress-text {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--brand);
+  transition: left 0.2s ease;
+  pointer-events: none;
+}
+
+/* Khi màn hình nhỏ, cho text auto xuống dòng nếu quá dài */
+@media (max-width: 480px) {
+  .progress-text {
+    font-size: 0.75rem;
+    white-space: normal;
+    text-align: center;
+    width: 100%;
+    left: 50% !important;
+    transform: translate(-50%, -50%);
+  }
+}
