@@ -127,7 +127,7 @@
     else if (cd >= 200) buffPercent += 0.03;
 
     const keBang = parseInt(keBangTam?.value || 0, 10);
-    const extra = keBang > 0 ? Math.ceil(keBang / 2) : 0;
+    const extra = keBang > 0 ? keBang : 0;
 
     const hmc = parseInt(huyenMinhCong?.value || 0, 10);
     buffPercent += hmc * 0.01;
