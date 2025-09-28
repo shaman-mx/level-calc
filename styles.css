@@ -555,6 +555,9 @@ body.admin-page .btn-primary:hover {
 
 /* PC (>=768px): hiển thị cả 2 card song song */
 @media (min-width: 768px) {
+  .slider-wrapper {
+    overflow: visible;
+  }
   .slide-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -569,11 +572,18 @@ body.admin-page .btn-primary:hover {
 
 /* Mobile (<768px): vuốt để đổi slide */
 @media (max-width: 767px) {
+  .slider-wrapper {
+    overflow: hidden;
+    width: 100%;
+    position: relative;
+  }
   .slide-container {
     display: flex;
-    width: 100%;             /* 2 slide → 200% */
+    width: 100%;
     transition: transform 0.3s ease;
     will-change: transform;
+    gap: 16px; /* 👈 tạo khoảng hở giữa các slide */
+    padding: 0 8px; /* 👈 chừa lề 2 bên để thoáng */
   }
   .slide {
     flex: 0 0 100%;
@@ -587,3 +597,4 @@ body.admin-page .btn-primary:hover {
     gap: 16px;
   }
 }
+
