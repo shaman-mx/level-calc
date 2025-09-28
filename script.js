@@ -127,7 +127,7 @@
     else if (cd >= 200) buffPercent += 0.03;
 
     const keBang = parseInt(keBangTam?.value || 0, 10);
-    const extra = keBang > 0 ? keBang : 0;
+    const extra = keBang > 0 ? Math.ceil(keBang / 2) : 0;
 
     const hmc = parseInt(huyenMinhCong?.value || 0, 10);
     buffPercent += hmc * 0.01;
@@ -245,24 +245,56 @@ function updateProgressUI() {
     timer = requestAnimationFrame(animate);
   }
 
-  // ===== Calculator (before/after Lv15) =====
-  function calcBefore() {
-    const expr = (beforeInput?.value || "").replace(",", ".");
-    const val = safeEval(expr);
-    const res = (val * 105) / 95;
-    if (beforeOut) beforeOut.textContent = fmt(res);
-  }
-  function calcAfter() {
-    const expr = (afterInput?.value || "").replace(",", ".");
-    const val = safeEval(expr);
-    const res = (val * 110) / 95;
-    if (afterOut) afterOut.textContent = fmt(res);
-  }
+// ===== Calculator (before/after Lv15) =====
+function calcBefore() {
+  const expr = (beforeInput?.value || "").replace(",", ".");
+  const val = safeEval(expr);
+  let res = (val * 105) / 95;
 
-  beforeInput?.addEventListener("input", calcBefore);
-  afterInput?.addEventListener("input", calcAfter);
-  clearBefore?.addEventListener("click", () => { if (!beforeInput) return; beforeInput.value = ""; calcBefore(); beforeInput.focus(); });
-  clearAfter?.addEventListener("click", () => { if (!afterInput) return; afterInput.value = ""; calcAfter(); afterInput.focus(); });
+  // Thiên thư + Sách hệ (Trước Lv15)
+  const thienThuValue = parseInt(document.getElementById("thienthu")?.value || 0, 10);
+  const sachHeValue   = parseInt(document.getElementById("sachhe")?.value || 0, 10);
+  res += thienThuValue + sachHeValue;
+
+  if (beforeOut) beforeOut.textContent = fmt(res);
+}
+
+function calcAfter() {
+  const expr = (afterInput?.value || "").replace(",", ".");
+  const val = safeEval(expr);
+  let res = (val * 110) / 95;
+
+  // Thiên thư + Sách hệ (Sau Lv15)
+  const thienThuAfter = parseInt(document.getElementById("thienthuAfter")?.value || 0, 10);
+  const sachHeAfter   = parseInt(document.getElementById("sachheAfter")?.value || 0, 10);
+  res += thienThuAfter + sachHeAfter;
+
+  if (afterOut) afterOut.textContent = fmt(res);
+}
+
+// ===== Event listeners =====
+
+// Trước Lv15
+beforeInput?.addEventListener("input", calcBefore);
+document.getElementById("thienthu")?.addEventListener("change", calcBefore);
+document.getElementById("sachhe")?.addEventListener("change", calcBefore);
+clearBefore?.addEventListener("click", () => {
+  if (!beforeInput) return;
+  beforeInput.value = "";
+  calcBefore();
+  beforeInput.focus();
+});
+
+// Sau Lv15
+afterInput?.addEventListener("input", calcAfter);
+document.getElementById("thienthuAfter")?.addEventListener("change", calcAfter);
+document.getElementById("sachheAfter")?.addEventListener("change", calcAfter);
+clearAfter?.addEventListener("click", () => {
+  if (!afterInput) return;
+  afterInput.value = "";
+  calcAfter();
+  afterInput.focus();
+});
 
   // ===== Theme (single, stable) =====
   function setTheme(theme) {
@@ -385,3 +417,148 @@ function updateProgressUI() {
   calcBefore();
   calcAfter();
 })();
+
+// ========== Store Integration ==========
+(function () {
+  "use strict";
+
+  const API_URL = "https://script.google.com/macros/s/AKfycbwO8sd6b9-Uxrm8SeSuCW6IXBQia57J4rNJqwZObBjZ3eUE8VSml-qVjYIdUc_zIvZfVw/exec"; 
+  // 👆 thay bằng link Web App của bạn
+
+  // Trang Landing: hiển thị sản phẩm (responsive + bg từ sheet)
+  const productList = document.getElementById("product-list");
+  if (productList) {
+    fetch(API_URL)
+      .then(res => {
+        console.log("Status:", res.status, res.statusText);
+        return res.text();
+      })
+      .then(txt => {
+        console.log("Raw response:", txt);
+        let data;
+        try {
+          data = JSON.parse(txt);
+        } catch (e) {
+          console.error("Không parse được JSON:", e);
+          productList.innerHTML = "<p class='error'>API không trả JSON hợp lệ</p>";
+          return;
+        }
+
+ productList.innerHTML = "";
+        data.forEach(item => {
+          const card = document.createElement("div");
+          card.className = "card";
+
+          // chỉ set background nếu có link ảnh trong sheet
+          if (item.image && item.image.trim() !== "") {
+            card.style.background = `
+              linear-gradient(to right top, rgba(255,255,255,0.9) 30%, rgba(255,255,255,0) 70%),
+              url('${item.image}')
+            `;
+            card.style.backgroundSize = "cover";
+            card.style.backgroundPosition = "right center";
+            card.style.backgroundRepeat = "no-repeat";
+          }
+
+          card.innerHTML = `
+            <h3 class="card__title">${item.name}</h3>
+            <p>Số lượng: ${item.quantity}</p>
+          `;
+          productList.appendChild(card);
+        });
+      })
+      .catch(err => {
+        console.error("Fetch lỗi:", err);
+        productList.innerHTML = "<p class='error'>Không tải được dữ liệu từ API</p>";
+      });
+  }
+
+  // Trang Admin: cập nhật sản phẩm
+const form = document.getElementById("update-form");
+if (form) {
+  const productSelect = document.getElementById("product");
+
+  fetch(API_URL)
+    .then(res => res.json())
+    .then(data => {
+      console.log("Admin loaded products:", data);
+      // reset select trước khi thêm option
+      productSelect.innerHTML = `<option value="">-- Chọn sản phẩm --</option>`;
+      data.forEach(item => {
+        const opt = document.createElement("option");
+        opt.value = item.name;
+        opt.textContent = item.name;
+        productSelect.appendChild(opt);
+      });
+    })
+    .catch(err => console.error("Không tải được danh sách sản phẩm:", err));
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const name = productSelect.value;
+    const quantity = document.getElementById("quantity").value;
+
+    fetch(API_URL, {
+      method: "POST",
+      body: JSON.stringify({ name, quantity }),
+    })
+      .then(res => res.text())
+      .then(msg => {
+        alert(msg);
+        form.reset();
+      })
+      .catch(err => {
+        alert("Lỗi cập nhật!");
+        console.error(err);
+      });
+  });
+}
+})();
+
+// ===== Swipe between Before/After Lv15 (chỉ cho mobile) =====
+if (window.innerWidth < 768) {
+  let startX = 0;
+  const slideContainer = document.querySelector(".slide-container");
+  const slides = document.querySelectorAll(".slide");
+  const dots = document.querySelectorAll(".dot");
+  const btnLeft = document.querySelector(".slide-arrow.left");
+  const btnRight = document.querySelector(".slide-arrow.right");
+  let currentSlide = 0; // 0 = Before, 1 = After
+
+  function showSlide(index) {
+    slides.forEach((s, i) => s.classList.toggle("active", i === index));
+    dots.forEach((d, i) => d.classList.toggle("active", i === index));
+    currentSlide = index;
+  }
+
+  // Vuốt cảm ứng
+  slideContainer.addEventListener("touchstart", (e) => {
+    startX = e.touches[0].clientX;
+  });
+
+  slideContainer.addEventListener("touchend", (e) => {
+    let endX = e.changedTouches[0].clientX;
+    let diffX = startX - endX;
+
+    if (Math.abs(diffX) > 50) {
+      if (diffX > 0 && currentSlide < slides.length - 1) {
+        showSlide(currentSlide + 1);
+      } else if (diffX < 0 && currentSlide > 0) {
+        showSlide(currentSlide - 1);
+      }
+    }
+  });
+
+  // Click nút mũi tên
+  btnLeft?.addEventListener("click", () => {
+    if (currentSlide > 0) showSlide(currentSlide - 1);
+  });
+  btnRight?.addEventListener("click", () => {
+    if (currentSlide < slides.length - 1) showSlide(currentSlide + 1);
+  });
+
+  // Click chấm dot
+  dots.forEach((dot, i) => {
+    dot.addEventListener("click", () => showSlide(i));
+  });
+}
