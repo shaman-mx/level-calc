@@ -553,68 +553,37 @@ body.admin-page .btn-primary:hover {
   min-width: 0; /* để tránh vỡ layout */
 }
 
-/* PC (>= 768px): hiển thị cả 2 card song song, bỏ swipe */
+/* PC (>=768px): hiển thị cả 2 card song song */
 @media (min-width: 768px) {
   .slide-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
+    transform: none !important;
   }
   .slide {
-    display: block !important; /* luôn hiện */
+    display: block !important;
   }
-  .slide-controls {
-    display: none; /* ẩn controls trên PC */
-  }
+  .slide-controls { display: none; }
 }
 
-/* Mobile (< 768px): slides xếp ngang để swipe */
+/* Mobile (<768px): vuốt để đổi slide */
 @media (max-width: 767px) {
   .slide-container {
     display: flex;
-    width: 200%; /* 2 slide = 200% */
-    transition: transform 0.3s ease-in-out;
-    overflow: hidden;
+    width: 100%;             /* 2 slide → 200% */
+    transition: transform 0.3s ease;
+    will-change: transform;
   }
-
   .slide {
     flex: 0 0 100%;
-    display: block;
   }
 
-  /* Controls chỉ hiện trên mobile */
   .slide-controls {
     margin-top: 10px;
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
     gap: 16px;
   }
-
-  .slide-arrow {
-    background: var(--btn-bg, #ccc);
-    border: none;
-    padding: 6px 12px;
-    font-size: 18px;
-    border-radius: 6px;
-    cursor: pointer;
-  }
-
-  .slide-dots {
-    display: flex;
-    gap: 6px;
-  }
-
-  .dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: #bbb;
-    display: block;
-  }
-
-  .dot.active {
-    background: #333;
-  }
 }
-
