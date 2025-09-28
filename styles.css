@@ -566,16 +566,20 @@ body.admin-page .btn-primary:hover {
   }
 }
 
-/* Mobile (< 768px): chỉ hiển thị 1 slide, swipe để đổi */
+/* Mobile (< 768px): slides xếp ngang để swipe */
 @media (max-width: 767px) {
   .slide-container {
+    display: flex;
+    width: 100%;
     overflow: hidden;
     position: relative;
   }
+
   .slide {
-    display: none;
-    width: 100%;
+    flex: 0 0 100%;
+    transition: transform 0.3s ease;
   }
+}
   .slide.active {
     display: block;
   }
