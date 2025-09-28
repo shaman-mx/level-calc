@@ -579,6 +579,7 @@ if (form) {
   updateSlide();
 })();
 
+// ===== Swipe hạn chế biên =====
 document.addEventListener("DOMContentLoaded", () => {
   const container = document.querySelector(".slide-container");
   const slides = document.querySelectorAll(".slide");
@@ -587,6 +588,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let startX = 0, currentX = 0, isDragging = false;
 
   function updateSlide(index) {
+    // Giới hạn không cho vượt biên
     currentIndex = Math.max(0, Math.min(index, slides.length - 1));
     container.style.transform = `translateX(-${currentIndex * 100}%)`;
     dots.forEach((d, i) => d.classList.toggle("active", i === currentIndex));
@@ -605,7 +607,7 @@ document.addEventListener("DOMContentLoaded", () => {
     container.style.transform = `translateX(calc(${-currentIndex * 100}% + ${dx}px))`;
   });
 
-  container.addEventListener("touchend", (e) => {
+  container.addEventListener("touchend", () => {
     isDragging = false;
     const dx = currentX - startX;
     if (dx > 50) {
@@ -613,7 +615,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (dx < -50) {
       updateSlide(currentIndex + 1); // Vuốt trái → tiến
     } else {
-      updateSlide(currentIndex); // về chỗ cũ
+      updateSlide(currentIndex); // Snap lại
     }
   });
 
@@ -626,3 +628,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
   updateSlide(0);
 });
+
