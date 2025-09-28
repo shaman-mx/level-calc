@@ -276,8 +276,10 @@ function calcAfter() {
 
 // Trước Lv15
 beforeInput?.addEventListener("input", calcBefore);
-document.getElementById("thienthu")?.addEventListener("change", calcBefore);
-document.getElementById("sachhe")?.addEventListener("change", calcBefore);
+["change","input"].forEach(ev => {
+  $("#thienthu")?.addEventListener(ev, calcBefore);
+  $("#sachhe")?.addEventListener(ev, calcBefore);
+});
 clearBefore?.addEventListener("click", () => {
   if (!beforeInput) return;
   beforeInput.value = "";
@@ -287,14 +289,17 @@ clearBefore?.addEventListener("click", () => {
 
 // Sau Lv15
 afterInput?.addEventListener("input", calcAfter);
-document.getElementById("thienthuAfter")?.addEventListener("change", calcAfter);
-document.getElementById("sachheAfter")?.addEventListener("change", calcAfter);
+["change","input"].forEach(ev => {
+  $("#thienthuAfter")?.addEventListener(ev, calcAfter);
+  $("#sachheAfter")?.addEventListener(ev, calcAfter);
+});
 clearAfter?.addEventListener("click", () => {
   if (!afterInput) return;
   afterInput.value = "";
   calcAfter();
   afterInput.focus();
 });
+
 
   // ===== Theme (single, stable) =====
   function setTheme(theme) {
