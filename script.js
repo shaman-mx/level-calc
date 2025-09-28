@@ -567,3 +567,59 @@ if (window.innerWidth < 768) {
     dot.addEventListener("click", () => showSlide(i));
   });
 }
+// ===== Swipe cho mobile (slide-container) =====
+(function () {
+  const container = document.querySelector(".slide-container");
+  const slides = document.querySelectorAll(".slide");
+  const dots = document.querySelectorAll(".slide-controls .dot");
+
+  if (!container || slides.length === 0) return;
+
+  let current = 0;
+  let startX = 0;
+  let endX = 0;
+
+  function showSlide(index) {
+    slides.forEach((s, i) => {
+      s.classList.toggle("active", i === index);
+    });
+    dots.forEach((d, i) => {
+      d.classList.toggle("active", i === index);
+    });
+    current = index;
+  }
+
+  function nextSlide() {
+    const next = (current + 1) % slides.length;
+    showSlide(next);
+  }
+
+  function prevSlide() {
+    const prev = (current - 1 + slides.length) % slides.length;
+    showSlide(prev);
+  }
+
+  // Controls
+  document.querySelector(".slide-arrow.prev")?.addEventListener("click", prevSlide);
+  document.querySelector(".slide-arrow.next")?.addEventListener("click", nextSlide);
+  dots.forEach((dot, i) => {
+    dot.addEventListener("click", () => showSlide(i));
+  });
+
+  // Touch events
+  container.addEventListener("touchstart", (e) => {
+    startX = e.touches[0].clientX;
+  });
+
+  container.addEventListener("touchmove", (e) => {
+    endX = e.touches[0].clientX;
+  });
+
+  container.addEventListener("touchend", () => {
+    if (startX - endX > 50) nextSlide();     // swipe trái → next
+    if (endX - startX > 50) prevSlide();     // swipe phải → prev
+  });
+
+  // init
+  showSlide(0);
+})();
