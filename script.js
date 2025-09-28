@@ -520,106 +520,55 @@ if (form) {
 }
 })();
 
-// ===== Swipe between Before/After Lv15 (chỉ cho mobile) =====
-if (window.innerWidth < 768) {
-  let startX = 0;
-  const slideContainer = document.querySelector(".slide-container");
-  const slides = document.querySelectorAll(".slide");
-  const dots = document.querySelectorAll(".dot");
-  const btnLeft = document.querySelector(".slide-arrow.left");
-  const btnRight = document.querySelector(".slide-arrow.right");
-  let currentSlide = 0; // 0 = Before, 1 = After
-
-  function showSlide(index) {
-    slides.forEach((s, i) => s.classList.toggle("active", i === index));
-    dots.forEach((d, i) => d.classList.toggle("active", i === index));
-    currentSlide = index;
-  }
-
-  // Vuốt cảm ứng
-  slideContainer.addEventListener("touchstart", (e) => {
-    startX = e.touches[0].clientX;
-  });
-
-  slideContainer.addEventListener("touchend", (e) => {
-    let endX = e.changedTouches[0].clientX;
-    let diffX = startX - endX;
-
-    if (Math.abs(diffX) > 50) {
-      if (diffX > 0 && currentSlide < slides.length - 1) {
-        showSlide(currentSlide + 1);
-      } else if (diffX < 0 && currentSlide > 0) {
-        showSlide(currentSlide - 1);
-      }
-    }
-  });
-
-  // Click nút mũi tên
-  btnLeft?.addEventListener("click", () => {
-    if (currentSlide > 0) showSlide(currentSlide - 1);
-  });
-  btnRight?.addEventListener("click", () => {
-    if (currentSlide < slides.length - 1) showSlide(currentSlide + 1);
-  });
-
-  // Click chấm dot
-  dots.forEach((dot, i) => {
-    dot.addEventListener("click", () => showSlide(i));
-  });
-}
-// ===== Swipe cho mobile (slide-container) =====
+// ===== Swipe with smooth transition =====
 (function () {
   const container = document.querySelector(".slide-container");
   const slides = document.querySelectorAll(".slide");
-  const dots = document.querySelectorAll(".slide-controls .dot");
-
   if (!container || slides.length === 0) return;
 
   let current = 0;
   let startX = 0;
-  let endX = 0;
+  let currentX = 0;
+  let isDragging = false;
 
-  function showSlide(index) {
-    slides.forEach((s, i) => {
-      s.classList.toggle("active", i === index);
-    });
-    dots.forEach((d, i) => {
-      d.classList.toggle("active", i === index);
-    });
-    current = index;
+  function updateSlide() {
+    container.style.transform = `translateX(${-current * 100}%)`;
   }
 
+  // next/prev
   function nextSlide() {
-    const next = (current + 1) % slides.length;
-    showSlide(next);
+    if (current < slides.length - 1) current++;
+    else current = 0;
+    updateSlide();
   }
-
   function prevSlide() {
-    const prev = (current - 1 + slides.length) % slides.length;
-    showSlide(prev);
+    if (current > 0) current--;
+    else current = slides.length - 1;
+    updateSlide();
   }
 
-  // Controls
-  document.querySelector(".slide-arrow.prev")?.addEventListener("click", prevSlide);
-  document.querySelector(".slide-arrow.next")?.addEventListener("click", nextSlide);
-  dots.forEach((dot, i) => {
-    dot.addEventListener("click", () => showSlide(i));
-  });
-
-  // Touch events
+  // touch start
   container.addEventListener("touchstart", (e) => {
     startX = e.touches[0].clientX;
+    isDragging = true;
   });
 
+  // touch move
   container.addEventListener("touchmove", (e) => {
-    endX = e.touches[0].clientX;
+    if (!isDragging) return;
+    currentX = e.touches[0].clientX;
   });
 
+  // touch end
   container.addEventListener("touchend", () => {
-    if (startX - endX > 50) nextSlide();     // swipe trái → next
-    if (endX - startX > 50) prevSlide();     // swipe phải → prev
+    if (!isDragging) return;
+    const deltaX = startX - currentX;
+    if (deltaX > 50) nextSlide(); // swipe trái
+    if (deltaX < -50) prevSlide(); // swipe phải
+    isDragging = false;
   });
 
   // init
-  showSlide(0);
+  updateSlide();
 })();
+
