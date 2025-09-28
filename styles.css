@@ -544,19 +544,16 @@ body.admin-page .btn-primary:hover {
 }
 .field-row {
   display: flex;
-  gap: 16px;
+  flex-wrap: nowrap;
+  gap: 12px;
 }
 
 .field-row .field {
-  flex: 1;
+  flex: 1 1 50%;
+  min-width: 0; /* để tránh vỡ layout */
 }
 
-/* Responsive: khi màn hình nhỏ hơn 600px thì xếp dọc */
-@media (max-width: 600px) {
-  .field-row {
-    flex-direction: column;
-  }
-}
+
 /* PC (>= 768px): hiển thị cả 2 card song song, bỏ swipe */
 @media (min-width: 768px) {
   .slide-container {
