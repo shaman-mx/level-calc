@@ -1,167 +1,498 @@
-<!doctype html>
-<html lang="vi" data-theme="light">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Máy Tính Level – TU TIÊN WEPLAY</title>
-  <meta name="description" content="Công cụ tính toán lực chiến có thể thách đấu (trước/sau level 15). Hiển thị tốt trên mọi thiết bị." />
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" href="icons/icon-192.png" type="image/png" />
-  <link rel="manifest" href="manifest.json" />
-  <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-512.png" />
-  <link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192.png" />
-  <link rel="apple-touch-icon" sizes="512x512" href="icons/icon-512.png" />
-  <meta name="theme-color" content="#2563eb">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Level Calc">
-  <script>
-    (() => {
-      const saved = localStorage.getItem("theme");
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      const theme = saved || (prefersDark ? "dark" : "light");
-      document.documentElement.setAttribute("data-theme", theme);
-    })();
-  </script>
-</head>
-<body>
-  <header class="site-header container">
-    <div class="header-row">
-      <div class="header-title">
-        <h1>TU TIÊN WEPLAY</h1>
-        <p>Công cụ tính toán lực chiến có thể thách đấu</p>
-      </div>
-      <button id="themeToggle" class="theme-toggle" aria-label="Chuyển chế độ sáng/tối">🌙</button>
-    </div>
-  </header>
+(function () {
+  "use strict";
 
-  <main>
-    <!-- 🔹 Slider riêng biệt -->
-    <div class="slider-wrapper">
-      <section class="cards container" aria-label="Bộ tính trước và sau level 15">
-        <div class="slide-container">
-          <!-- Trước Lv15 -->
-          <div class="slide active" id="slideBefore">
-            <article class="card" aria-labelledby="before-title">
-              <h2 class="card__title" id="before-title">
-                <span class="dot dot--before" aria-hidden="true"></span>
-                Trước Level 15
-              </h2>
-              <div class="field">
-                <label for="beforeInput" class="field__label">Giá trị gốc</label>
-                <div class="field__wrapper">
-                  <input type="text" inputmode="decimal" id="beforeInput" class="field__input" placeholder="Nhập số hoặc phép tính…" autocomplete="off"/>
-                  <button class="clear-btn" id="clearBefore" aria-label="Xoá dữ liệu">✖</button>
-                </div>
-              </div>
-              <div class="formula">
-                <div class="field-row">
-<!-- Trước Lv15 -->
-<div class="field">
-  <label class="field__label">Sách hệ</label>
-  <div class="toggle toggle-before">
-    <input type="radio" id="sachhe0" name="sachhe" value="0" checked>
-    <label for="sachhe0">Level 0</label>
-    <input type="radio" id="sachhe1" name="sachhe" value="3000">
-    <label for="sachhe1">Level 1</label>
+  // ===== Helpers =====
+  const $ = (sel) => document.querySelector(sel);
+  const root = document.documentElement;
 
-    <input type="radio" id="sachhe2" name="sachhe" value="10000">
-    <label for="sachhe2">Level 2</label>
+  // ===== Elements (Calculator) =====
+  const beforeInput = $("#beforeInput");
+  const afterInput = $("#afterInput");
+  const beforeOut = $("#beforeResult");
+  const afterOut = $("#afterResult");
+  const clearBefore = $("#clearBefore");
+  const clearAfter = $("#clearAfter");
+  const toggleBtn = $("#themeToggle");
 
-    <input type="radio" id="sachhe3" name="sachhe" value="15000">
-    <label for="sachhe3">Level 3</label>
+  // ===== Elements (Crystal) =====
+  const levelSelect = $("#levelSelect");
+  const progressBar = $("#progressBar");
+  const progressText = $("#progressText");
+  const resetBtn = $("#resetBtn");
+  const progressMessage = $("#progressMessage");
 
-    <input type="radio" id="sachhe4" name="sachhe" value="20000">
-    <label for="sachhe4">Level 4</label>
+  // Info box (may be absent in HTML — we handle nulls)
+  const expCapacityEl = $("#expCapacity");
+  const baseSpeedEl = $("#baseSpeed");
+  const currentSpeedEl = $("#currentSpeed");
+  const timeRequiredEl = $("#timeRequired");
+  const timeRemainingEl = $("#timeRemaining");
+  const customSpeedInput = $("#customSpeed");
+  const clearCustomSpeed = $("#clearCustomSpeed")
 
-    <input type="radio" id="sachhe5" name="sachhe" value="30000">
-    <label for="sachhe5">Level 5</label>
-  </div>
-</div>
-                </div>
-              </div>
-              <output class="result result--before" id="beforeResultBox">
-                <div class="result__label">Kết quả</div>
-                <div class="result__value" id="beforeResult">0.00</div>
-                <div class="result__hint">Tự động cập nhật</div>
-              </output>
-            </article>
-          </div>
+  // Buff controls
+  const suoiLinh = $("#suoiLinh");
+  const danTuLinh = $("#danTuLinh") || $("#dantulinh");
+  const thanchu = $("#thanchu");
+  const thanMat = $("#thanMat");
+  const chienDau = $("#chienDau");
+  const keBangTam = $("#keBangTam");
+  const huyenMinhCong = $("#huyenMinhCong");
 
-          <!-- Sau Lv15 -->
-          <div class="slide" id="slideAfter">
-            <article class="card" aria-labelledby="after-title">
-              <h2 class="card__title" id="after-title">
-                <span class="dot dot--after" aria-hidden="true"></span>
-                Sau Level 15
-              </h2>
-              <div class="field">
-                <label for="afterInput" class="field__label">Giá trị gốc</label>
-                <div class="field__wrapper">
-                  <input type="text" inputmode="decimal" id="afterInput" class="field__input" placeholder="Nhập số hoặc phép tính…" autocomplete="off"/>
-                  <button class="clear-btn" id="clearAfter" aria-label="Xoá dữ liệu">✖</button>
-                </div>
-              </div>
-              <div class="formula">
-                <div class="field-row">
-<!-- Sau Lv15 -->
-<div class="field">
-  <label class="field__label">Sách hệ</label>
-  <div class="toggle toggle-after">
-    <input type="radio" id="sachheA0" name="sachheAfter" value="0" checked>
-    <label for="sachheA0">Level 0</label>
-    <input type="radio" id="sachheA1" name="sachheAfter" value="3000">
-    <label for="sachheA1">Level 1</label>
+  // ===== State =====
+  let progress = 0;
+  let expPerSecond = 0;
+  let totalExp = 0;
+  let timer = null;
 
-    <input type="radio" id="sachheA2" name="sachheAfter" value="10000">
-    <label for="sachheA2">Level 2</label>
+  // ===== Data =====
+  const crystalData = {
+    "1-sơ": { exp: 6, rate: 1 },
+    "1-trung": { exp: 8, rate: 1 },
+    "1-hậu": { exp: 18, rate: 1 },
+    "2-sơ": { exp: 38, rate: 1 },
+    "2-trung": { exp: 160, rate: 1 },
+    "2-hậu": { exp: 320, rate: 1 },
+    "3-sơ": { exp: 1938, rate: 3 },
+    "3-trung": { exp: 5000, rate: 3 },
+    "3-hậu": { exp: 8740, rate: 3 },
+    "4-sơ": { exp: 9100, rate: 5 },
+    "4-trung": { exp: 9690, rate: 5 },
+    "4-hậu": { exp: 16150, rate: 5 },
+    "5-sơ": { exp: 17670, rate: 5 },
+    "5-trung": { exp: 18544, rate: 5 },
+    "5-hậu": { exp: 19874, rate: 5 },
+    "6-sơ": { exp: 20444, rate: 5 },
+    "6-trung": { exp: 21470, rate: 5 },
+    "6-hậu": { exp: 22420, rate: 5 },
+    "7-sơ": { exp: 23674, rate: 5 },
+    "7-trung": { exp: 24852, rate: 5 },
+    "7-hậu": { exp: 26106, rate: 5 },
+    "8-sơ": { exp: 27398, rate: 10 },
+    "8-trung": { exp: 28766, rate: 10 },
+    "8-hậu": { exp: 60420, rate: 10 },
+    "9-sơ": { exp: 63460, rate: 10 },
+    "9-trung": { exp: 66500, rate: 10 },
+    "9-hậu": { exp: 69920, rate: 10 },
+    "10-sơ": { exp: 73454, rate: 10 },
+    "10-trung": { exp: 77140, rate: 10 },
+    "10-hậu": { exp: 80940, rate: 10 },
+    "11-sơ": { exp: 95000, rate: 10 },
+    "11-hậu": { exp: 114000, rate: 10 },
+    "12-sơ": { exp: 380000, rate: 30 },
+    "12-trung": { exp: 311600, rate: 30 },
+    "12-hậu": { exp: 326800, rate: 30 },
+    "13-sơ": { exp: 334400, rate: 30 },
+    "13-trung": { exp: 342000, rate: 30 },
+    "13-hậu": { exp: 344166, rate: 30 },
+    "14-sơ": { exp: 350360, rate: 30 },
+    "14-trung": { exp: 356668, rate: 30 },
+    "14-hậu": { exp: 363090, rate: 30 },
+	"15-trung": { exp: 376200, rate: 30 },
+	"15-hậu": { exp: 383055, rate: 30 },
+  };
 
-    <input type="radio" id="sachheA3" name="sachheAfter" value="15000">
-    <label for="sachheA3">Level 3</label>
+  // ===== Utils =====
+  const fmt = (n) => (Number.isFinite(n) ? n.toFixed(2) : "0.00");
+  const safeEval = (expr) => {
+    if (!/^[0-9+\-*/().\s]+$/.test(expr)) return NaN;
+    try { return new Function(`return (${expr})`)(); } catch { return NaN; }
+  };
+  const formatTime = (sec) => {
+    if (!sec || sec <= 0) return "—";
+    const h = Math.floor(sec / 3600);
+    const m = Math.floor((sec % 3600) / 60);
+    const s = Math.floor(sec % 60);
+    return `${h}h ${m}m ${s}s`;
+  };
 
-    <input type="radio" id="sachheA4" name="sachheAfter" value="20000">
-    <label for="sachheA4">Level 4</label>
+  // ===== Speed with Buffs =====
+  function getCurrentSpeed(baseSpeed) {
+    // Nếu có tốc độ tuỳ chỉnh → bỏ buff
+    if (customSpeedInput && customSpeedInput.value !== "") {
+      return parseFloat(customSpeedInput.value) || 0;
+    }
 
-    <input type="radio" id="sachheA5" name="sachheAfter" value="30000">
-    <label for="sachheA5">Level 5</label>
-  </div>
-</div>
-                  </div>
-              </div>
-              <output class="result result--after" id="afterResultBox">
-                <div class="result__label">Kết quả</div>
-                <div class="result__value" id="afterResult">0.00</div>
-                <div class="result__hint">Tự động cập nhật</div>
-              </output>
-            </article>
-          </div>
-        </div>
-      </section>
+    let buffPercent = 1;
 
-      <!-- Điều khiển swipe -->
-      <div class="slide-controls">
-        <button class="slide-arrow left">←</button>
-        <div class="slide-dots"><span class="dot active"></span><span class="dot"></span></div>
-        <button class="slide-arrow right">→</button>
-      </div>
-    </div>
+    if (suoiLinh?.checked) buffPercent += 0.1;
+    if (danTuLinh?.checked) buffPercent += 0.2;
+    if (thanchu?.checked) buffPercent += 0.3;
+    buffPercent += parseInt(thanMat?.value || 0, 10) * 0.05;
 
-    <!-- 🔹 Info KHÔNG swipe -->
-    <section class="cards container">
-      <article class="info">
-      <h3>Thông tin công thức</h3>
-      <ul class="info__list">
-        <li class="info__item"><span class="dot dot--before"></span> <strong>Trước level 15:</strong> Giá trị × 105 ÷ 95</li>
-        <li class="info__item"><span class="dot dot--after"></span> <strong>Sau level 15:</strong> Giá trị × 110 ÷ 95</li>
-      </ul>
-      <p class="info__note">Nhập số hoặc phép tính để xem kết quả ngay lập tức.</p>
-        </article>
-    </section>
-  </main>
+    const cd = parseInt(chienDau?.value || 0, 10);
+    if (cd >= 1501) buffPercent += 0.15;
+    else if (cd >= 1001) buffPercent += 0.07;
+    else if (cd >= 501) buffPercent += 0.05;
+    else if (cd >= 200) buffPercent += 0.03;
 
-  <footer class="site-footer container">
-    <small>© 2025 TU TIÊN WEPLAY · 🌙 Bao Chửng</small>
-  </footer>
-  <script src="script.js" defer></script>
-</body>
-</html>
+    const keBang = parseInt(keBangTam?.value || 0, 10);
+    const extra = keBang > 0 ? Math.ceil(keBang / 2) : 0;
+
+    const hmc = parseInt(huyenMinhCong?.value || 0, 10);
+    buffPercent += hmc * 0.01;
+
+    return baseSpeed * buffPercent + extra;
+  }
+
+  // ===== Xoá tốc độ tuỳ chỉnh =====
+  clearCustomSpeed?.addEventListener("click", () => {
+    if (customSpeedInput) customSpeedInput.value = "";
+    updateCrystalInfo();
+  });
+
+  // ===== Info box update =====
+  function updateCrystalInfo() {
+    if (!levelSelect) return;
+    const key = levelSelect.value;
+    const data = crystalData[key];
+    if (!data) return;
+
+    const expCapacity = data.exp;
+    const baseSpeed = data.rate;
+    const currentSpeed = getCurrentSpeed(baseSpeed);
+    const timeRequiredSec = currentSpeed > 0 ? expCapacity / currentSpeed : 0;
+
+    // Update only elements that exist in DOM (we support case when expCapacityEl is removed)
+    if (expCapacityEl) expCapacityEl.textContent = expCapacity.toLocaleString();
+    if (baseSpeedEl) baseSpeedEl.textContent = baseSpeed.toFixed(2);
+    if (currentSpeedEl) currentSpeedEl.textContent = currentSpeed.toFixed(2);
+    if (timeRequiredEl) timeRequiredEl.textContent = formatTime(timeRequiredSec);
+
+    if (progress > 0 && currentSpeed > 0) {
+      const expRemaining = expCapacity * (1 - progress / 100);
+      if (timeRemainingEl) timeRemainingEl.textContent = formatTime(expRemaining / currentSpeed);
+    } else {
+      if (timeRemainingEl) timeRemainingEl.textContent = "—";
+    }
+
+    // sync totalExp so updateProgressUI can display current/capacity
+    totalExp = expCapacity;
+  }
+
+  // ===== Progress simulation & UI =====
+function updateProgressUI() {
+  if (!progressBar || !progressText) return;
+
+  // clamp progress
+  const p = Math.max(0, Math.min(100, progress));
+  progressBar.style.width = `${p}%`;
+
+  // determine capacity and current EXP
+  const capacity = totalExp || 0;
+  const currentExp = Math.round((p / 100) * capacity);
+
+  // build display strings
+  const capDisplay = capacity ? capacity.toLocaleString() : "—";
+  const curDisplay = capacity ? currentExp.toLocaleString() : "—";
+  const pctDisplay = `${p >= 99.5 ? 100 : Math.floor(p)}%`;
+
+  // đặt nội dung text
+  progressText.textContent = `(${curDisplay}/${capDisplay} – ${pctDisplay})`;
+}
+
+
+  // Recalculate text on resize to keep it placed correctly
+  let resizeTimer = null;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(updateProgressUI, 80);
+  });
+
+  function startProgress() {
+    if (timer) cancelAnimationFrame(timer);
+
+    if (!levelSelect || !progressBar || !progressText) return;
+
+    const key = levelSelect.value;
+    const data = crystalData[key];
+    if (!data) return;
+
+    totalExp = data.exp;
+    progress = 0;
+    updateProgressUI();
+    if (progressMessage) {
+      progressMessage.textContent = "";
+      progressMessage.classList.remove("danger-glow");
+    }
+
+    let lastTime = performance.now();
+
+    function animate(now) {
+      const delta = (now - lastTime) / 1000;
+      lastTime = now;
+
+      expPerSecond = getCurrentSpeed(data.rate);
+      progress += (expPerSecond / totalExp) * 100 * delta;
+
+      if (progress >= 100) {
+        progress = 100;
+        updateProgressUI();
+        if (progressMessage) {
+          progressMessage.textContent = "✨ Tinh thể tu vi đã đầy!";
+          progressMessage.classList.add("danger-glow");
+        }
+        cancelAnimationFrame(timer);
+        timer = null;
+        return;
+      }
+
+      updateProgressUI();
+      updateCrystalInfo();
+      timer = requestAnimationFrame(animate);
+    }
+
+    timer = requestAnimationFrame(animate);
+  }
+
+// ===== Calculator (before/after Lv15) =====
+function calcBefore() {
+  const expr = (beforeInput?.value || "").replace(",", ".");
+  const val = safeEval(expr);
+  let res = (val * 105) / 95;
+
+  // Sách hệ (Trước Lv15)
+  const selected = document.querySelector("input[name='sachhe']:checked");
+  const sachHeValue = selected ? parseInt(selected.value, 10) : 0;
+  res += sachHeValue;
+
+  if (beforeOut) beforeOut.textContent = fmt(res);
+}
+
+function calcAfter() {
+  const expr = (afterInput?.value || "").replace(",", ".");
+  const val = safeEval(expr);
+  let res = (val * 110) / 95;
+
+  // Sách hệ (Sau Lv15)
+  const selected = document.querySelector("input[name='sachheAfter']:checked");
+  const sachHeValue = selected ? parseInt(selected.value, 10) : 0;
+  res += sachHeValue;
+
+  if (afterOut) afterOut.textContent = fmt(res);
+}
+
+// ===== Event listeners =====
+
+// Trước Lv15
+beforeInput?.addEventListener("input", calcBefore);
+document.querySelectorAll("input[name='sachhe']").forEach(radio => {
+  radio.addEventListener("change", calcBefore);
+});
+
+// Sau Lv15
+afterInput?.addEventListener("input", calcAfter);
+document.querySelectorAll("input[name='sachheAfter']").forEach(radio => {
+  radio.addEventListener("change", calcAfter);
+});
+
+
+
+
+  // ===== Theme (single, stable) =====
+  function setTheme(theme) {
+    root.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+    if (toggleBtn) toggleBtn.textContent = theme === "dark" ? "☀️" : "🌙";
+  }
+  (function initTheme() {
+    const saved = localStorage.getItem("theme");
+    if (saved) setTheme(saved);
+    else setTheme(window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    toggleBtn?.addEventListener("click", () => {
+      const cur = root.getAttribute("data-theme");
+      setTheme(cur === "dark" ? "light" : "dark");
+    });
+  })();
+
+  // ===== Choices table =====
+  const choicesData = [
+    { option1: { text: "Ăn quả", reward: "Tăng tu vi", danger: false }, option2: { text: "Uống nước từ suối", reward: "Tăng tu vi", danger: false } },
+    { option1: { text: "Bí mật điều tra", reward: "Thư thách đấu", danger: false }, option2: { text: "Tấn công trực diện", reward: "Không có gì", danger: true } },
+    { option1: { text: "Chiến đấu", reward: "Thư thách đấu", danger: false }, option2: { text: "Ngưỡng mộ", reward: "Tăng tu vi", danger: false } },
+    { option1: { text: "Cùng nhau khám phá", reward: "Trừ tu vi", danger: true }, option2: { text: "Tự khám phá", reward: "Đan vàng", danger: false } },
+    { option1: { text: "Cứu chữa", reward: "Đan xanh", danger: false }, option2: { text: "Rời đi", reward: "Trừ tu vi", danger: true } },
+    { option1: { text: "Đá thần", reward: "Tăng tu vi", danger: false }, option2: { text: "Đá hiếm", reward: "Tăng tu vi", danger: false } },
+    { option1: { text: "Đánh nhau với người đó", reward: "Đan xanh", danger: false }, option2: { text: "Cho lời khuyên", reward: "Tăng tu vi", danger: false } },
+    { option1: { text: "Đi đến hồ đen", reward: "Trừ tu vi", danger: true }, option2: { text: "Đi đến thôn hoa sen", reward: "Đan xanh", danger: false } },
+    { option1: { text: "Đi sang trái", reward: "Trừ tu vi", danger: true }, option2: { text: "Đi sang phải", reward: "Thư thách đấu", danger: false } },
+    { option1: { text: "Đi trên thuyền", reward: "Đan xanh", danger: false }, option2: { text: "Bay trên kiếm", reward: "Thư thách đấu", danger: false } },
+    { option1: { text: "Đi vào ban đêm", reward: "Đan vàng", danger: false }, option2: { text: "Đi vào ban ngày", reward: "Không có gì", danger: true } },
+    { option1: { text: "Đồng ý", reward: "Tăng tu vi", danger: false }, option2: { text: "Từ chối", reward: "Tăng tu vi", danger: false } },
+    { option1: { text: "Dũng cảm dựa vào", reward: "Tăng tu vi", danger: false }, option2: { text: "Đi nấp", reward: "Không có gì", danger: true } },
+    { option1: { text: "Khai thác bề mặt", reward: "Tăng tu vi", danger: false }, option2: { text: "Khai thác sâu", reward: "Không có gì", danger: true } },
+    { option1: { text: "Lương thiện", reward: "Tăng tu vi", danger: false }, option2: { text: "Lớn mạnh", reward: "Đan vàng", danger: false } },
+    { option1: { text: "Tặng thuốc", reward: "Đan xanh", danger: false }, option2: { text: "Cứu chữa", reward: "Đan vàng", danger: false } },
+    { option1: { text: "Tiên thảo", reward: "Tăng tu vi", danger: false }, option2: { text: "Đan dược", reward: "Đan xanh", danger: false } },
+    { option1: { text: "Trợ giúp chim loan", reward: "Đan xanh", danger: false }, option2: { text: "Trợ giúp chuột vàng", reward: "Đan vàng", danger: false } },
+    { option1: { text: "Tưới vườn thuốc", reward: "Tăng tu vi", danger: false }, option2: { text: "Luyện đan", reward: "Đan xanh", danger: false } },
+  ];
+  (function buildChoices() {
+    const choicesBody = document.getElementById("choicesBody");
+    if (!choicesBody) return;
+    choicesBody.innerHTML = "";
+    choicesData.forEach((q) => {
+      const row = document.createElement("tr");
+      const td1 = document.createElement("td");
+      td1.innerHTML = `<div class="choice ${q.option1.danger ? "danger" : ""}">
+        <span>${q.option1.text}</span><span class="reward">(${q.option1.reward})</span></div>`;
+      const td2 = document.createElement("td");
+      td2.innerHTML = `<div class="choice ${q.option2.danger ? "danger" : ""}">
+        <span>${q.option2.text}</span><span class="reward">(${q.option2.reward})</span></div>`;
+      row.append(td1, td2);
+      choicesBody.appendChild(row);
+    });
+  })();
+
+  // ===== Nav buttons =====
+  (function addNavButtons() {
+    const main = document.querySelector("main");
+    if (!main) return;
+    const currentPage = window.location.pathname.split("/").pop();
+    const wrapper = document.createElement("div");
+    wrapper.className = "exp-link-wrapper";
+    const buttons = [
+      { href: "index.html", label: "🏠 Trang chính", class: "exp-btn back" },
+      { href: "exp.html", label: "📄 Bảng EXP", class: "exp-btn" },
+      { href: "choices.html", label: "❓ Câu hỏi", class: "exp-btn alt" },
+      { href: "crystal.html", label: "🔮 Mô phỏng tinh thể", class: "exp-btn" },
+    ];
+    buttons.forEach((b) => {
+      if (b.href === currentPage) return;
+      const a = document.createElement("a");
+      a.href = b.href; a.textContent = b.label; a.className = b.class;
+      wrapper.appendChild(a);
+    });
+    main.appendChild(wrapper);
+  })();
+
+  // ===== Events =====
+  levelSelect?.addEventListener("change", startProgress);
+  levelSelect?.addEventListener("click", startProgress);
+  resetBtn?.addEventListener("click", startProgress);
+
+  // When buffs change update info
+  [levelSelect, suoiLinh, danTuLinh, thanchu, thanMat, chienDau, keBangTam, huyenMinhCong].forEach(el => {
+    if (el) el.addEventListener("change", () => {
+      updateCrystalInfo();
+      const key = levelSelect.value;
+      if (crystalData[key]) {
+        expPerSecond = getCurrentSpeed(crystalData[key].rate);
+      }
+    });
+  });
+
+  // custom speed input behavior
+  customSpeedInput?.addEventListener("input", () => {
+    const val = parseFloat(customSpeedInput.value);
+    if (!isNaN(val) && val >= 0 && customSpeedInput.value !== "") {
+      // Reset buffs to default to avoid confusion
+      if (suoiLinh) suoiLinh.checked = false;
+      if (danTuLinh) danTuLinh.checked = false;
+      if (thanchu) thanchu.checked = false;
+      if (thanMat) thanMat.value = "0";
+      if (chienDau) chienDau.value = "0";
+      if (keBangTam) keBangTam.value = "0";
+      if (huyenMinhCong) huyenMinhCong.value = "0";
+    }
+    updateCrystalInfo();
+  });
+
+  // clear custom speed handler (defensive)
+  clearCustomSpeed?.addEventListener("click", () => {
+    if (customSpeedInput) customSpeedInput.value = "";
+    updateCrystalInfo();
+  });
+
+  // ===== Init =====
+  updateCrystalInfo();
+  startProgress();
+  calcBefore();
+  calcAfter();
+})();
+
+// ===== Swipe an toàn cho mobile: chặn swipe khi chạm vào form control =====
+(function () {
+  const container = document.querySelector(".slide-container");
+  if (!container) return;
+  const slides = container.querySelectorAll(".slide");
+  if (!slides || slides.length <= 1) return;
+
+  let currentIndex = 0;
+  let startX = 0;
+  let currentX = 0;
+  let isTouching = false;
+  let allowSwipe = false;
+  const THRESHOLD = 50; // px để kích hoạt chuyển slide
+
+  // helper: nếu target nằm trong 1 control thì không cho swipe
+  function touchOnControl(target) {
+    if (!target) return false;
+    return !!target.closest("input, select, textarea, button, label, .field__wrapper");
+  }
+
+  // set transform với animation
+  function goTo(index, animate = true) {
+    index = Math.max(0, Math.min(index, slides.length - 1));
+    currentIndex = index;
+    container.style.transition = animate ? "transform 0.3s ease" : "none";
+    container.style.transform = `translateX(-${currentIndex * 100}%)`;
+    // cập nhật dots nếu có
+    const dots = document.querySelectorAll(".slide-dots .dot");
+    dots.forEach((d, i) => d.classList.toggle("active", i === currentIndex));
+  }
+
+  // nút mũi tên (nếu có)
+  document.querySelector(".slide-arrow.left")?.addEventListener("click", () => goTo(currentIndex - 1));
+  document.querySelector(".slide-arrow.right")?.addEventListener("click", () => goTo(currentIndex + 1));
+  // chấm tròn click
+  document.querySelectorAll(".slide-dots .dot").forEach((dot, i) => dot.addEventListener("click", () => goTo(i)));
+
+  // touchstart
+  container.addEventListener("touchstart", (e) => {
+    // nếu chạm vào control (input/select/btn/label/field__wrapper) => không kích hoạt swipe
+    if (touchOnControl(e.target)) {
+      isTouching = false;
+      allowSwipe = false;
+      return;
+    }
+    startX = e.touches[0].clientX;
+    currentX = startX;
+    isTouching = true;
+    allowSwipe = true;
+    container.style.transition = "none";
+  }, { passive: true });
+
+  // touchmove
+  container.addEventListener("touchmove", (e) => {
+    if (!isTouching || !allowSwipe) return;
+    currentX = e.touches[0].clientX;
+    const dx = currentX - startX;
+    // kéo theo dx (tính bằng px) để thấy preview
+    container.style.transform = `translateX(calc(${-currentIndex * 100}% + ${dx}px))`;
+  }, { passive: true });
+
+  // touchend / touchcancel
+  container.addEventListener("touchend", (e) => {
+    if (!isTouching) return;
+    const dx = currentX - startX;
+    isTouching = false;
+    allowSwipe = false;
+    // chuyển slide nếu vượt ngưỡng
+    if (dx > THRESHOLD && currentIndex > 0) {
+      goTo(currentIndex - 1, true);
+    } else if (dx < -THRESHOLD && currentIndex < slides.length - 1) {
+      goTo(currentIndex + 1, true);
+    } else {
+      // trở về vị trí cũ
+      goTo(currentIndex, true);
+    }
+  }, { passive: true });
+
+  // khóa ngang không cho ra ngoài (nếu bạn muốn vòng thì bỏ logic dưới)
+  // hiện goTo(0) là đủ khi khởi tạo:
+  goTo(0, false);
+})();
+
+
+
