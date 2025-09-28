@@ -494,5 +494,21 @@ document.querySelectorAll("input[name='sachheAfter']").forEach(radio => {
   goTo(0, false);
 })();
 
+// ===== Clear input =====
+clearBefore?.addEventListener("click", () => {
+  if (beforeInput) {
+    beforeInput.value = "";
+    calcBefore(); // cập nhật kết quả về 0
+  }
+});
+
+clearAfter?.addEventListener("click", () => {
+  if (afterInput) {
+    afterInput.value = "";
+    calcAfter(); // cập nhật kết quả về 0
+  }
+});
+
+
 
 
