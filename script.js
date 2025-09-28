@@ -520,108 +520,86 @@ if (form) {
 }
 })();
 
-// ===== Swipe with smooth transition =====
+// ===== Swipe an toàn cho mobile: chặn swipe khi chạm vào form control =====
 (function () {
   const container = document.querySelector(".slide-container");
-  const slides = document.querySelectorAll(".slide");
-  if (!container || slides.length === 0) return;
+  if (!container) return;
+  const slides = container.querySelectorAll(".slide");
+  if (!slides || slides.length <= 1) return;
 
-  let current = 0;
+  let currentIndex = 0;
   let startX = 0;
   let currentX = 0;
-  let isDragging = false;
+  let isTouching = false;
+  let allowSwipe = false;
+  const THRESHOLD = 50; // px để kích hoạt chuyển slide
 
-  function updateSlide() {
-    container.style.transform = `translateX(${-current * 100}%)`;
-
-    // cập nhật dot
-    const dots = document.querySelectorAll(".slide-dots .dot");
-    dots.forEach((d, i) => d.classList.toggle("active", i === current));
+  // helper: nếu target nằm trong 1 control thì không cho swipe
+  function touchOnControl(target) {
+    if (!target) return false;
+    return !!target.closest("input, select, textarea, button, label, .field__wrapper");
   }
 
-  function nextSlide() {
-    if (current < slides.length - 1) current++;
-    else current = 0;
-    updateSlide();
-  }
-
-  function prevSlide() {
-    if (current > 0) current--;
-    else current = slides.length - 1;
-    updateSlide();
-  }
-
-  // touch start
-container.addEventListener("touchstart", (e) => {
-  // Nếu chạm vào input, select, textarea, button → bỏ qua
-  if (e.target.closest("input, select, textarea, button")) {
-    isDragging = false;
-    return;
-  }
-  startX = e.touches[0].clientX;
-  isDragging = true;
-});
-
-
-  // touch move
-  container.addEventListener("touchmove", (e) => {
-    if (!isDragging) return;
-    currentX = e.touches[0].clientX;
-  });
-
-  // touch end
-  container.addEventListener("touchend", () => {
-    if (!isDragging) return;
-    const deltaX = startX - currentX;
-    if (deltaX > 50) nextSlide();   // swipe trái
-    if (deltaX < -50) prevSlide();  // swipe phải
-    isDragging = false;
-  });
-
-  // nút điều hướng
-  document.querySelector(".slide-arrow.left")?.addEventListener("click", prevSlide);
-  document.querySelector(".slide-arrow.right")?.addEventListener("click", nextSlide);
-
-  updateSlide();
-})();
-
-// ===== Swipe hạn chế biên =====
-document.addEventListener("DOMContentLoaded", () => {
-  const container = document.querySelector(".slide-container");
-  const slides = document.querySelectorAll(".slide");
-  const dots = document.querySelectorAll(".slide-dots .dot");
-  let currentIndex = 0;
-  let startX = 0, currentX = 0, isDragging = false;
-
-  function updateSlide(index) {
-    currentIndex = Math.max(0, Math.min(index, slides.length - 1));
+  // set transform với animation
+  function goTo(index, animate = true) {
+    index = Math.max(0, Math.min(index, slides.length - 1));
+    currentIndex = index;
+    container.style.transition = animate ? "transform 0.3s ease" : "none";
     container.style.transform = `translateX(-${currentIndex * 100}%)`;
+    // cập nhật dots nếu có
+    const dots = document.querySelectorAll(".slide-dots .dot");
     dots.forEach((d, i) => d.classList.toggle("active", i === currentIndex));
   }
 
-  container.addEventListener("touchstart", (e) => {
-    startX = e.touches[0].clientX;
-    isDragging = true;
-  });
+  // nút mũi tên (nếu có)
+  document.querySelector(".slide-arrow.left")?.addEventListener("click", () => goTo(currentIndex - 1));
+  document.querySelector(".slide-arrow.right")?.addEventListener("click", () => goTo(currentIndex + 1));
+  // chấm tròn click
+  document.querySelectorAll(".slide-dots .dot").forEach((dot, i) => dot.addEventListener("click", () => goTo(i)));
 
+  // touchstart
+  container.addEventListener("touchstart", (e) => {
+    // nếu chạm vào control (input/select/btn/label/field__wrapper) => không kích hoạt swipe
+    if (touchOnControl(e.target)) {
+      isTouching = false;
+      allowSwipe = false;
+      return;
+    }
+    startX = e.touches[0].clientX;
+    currentX = startX;
+    isTouching = true;
+    allowSwipe = true;
+    container.style.transition = "none";
+  }, { passive: true });
+
+  // touchmove
   container.addEventListener("touchmove", (e) => {
-    if (!isDragging) return;
+    if (!isTouching || !allowSwipe) return;
     currentX = e.touches[0].clientX;
     const dx = currentX - startX;
+    // kéo theo dx (tính bằng px) để thấy preview
     container.style.transform = `translateX(calc(${-currentIndex * 100}% + ${dx}px))`;
-  });
+  }, { passive: true });
 
-  container.addEventListener("touchend", () => {
-    isDragging = false;
+  // touchend / touchcancel
+  container.addEventListener("touchend", (e) => {
+    if (!isTouching) return;
     const dx = currentX - startX;
-    if (dx > 50) updateSlide(currentIndex - 1);
-    else if (dx < -50) updateSlide(currentIndex + 1);
-    else updateSlide(currentIndex);
-  });
+    isTouching = false;
+    allowSwipe = false;
+    // chuyển slide nếu vượt ngưỡng
+    if (dx > THRESHOLD && currentIndex > 0) {
+      goTo(currentIndex - 1, true);
+    } else if (dx < -THRESHOLD && currentIndex < slides.length - 1) {
+      goTo(currentIndex + 1, true);
+    } else {
+      // trở về vị trí cũ
+      goTo(currentIndex, true);
+    }
+  }, { passive: true });
 
-  document.querySelector(".slide-arrow.left")?.addEventListener("click", () => updateSlide(currentIndex - 1));
-  document.querySelector(".slide-arrow.right")?.addEventListener("click", () => updateSlide(currentIndex + 1));
-  dots.forEach((dot, i) => dot.addEventListener("click", () => updateSlide(i)));
+  // khóa ngang không cho ra ngoài (nếu bạn muốn vòng thì bỏ logic dưới)
+  // hiện goTo(0) là đủ khi khởi tạo:
+  goTo(0, false);
+})();
 
-  updateSlide(0);
-});
