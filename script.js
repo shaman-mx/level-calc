@@ -578,3 +578,51 @@ if (form) {
 
   updateSlide();
 })();
+
+document.addEventListener("DOMContentLoaded", () => {
+  const container = document.querySelector(".slide-container");
+  const slides = document.querySelectorAll(".slide");
+  const dots = document.querySelectorAll(".slide-dots .dot");
+  let currentIndex = 0;
+  let startX = 0, currentX = 0, isDragging = false;
+
+  function updateSlide(index) {
+    currentIndex = Math.max(0, Math.min(index, slides.length - 1));
+    container.style.transform = `translateX(-${currentIndex * 100}%)`;
+    dots.forEach((d, i) => d.classList.toggle("active", i === currentIndex));
+  }
+
+  // Vuốt tay
+  container.addEventListener("touchstart", (e) => {
+    startX = e.touches[0].clientX;
+    isDragging = true;
+  });
+
+  container.addEventListener("touchmove", (e) => {
+    if (!isDragging) return;
+    currentX = e.touches[0].clientX;
+    const dx = currentX - startX;
+    container.style.transform = `translateX(calc(${-currentIndex * 100}% + ${dx}px))`;
+  });
+
+  container.addEventListener("touchend", (e) => {
+    isDragging = false;
+    const dx = currentX - startX;
+    if (dx > 50) {
+      updateSlide(currentIndex - 1); // Vuốt phải → lùi
+    } else if (dx < -50) {
+      updateSlide(currentIndex + 1); // Vuốt trái → tiến
+    } else {
+      updateSlide(currentIndex); // về chỗ cũ
+    }
+  });
+
+  // Nút mũi tên
+  document.querySelector(".slide-arrow.left")?.addEventListener("click", () => updateSlide(currentIndex - 1));
+  document.querySelector(".slide-arrow.right")?.addEventListener("click", () => updateSlide(currentIndex + 1));
+
+  // Chấm tròn
+  dots.forEach((dot, i) => dot.addEventListener("click", () => updateSlide(i)));
+
+  updateSlide(0);
+});
