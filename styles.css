@@ -627,3 +627,17 @@ body.admin-page .btn-primary:hover {
     display: none;
   }
 }
+/* Hiệu ứng swipe cho mobile */
+@media (max-width: 767px) {
+  .slide-container {
+    display: flex;
+    width: 200%; /* vì có 2 slide */
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .slide {
+    flex: 0 0 100%;
+    display: block; /* luôn hiển thị, ẩn bằng translateX */
+  }
+}
+
