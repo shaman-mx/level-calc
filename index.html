@@ -6,24 +6,15 @@
   <title>Máy Tính Level – TU TIÊN WEPLAY</title>
   <meta name="description" content="Công cụ tính toán lực chiến có thể thách đấu (trước/sau level 15). Hiển thị tốt trên mọi thiết bị." />
   <link rel="stylesheet" href="styles.css" />
-  <!-- Favicon cho trình duyệt -->
   <link rel="icon" href="icons/icon-192.png" type="image/png" />
-
-  <!-- Manifest cho PWA -->
   <link rel="manifest" href="manifest.json" />
-
-  <!-- Icon cho iPhone/iPad -->
   <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-512.png" />
   <link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192.png" />
   <link rel="apple-touch-icon" sizes="512x512" href="icons/icon-512.png" />
-
-  <!-- PWA config -->
   <meta name="theme-color" content="#2563eb">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Level Calc">
-  
-  <!-- Đặt theme sớm để tránh nháy -->
   <script>
     (() => {
       const saved = localStorage.getItem("theme");
@@ -40,164 +31,137 @@
         <h1>TU TIÊN WEPLAY</h1>
         <p>Công cụ tính toán lực chiến có thể thách đấu</p>
       </div>
-      <button id="themeToggle" class="theme-toggle" aria-label="Chuyển chế độ sáng/tối">
-        🌙
-      </button>
+      <button id="themeToggle" class="theme-toggle" aria-label="Chuyển chế độ sáng/tối">🌙</button>
     </div>
   </header>
 
   <main>
-    <section class="cards container" aria-label="Bộ tính trước và sau level 15">
-      <div class="slide-container">
-        <!-- Trước Lv15 -->
-        <div class="slide active" id="slideBefore">
-          <article class="card" aria-labelledby="before-title">
-            <h2 class="card__title" id="before-title">
-              <span class="dot dot--before" aria-hidden="true"></span>
-              Trước Level 15
-            </h2>
-            <div class="field">
-              <label for="beforeInput" class="field__label">Giá trị gốc</label>
-              <div class="field__wrapper">
-                <input
-                  type="text"
-                  inputmode="decimal"
-                  id="beforeInput"
-                  class="field__input"
-                  placeholder="Nhập số hoặc phép tính…"
-                  autocomplete="off"
-                />
-                <button class="clear-btn" id="clearBefore" aria-label="Xoá dữ liệu">✖</button>
-              </div>
-            </div>
-
-            <div class="formula" aria-live="polite">
-              <div class="field-row">
-                <div class="field">
-                  <label class="field__label" for="thienthu">Thiên thư</label>
-                  <select id="thienthu" class="field__input">
-                    <option value="0">Level 0</option>
-                    <option value="1000">Level 1 (+1.000)</option>
-                    <option value="5000">Level 2 (+5.000)</option>
-                    <option value="10000">Level 3 (+10.000)</option>
-                    <option value="15000">Level 4 (+15.000)</option>
-                    <option value="20000">Level 5 (+20.000)</option>
-                  </select>
-                </div>
-
-                <div class="field">
-                  <label class="field__label" for="sachhe">Sách hệ</label>
-                  <select id="sachhe" class="field__input">
-                    <option value="0">Level 0</option>
-                    <option value="5000">Level 1 (+5.000)</option>
-                    <option value="10000">Level 2 (+10.000)</option>
-                    <option value="15000">Level 3 (+15.000)</option>
-                    <option value="20000">Level 4 (+20.000)</option>
-                    <option value="30000">Level 5 (+30.000)</option>
-                  </select>
+    <!-- 🔹 Slider riêng biệt -->
+    <div class="slider-wrapper">
+      <section class="cards container" aria-label="Bộ tính trước và sau level 15">
+        <div class="slide-container">
+          <!-- Trước Lv15 -->
+          <div class="slide active" id="slideBefore">
+            <article class="card" aria-labelledby="before-title">
+              <h2 class="card__title" id="before-title">
+                <span class="dot dot--before" aria-hidden="true"></span>
+                Trước Level 15
+              </h2>
+              <div class="field">
+                <label for="beforeInput" class="field__label">Giá trị gốc</label>
+                <div class="field__wrapper">
+                  <input type="text" inputmode="decimal" id="beforeInput" class="field__input" placeholder="Nhập số hoặc phép tính…" autocomplete="off"/>
+                  <button class="clear-btn" id="clearBefore" aria-label="Xoá dữ liệu">✖</button>
                 </div>
               </div>
-            </div>
+              <div class="formula">
+                <div class="field-row">
+                  <div class="field">
+                    <label class="field__label" for="thienthu">Thiên thư</label>
+                    <select id="thienthu" class="field__input">
+                      <option value="0">Level 0</option>
+                      <option value="1000">Level 1 (+1.000)</option>
+                      <option value="5000">Level 2 (+5.000)</option>
+                      <option value="10000">Level 3 (+10.000)</option>
+                      <option value="15000">Level 4 (+15.000)</option>
+                      <option value="20000">Level 5 (+20.000)</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label class="field__label" for="sachhe">Sách hệ</label>
+                    <select id="sachhe" class="field__input">
+                      <option value="0">Level 0</option>
+                      <option value="5000">Level 1 (+5.000)</option>
+                      <option value="10000">Level 2 (+10.000)</option>
+                      <option value="15000">Level 3 (+15.000)</option>
+                      <option value="20000">Level 4 (+20.000)</option>
+                      <option value="30000">Level 5 (+30.000)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <output class="result result--before" id="beforeResultBox">
+                <div class="result__label">Kết quả</div>
+                <div class="result__value" id="beforeResult">0.00</div>
+                <div class="result__hint">Tự động cập nhật</div>
+              </output>
+            </article>
+          </div>
 
-            <output class="result result--before" id="beforeResultBox" for="beforeInput">
-              <div class="result__label">Kết quả</div>
-              <div class="result__value" id="beforeResult">0.00</div>
-              <div class="result__hint">Tự động cập nhật</div>
-            </output>
-          </article>
+          <!-- Sau Lv15 -->
+          <div class="slide" id="slideAfter">
+            <article class="card" aria-labelledby="after-title">
+              <h2 class="card__title" id="after-title">
+                <span class="dot dot--after" aria-hidden="true"></span>
+                Sau Level 15
+              </h2>
+              <div class="field">
+                <label for="afterInput" class="field__label">Giá trị gốc</label>
+                <div class="field__wrapper">
+                  <input type="text" inputmode="decimal" id="afterInput" class="field__input" placeholder="Nhập số hoặc phép tính…" autocomplete="off"/>
+                  <button class="clear-btn" id="clearAfter" aria-label="Xoá dữ liệu">✖</button>
+                </div>
+              </div>
+              <div class="formula">
+                <div class="field-row">
+                  <div class="field">
+                    <label class="field__label" for="thienthuAfter">Thiên thư</label>
+                    <select id="thienthuAfter" class="field__input">
+                      <option value="0">Level 0</option>
+                      <option value="1000">Level 1 (+1.000)</option>
+                      <option value="5000">Level 2 (+5.000)</option>
+                      <option value="10000">Level 3 (+10.000)</option>
+                      <option value="15000">Level 4 (+15.000)</option>
+                      <option value="20000">Level 5 (+20.000)</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label class="field__label" for="sachheAfter">Sách hệ</label>
+                    <select id="sachheAfter" class="field__input">
+                      <option value="0">Level 0</option>
+                      <option value="5000">Level 1 (+5.000)</option>
+                      <option value="10000">Level 2 (+10.000)</option>
+                      <option value="15000">Level 3 (+15.000)</option>
+                      <option value="20000">Level 4 (+20.000)</option>
+                      <option value="30000">Level 5 (+30.000)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <output class="result result--after" id="afterResultBox">
+                <div class="result__label">Kết quả</div>
+                <div class="result__value" id="afterResult">0.00</div>
+                <div class="result__hint">Tự động cập nhật</div>
+              </output>
+            </article>
+          </div>
         </div>
+      </section>
 
-        <!-- Sau Lv15 -->
-        <div class="slide" id="slideAfter">
-          <article class="card" aria-labelledby="after-title">
-            <h2 class="card__title" id="after-title">
-              <span class="dot dot--after" aria-hidden="true"></span>
-              Sau Level 15
-            </h2>
-            <div class="field">
-              <label for="afterInput" class="field__label">Giá trị gốc</label>
-              <div class="field__wrapper">
-                <input
-                  type="text"
-                  inputmode="decimal"
-                  id="afterInput"
-                  class="field__input"
-                  placeholder="Nhập số hoặc phép tính…"
-                  autocomplete="off"
-                />
-                <button class="clear-btn" id="clearAfter" aria-label="Xoá dữ liệu">✖</button>
-              </div>
-            </div>
-
-            <div class="formula" aria-live="polite">
-              <div class="field-row">
-                <div class="field">
-                  <label class="field__label" for="thienthuAfter">Thiên thư</label>
-                  <select id="thienthuAfter" class="field__input">
-                    <option value="0">Level 0</option>
-                    <option value="1000">Level 1 (+1.000)</option>
-                    <option value="5000">Level 2 (+5.000)</option>
-                    <option value="10000">Level 3 (+10.000)</option>
-                    <option value="15000">Level 4 (+15.000)</option>
-                    <option value="20000">Level 5 (+20.000)</option>
-                  </select>
-                </div>
-
-                <div class="field">
-                  <label class="field__label" for="sachheAfter">Sách hệ</label>
-                  <select id="sachheAfter" class="field__input">
-                    <option value="0">Level 0</option>
-                    <option value="5000">Level 1 (+5.000)</option>
-                    <option value="10000">Level 2 (+10.000)</option>
-                    <option value="15000">Level 3 (+15.000)</option>
-                    <option value="20000">Level 4 (+20.000)</option>
-                    <option value="30000">Level 5 (+30.000)</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <output class="result result--after" id="afterResultBox" for="afterInput">
-              <div class="result__label">Kết quả</div>
-              <div class="result__value" id="afterResult">0.00</div>
-              <div class="result__hint">Tự động cập nhật</div>
-            </output>
-          </article>
-        </div>
+      <!-- Điều khiển swipe -->
+      <div class="slide-controls">
+        <button class="slide-arrow left">←</button>
+        <div class="slide-dots"><span class="dot active"></span><span class="dot"></span></div>
+        <button class="slide-arrow right">→</button>
       </div>
-    </section>
-
-    <!-- Chỉ báo + điều hướng (mobile) -->
-    <div class="slide-controls">
-      <button class="slide-arrow left">←</button>
-      <div class="slide-dots">
-        <span class="dot active"></span>
-        <span class="dot"></span>
-      </div>
-      <button class="slide-arrow right">→</button>
     </div>
 
-    <!-- Thông tin công thức (ngoài slide) -->
-    <section class="info container">
+    <!-- 🔹 Info KHÔNG swipe -->
+    <section class="cards container">
+      <article class="info">
       <h3>Thông tin công thức</h3>
       <ul class="info__list">
-        <li class="info__item">
-          <span class="dot dot--before" aria-hidden="true"></span>
-          <span><strong>Trước level 15:</strong> Giá trị × 105 ÷ 95</span>
-        </li>
-        <li class="info__item">
-          <span class="dot dot--after" aria-hidden="true"></span>
-          <span><strong>Sau level 15:</strong> Giá trị × 110 ÷ 95</span>
-        </li>
+        <li class="info__item"><span class="dot dot--before"></span> <strong>Trước level 15:</strong> Giá trị × 105 ÷ 95</li>
+        <li class="info__item"><span class="dot dot--after"></span> <strong>Sau level 15:</strong> Giá trị × 110 ÷ 95</li>
       </ul>
       <p class="info__note">Nhập số hoặc phép tính để xem kết quả ngay lập tức.</p>
+        </article>
     </section>
   </main>
 
   <footer class="site-footer container">
     <small>© 2025 TU TIÊN WEPLAY · 🌙 Bao Chửng</small>
   </footer>
-
   <script src="script.js" defer></script>
 </body>
 </html>
