@@ -552,10 +552,16 @@ if (form) {
   }
 
   // touch start
-  container.addEventListener("touchstart", (e) => {
-    startX = e.touches[0].clientX;
-    isDragging = true;
-  });
+container.addEventListener("touchstart", (e) => {
+  // Nếu chạm vào input, select, textarea, button → bỏ qua
+  if (e.target.closest("input, select, textarea, button")) {
+    isDragging = false;
+    return;
+  }
+  startX = e.touches[0].clientX;
+  isDragging = true;
+});
+
 
   // touch move
   container.addEventListener("touchmove", (e) => {
