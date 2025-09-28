@@ -425,12 +425,6 @@ document.querySelectorAll("input[name='sachheAfter']").forEach(radio => {
   let allowSwipe = false;
   const THRESHOLD = 50; // px để kích hoạt chuyển slide
 
-  // helper: nếu target nằm trong 1 control thì không cho swipe
-  function touchOnControl(target) {
-    if (!target) return false;
-    return !!target.closest("input, select, textarea, button, label, .field__wrapper");
-  }
-
   // set transform với animation
   function goTo(index, animate = true) {
     index = Math.max(0, Math.min(index, slides.length - 1));
@@ -449,19 +443,13 @@ document.querySelectorAll("input[name='sachheAfter']").forEach(radio => {
   document.querySelectorAll(".slide-dots .dot").forEach((dot, i) => dot.addEventListener("click", () => goTo(i)));
 
   // touchstart
-  container.addEventListener("touchstart", (e) => {
-    // nếu chạm vào control (input/select/btn/label/field__wrapper) => không kích hoạt swipe
-    if (touchOnControl(e.target)) {
-      isTouching = false;
-      allowSwipe = false;
-      return;
-    }
-    startX = e.touches[0].clientX;
-    currentX = startX;
-    isTouching = true;
-    allowSwipe = true;
-    container.style.transition = "none";
-  }, { passive: true });
+container.addEventListener("touchstart", (e) => {
+  startX = e.touches[0].clientX;
+  currentX = startX;
+  isTouching = true;
+  allowSwipe = true;
+  container.style.transition = "none";
+}, { passive: true });
 
   // touchmove
   container.addEventListener("touchmove", (e) => {
