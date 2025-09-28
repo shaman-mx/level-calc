@@ -533,14 +533,18 @@ if (form) {
 
   function updateSlide() {
     container.style.transform = `translateX(${-current * 100}%)`;
+
+    // cập nhật dot
+    const dots = document.querySelectorAll(".slide-dots .dot");
+    dots.forEach((d, i) => d.classList.toggle("active", i === current));
   }
 
-  // next/prev
   function nextSlide() {
     if (current < slides.length - 1) current++;
     else current = 0;
     updateSlide();
   }
+
   function prevSlide() {
     if (current > 0) current--;
     else current = slides.length - 1;
@@ -563,12 +567,14 @@ if (form) {
   container.addEventListener("touchend", () => {
     if (!isDragging) return;
     const deltaX = startX - currentX;
-    if (deltaX > 50) nextSlide(); // swipe trái
-    if (deltaX < -50) prevSlide(); // swipe phải
+    if (deltaX > 50) nextSlide();   // swipe trái
+    if (deltaX < -50) prevSlide();  // swipe phải
     isDragging = false;
   });
 
-  // init
+  // nút điều hướng
+  document.querySelector(".slide-arrow.left")?.addEventListener("click", prevSlide);
+  document.querySelector(".slide-arrow.right")?.addEventListener("click", nextSlide);
+
   updateSlide();
 })();
-
