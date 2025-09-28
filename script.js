@@ -251,10 +251,9 @@ function calcBefore() {
   const val = safeEval(expr);
   let res = (val * 105) / 95;
 
-  // Thiên thư + Sách hệ (Trước Lv15)
-  const thienThuValue = parseInt(document.getElementById("thienthu")?.value || 0, 10);
+  // Sách hệ (Trước Lv15)
   const sachHeValue   = parseInt(document.getElementById("sachhe")?.value || 0, 10);
-  res += thienThuValue + sachHeValue;
+  res += sachHeValue;
 
   if (beforeOut) beforeOut.textContent = fmt(res);
 }
@@ -264,10 +263,9 @@ function calcAfter() {
   const val = safeEval(expr);
   let res = (val * 110) / 95;
 
-  // Thiên thư + Sách hệ (Sau Lv15)
-  const thienThuAfter = parseInt(document.getElementById("thienthuAfter")?.value || 0, 10);
+  // Sách hệ (Sau Lv15)
   const sachHeAfter   = parseInt(document.getElementById("sachheAfter")?.value || 0, 10);
-  res += thienThuAfter + sachHeAfter;
+  res += sachHeAfter;
 
   if (afterOut) afterOut.textContent = fmt(res);
 }
@@ -277,7 +275,6 @@ function calcAfter() {
 // Trước Lv15
 beforeInput?.addEventListener("input", calcBefore);
 ["change","input"].forEach(ev => {
-  $("#thienthu")?.addEventListener(ev, calcBefore);
   $("#sachhe")?.addEventListener(ev, calcBefore);
 });
 clearBefore?.addEventListener("click", () => {
@@ -290,7 +287,6 @@ clearBefore?.addEventListener("click", () => {
 // Sau Lv15
 afterInput?.addEventListener("input", calcAfter);
 ["change","input"].forEach(ev => {
-  $("#thienthuAfter")?.addEventListener(ev, calcAfter);
   $("#sachheAfter")?.addEventListener(ev, calcAfter);
 });
 clearAfter?.addEventListener("click", () => {
