@@ -631,13 +631,11 @@ body.admin-page .btn-primary:hover {
 @media (max-width: 767px) {
   .slide-container {
     display: flex;
-    width: 200%; /* vì có 2 slide */
-    transition: transform 0.3s ease-in-out;
+    transition: transform 0.3s ease;
+    width: 200%; /* số slide × 100% */
   }
-
   .slide {
     flex: 0 0 100%;
-    display: block; /* luôn hiển thị, ẩn bằng translateX */
   }
 }
 
