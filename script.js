@@ -4,6 +4,18 @@
   // ===== Helpers =====
   const $ = (sel) => document.querySelector(sel);
   const root = document.documentElement;
+  const fmt = (n) => (Number.isFinite(n) ? n.toFixed(2) : "0.00");
+  const safeEval = (expr) => {
+    if (!/^[0-9+\-*/().\s]+$/.test(expr)) return NaN;
+    try { return new Function(`return (${expr})`)(); } catch { return NaN; }
+  };
+  const formatTime = (sec) => {
+    if (!sec || sec <= 0) return "—";
+    const h = Math.floor(sec / 3600);
+    const m = Math.floor((sec % 3600) / 60);
+    const s = Math.floor(sec % 60);
+    return `${h}h ${m}m ${s}s`;
+  };
 
   // ===== Elements (Calculator) =====
   const beforeInput = $("#beforeInput");
@@ -21,18 +33,17 @@
   const resetBtn = $("#resetBtn");
   const progressMessage = $("#progressMessage");
 
-  // Info box (may be absent in HTML — we handle nulls)
   const expCapacityEl = $("#expCapacity");
   const baseSpeedEl = $("#baseSpeed");
   const currentSpeedEl = $("#currentSpeed");
   const timeRequiredEl = $("#timeRequired");
   const timeRemainingEl = $("#timeRemaining");
   const customSpeedInput = $("#customSpeed");
-  const clearCustomSpeed = $("#clearCustomSpeed")
+  const clearCustomSpeed = $("#clearCustomSpeed");
 
   // Buff controls
   const suoiLinh = $("#suoiLinh");
-  const danTuLinh = $("#danTuLinh") || $("#dantulinh");
+  const danTuLinh = $("#danTuLinh");
   const thanchu = $("#thanchu");
   const thanMat = $("#thanMat");
   const chienDau = $("#chienDau");
@@ -88,58 +99,31 @@
     "14-sơ": { exp: 350360, rate: 30 },
     "14-trung": { exp: 356668, rate: 30 },
     "14-hậu": { exp: 363090, rate: 30 },
-	"15-trung": { exp: 376200, rate: 30 },
-	"15-hậu": { exp: 383055, rate: 30 },
-  };
-
-  // ===== Utils =====
-  const fmt = (n) => (Number.isFinite(n) ? n.toFixed(2) : "0.00");
-  const safeEval = (expr) => {
-    if (!/^[0-9+\-*/().\s]+$/.test(expr)) return NaN;
-    try { return new Function(`return (${expr})`)(); } catch { return NaN; }
-  };
-  const formatTime = (sec) => {
-    if (!sec || sec <= 0) return "—";
-    const h = Math.floor(sec / 3600);
-    const m = Math.floor((sec % 3600) / 60);
-    const s = Math.floor(sec % 60);
-    return `${h}h ${m}m ${s}s`;
+    "15-trung": { exp: 376200, rate: 30 },
+    "15-hậu": { exp: 383055, rate: 30 },
   };
 
   // ===== Speed with Buffs =====
   function getCurrentSpeed(baseSpeed) {
-    // Nếu có tốc độ tuỳ chỉnh → bỏ buff
     if (customSpeedInput && customSpeedInput.value !== "") {
       return parseFloat(customSpeedInput.value) || 0;
     }
-
     let buffPercent = 1;
-
     if (suoiLinh?.checked) buffPercent += 0.1;
     if (danTuLinh?.checked) buffPercent += 0.2;
     if (thanchu?.checked) buffPercent += 0.3;
     buffPercent += parseInt(thanMat?.value || 0, 10) * 0.05;
-
     const cd = parseInt(chienDau?.value || 0, 10);
     if (cd >= 1501) buffPercent += 0.15;
     else if (cd >= 1001) buffPercent += 0.07;
     else if (cd >= 501) buffPercent += 0.05;
     else if (cd >= 200) buffPercent += 0.03;
-
     const keBang = parseInt(keBangTam?.value || 0, 10);
     const extra = keBang > 0 ? Math.ceil(keBang / 2) : 0;
-
     const hmc = parseInt(huyenMinhCong?.value || 0, 10);
     buffPercent += hmc * 0.01;
-
     return baseSpeed * buffPercent + extra;
   }
-
-  // ===== Xoá tốc độ tuỳ chỉnh =====
-  clearCustomSpeed?.addEventListener("click", () => {
-    if (customSpeedInput) customSpeedInput.value = "";
-    updateCrystalInfo();
-  });
 
   // ===== Info box update =====
   function updateCrystalInfo() {
@@ -147,67 +131,42 @@
     const key = levelSelect.value;
     const data = crystalData[key];
     if (!data) return;
-
     const expCapacity = data.exp;
     const baseSpeed = data.rate;
     const currentSpeed = getCurrentSpeed(baseSpeed);
     const timeRequiredSec = currentSpeed > 0 ? expCapacity / currentSpeed : 0;
-
-    // Update only elements that exist in DOM (we support case when expCapacityEl is removed)
     if (expCapacityEl) expCapacityEl.textContent = expCapacity.toLocaleString();
     if (baseSpeedEl) baseSpeedEl.textContent = baseSpeed.toFixed(2);
     if (currentSpeedEl) currentSpeedEl.textContent = currentSpeed.toFixed(2);
     if (timeRequiredEl) timeRequiredEl.textContent = formatTime(timeRequiredSec);
-
     if (progress > 0 && currentSpeed > 0) {
       const expRemaining = expCapacity * (1 - progress / 100);
       if (timeRemainingEl) timeRemainingEl.textContent = formatTime(expRemaining / currentSpeed);
     } else {
       if (timeRemainingEl) timeRemainingEl.textContent = "—";
     }
-
-    // sync totalExp so updateProgressUI can display current/capacity
     totalExp = expCapacity;
   }
 
   // ===== Progress simulation & UI =====
-function updateProgressUI() {
-  if (!progressBar || !progressText) return;
-
-  // clamp progress
-  const p = Math.max(0, Math.min(100, progress));
-  progressBar.style.width = `${p}%`;
-
-  // determine capacity and current EXP
-  const capacity = totalExp || 0;
-  const currentExp = Math.round((p / 100) * capacity);
-
-  // build display strings
-  const capDisplay = capacity ? capacity.toLocaleString() : "—";
-  const curDisplay = capacity ? currentExp.toLocaleString() : "—";
-  const pctDisplay = `${p >= 99.5 ? 100 : Math.floor(p)}%`;
-
-  // đặt nội dung text
-  progressText.textContent = `(${curDisplay}/${capDisplay} – ${pctDisplay})`;
-}
-
-
-  // Recalculate text on resize to keep it placed correctly
-  let resizeTimer = null;
-  window.addEventListener("resize", () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(updateProgressUI, 80);
-  });
+  function updateProgressUI() {
+    if (!progressBar || !progressText) return;
+    const p = Math.max(0, Math.min(100, progress));
+    progressBar.style.width = `${p}%`;
+    const capacity = totalExp || 0;
+    const currentExp = Math.round((p / 100) * capacity);
+    const capDisplay = capacity ? capacity.toLocaleString() : "—";
+    const curDisplay = capacity ? currentExp.toLocaleString() : "—";
+    const pctDisplay = `${p >= 99.5 ? 100 : Math.floor(p)}%`;
+    progressText.textContent = `(${curDisplay}/${capDisplay} – ${pctDisplay})`;
+  }
 
   function startProgress() {
     if (timer) cancelAnimationFrame(timer);
-
     if (!levelSelect || !progressBar || !progressText) return;
-
     const key = levelSelect.value;
     const data = crystalData[key];
     if (!data) return;
-
     totalExp = data.exp;
     progress = 0;
     updateProgressUI();
@@ -215,16 +174,12 @@ function updateProgressUI() {
       progressMessage.textContent = "";
       progressMessage.classList.remove("danger-glow");
     }
-
     let lastTime = performance.now();
-
     function animate(now) {
       const delta = (now - lastTime) / 1000;
       lastTime = now;
-
       expPerSecond = getCurrentSpeed(data.rate);
       progress += (expPerSecond / totalExp) * 100 * delta;
-
       if (progress >= 100) {
         progress = 100;
         updateProgressUI();
@@ -236,60 +191,35 @@ function updateProgressUI() {
         timer = null;
         return;
       }
-
       updateProgressUI();
       updateCrystalInfo();
       timer = requestAnimationFrame(animate);
     }
-
     timer = requestAnimationFrame(animate);
   }
 
-// ===== Calculator (before/after Lv15) =====
-function calcBefore() {
-  const expr = (beforeInput?.value || "").replace(",", ".");
-  const val = safeEval(expr);
-  let res = (val * 105) / 95;
+  // ===== Calculator (before/after Lv15) =====
+  function calcBefore() {
+    const expr = (beforeInput?.value || "").replace(",", ".");
+    const val = safeEval(expr);
+    let res = (val * 105) / 95;
+    const selected = document.querySelector("input[name='sachhe']:checked");
+    const sachHeValue = selected ? parseInt(selected.value, 10) : 0;
+    res += sachHeValue;
+    if (beforeOut) beforeOut.textContent = fmt(res);
+  }
 
-  // Sách hệ (Trước Lv15)
-  const selected = document.querySelector("input[name='sachhe']:checked");
-  const sachHeValue = selected ? parseInt(selected.value, 10) : 0;
-  res += sachHeValue;
+  function calcAfter() {
+    const expr = (afterInput?.value || "").replace(",", ".");
+    const val = safeEval(expr);
+    let res = (val * 110) / 95;
+    const selected = document.querySelector("input[name='sachheAfter']:checked");
+    const sachHeValue = selected ? parseInt(selected.value, 10) : 0;
+    res += sachHeValue;
+    if (afterOut) afterOut.textContent = fmt(res);
+  }
 
-  if (beforeOut) beforeOut.textContent = fmt(res);
-}
-
-function calcAfter() {
-  const expr = (afterInput?.value || "").replace(",", ".");
-  const val = safeEval(expr);
-  let res = (val * 110) / 95;
-
-  // Sách hệ (Sau Lv15)
-  const selected = document.querySelector("input[name='sachheAfter']:checked");
-  const sachHeValue = selected ? parseInt(selected.value, 10) : 0;
-  res += sachHeValue;
-
-  if (afterOut) afterOut.textContent = fmt(res);
-}
-
-// ===== Event listeners =====
-
-// Trước Lv15
-beforeInput?.addEventListener("input", calcBefore);
-document.querySelectorAll("input[name='sachhe']").forEach(radio => {
-  radio.addEventListener("change", calcBefore);
-});
-
-// Sau Lv15
-afterInput?.addEventListener("input", calcAfter);
-document.querySelectorAll("input[name='sachheAfter']").forEach(radio => {
-  radio.addEventListener("change", calcAfter);
-});
-
-
-
-
-  // ===== Theme (single, stable) =====
+  // ===== Theme =====
   function setTheme(theme) {
     root.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
@@ -305,198 +235,147 @@ document.querySelectorAll("input[name='sachheAfter']").forEach(radio => {
     });
   })();
 
-  // ===== Choices table =====
-  const choicesData = [
-    { option1: { text: "Ăn quả", reward: "Tăng tu vi", danger: false }, option2: { text: "Uống nước từ suối", reward: "Tăng tu vi", danger: false } },
-    { option1: { text: "Bí mật điều tra", reward: "Thư thách đấu", danger: false }, option2: { text: "Tấn công trực diện", reward: "Không có gì", danger: true } },
-    { option1: { text: "Chiến đấu", reward: "Thư thách đấu", danger: false }, option2: { text: "Ngưỡng mộ", reward: "Tăng tu vi", danger: false } },
-    { option1: { text: "Cùng nhau khám phá", reward: "Trừ tu vi", danger: true }, option2: { text: "Tự khám phá", reward: "Đan vàng", danger: false } },
-    { option1: { text: "Cứu chữa", reward: "Đan xanh", danger: false }, option2: { text: "Rời đi", reward: "Trừ tu vi", danger: true } },
-    { option1: { text: "Đá thần", reward: "Tăng tu vi", danger: false }, option2: { text: "Đá hiếm", reward: "Tăng tu vi", danger: false } },
-    { option1: { text: "Đánh nhau với người đó", reward: "Đan xanh", danger: false }, option2: { text: "Cho lời khuyên", reward: "Tăng tu vi", danger: false } },
-    { option1: { text: "Đi đến hồ đen", reward: "Trừ tu vi", danger: true }, option2: { text: "Đi đến thôn hoa sen", reward: "Đan xanh", danger: false } },
-    { option1: { text: "Đi sang trái", reward: "Trừ tu vi", danger: true }, option2: { text: "Đi sang phải", reward: "Thư thách đấu", danger: false } },
-    { option1: { text: "Đi trên thuyền", reward: "Đan xanh", danger: false }, option2: { text: "Bay trên kiếm", reward: "Thư thách đấu", danger: false } },
-    { option1: { text: "Đi vào ban đêm", reward: "Đan vàng", danger: false }, option2: { text: "Đi vào ban ngày", reward: "Không có gì", danger: true } },
-    { option1: { text: "Đồng ý", reward: "Tăng tu vi", danger: false }, option2: { text: "Từ chối", reward: "Tăng tu vi", danger: false } },
-    { option1: { text: "Dũng cảm dựa vào", reward: "Tăng tu vi", danger: false }, option2: { text: "Đi nấp", reward: "Không có gì", danger: true } },
-    { option1: { text: "Khai thác bề mặt", reward: "Tăng tu vi", danger: false }, option2: { text: "Khai thác sâu", reward: "Không có gì", danger: true } },
-    { option1: { text: "Lương thiện", reward: "Tăng tu vi", danger: false }, option2: { text: "Lớn mạnh", reward: "Đan vàng", danger: false } },
-    { option1: { text: "Tặng thuốc", reward: "Đan xanh", danger: false }, option2: { text: "Cứu chữa", reward: "Đan vàng", danger: false } },
-    { option1: { text: "Tiên thảo", reward: "Tăng tu vi", danger: false }, option2: { text: "Đan dược", reward: "Đan xanh", danger: false } },
-    { option1: { text: "Trợ giúp chim loan", reward: "Đan xanh", danger: false }, option2: { text: "Trợ giúp chuột vàng", reward: "Đan vàng", danger: false } },
-    { option1: { text: "Tưới vườn thuốc", reward: "Tăng tu vi", danger: false }, option2: { text: "Luyện đan", reward: "Đan xanh", danger: false } },
-  ];
-  (function buildChoices() {
-    const choicesBody = document.getElementById("choicesBody");
-    if (!choicesBody) return;
-    choicesBody.innerHTML = "";
-    choicesData.forEach((q) => {
-      const row = document.createElement("tr");
-      const td1 = document.createElement("td");
-      td1.innerHTML = `<div class="choice ${q.option1.danger ? "danger" : ""}">
-        <span>${q.option1.text}</span><span class="reward">(${q.option1.reward})</span></div>`;
-      const td2 = document.createElement("td");
-      td2.innerHTML = `<div class="choice ${q.option2.danger ? "danger" : ""}">
-        <span>${q.option2.text}</span><span class="reward">(${q.option2.reward})</span></div>`;
-      row.append(td1, td2);
-      choicesBody.appendChild(row);
-    });
-  })();
+  // ===== Swipe slides + swipe button =====
+  (function () {
+    const container = document.querySelector(".slide-container");
+    if (!container) return;
+    const slides = container.querySelectorAll(".slide");
+    if (slides.length <= 1) return;
+    let currentIndex = 0;
+    let startX = 0;
+    let currentX = 0;
+    let isTouching = false;
+    const THRESHOLD = 60;
+    container.style.touchAction = "pan-y";
 
-  // ===== Nav buttons =====
-  (function addNavButtons() {
-    const main = document.querySelector("main");
-    if (!main) return;
-    const currentPage = window.location.pathname.split("/").pop();
-    const wrapper = document.createElement("div");
-    wrapper.className = "exp-link-wrapper";
-    const buttons = [
-      { href: "index.html", label: "🏠 Trang chính", class: "exp-btn back" },
-      { href: "exp.html", label: "📄 Bảng EXP", class: "exp-btn" },
-      { href: "choices.html", label: "❓ Câu hỏi", class: "exp-btn alt" },
-      { href: "crystal.html", label: "🔮 Mô phỏng tinh thể", class: "exp-btn" },
-    ];
-    buttons.forEach((b) => {
-      if (b.href === currentPage) return;
-      const a = document.createElement("a");
-      a.href = b.href; a.textContent = b.label; a.className = b.class;
-      wrapper.appendChild(a);
+function goTo(index, animate = true) {
+  index = Math.max(0, Math.min(index, slides.length - 1));
+  currentIndex = index;
+  container.style.transition = animate ? "transform 0.3s ease" : "none";
+  container.style.transform = `translateX(-${currentIndex * 100}%)`;
+
+  // cập nhật dot
+  const dots = document.querySelectorAll(".slide-dots .dot");
+  dots.forEach((d, i) => d.classList.toggle("active", i === currentIndex));
+
+  // ✅ đồng bộ swipe button
+  const swipeBtn = document.getElementById("swipeBtn");
+  if (swipeBtn) {
+    const thumb = swipeBtn.querySelector(".swipe-thumb");
+    const maxX = swipeBtn.offsetWidth - thumb.offsetWidth;
+    thumb.style.transition = "left 0.25s ease";
+    thumb.style.left = (currentIndex === 0 ? "0px" : maxX + "px");
+    // ✅ cập nhật text và vị trí
+    const swipeText = swipeBtn.querySelector("#swipeText");
+    if (swipeText) {
+      if (currentIndex === 0) {
+        swipeText.textContent = "SAU LEVEL 15 >";
+        swipeText.classList.remove("left");
+        swipeText.classList.add("right");
+      } else {
+        swipeText.textContent = "< TRƯỚC LEVEL 15";
+        swipeText.classList.remove("right");
+        swipeText.classList.add("left");
+      }
+    }
+  }
+}
+
+
+
+    // swipe container
+    container.addEventListener("pointerdown", (e) => {
+      isTouching = true;
+      startX = e.clientX;
+      currentX = startX;
+      container.style.transition = "none";
     });
-    main.appendChild(wrapper);
+    container.addEventListener("pointermove", (e) => {
+      if (!isTouching) return; 
+      currentX = e.clientX;
+      const dx = currentX - startX;
+      container.style.transform = `translateX(calc(${-currentIndex * 100}% + ${dx}px))`;
+    });
+    container.addEventListener("pointerup", () => {
+      if (!isTouching) return;
+      const dx = currentX - startX;
+      isTouching = false;
+      if (dx > THRESHOLD && currentIndex > 0) goTo(currentIndex - 1, true);
+      else if (dx < -THRESHOLD && currentIndex < slides.length - 1) goTo(currentIndex + 1, true);
+      else goTo(currentIndex, true);
+    });
+
+    // dots
+    document.querySelectorAll(".slide-dots .dot").forEach((dot, i) => dot.addEventListener("click", () => goTo(i)));
+
+    // swipe button
+    const swipeBtn = document.getElementById("swipeBtn");
+    if (swipeBtn) {
+      const thumb = swipeBtn.querySelector(".swipe-thumb");
+      let dragging = false;
+      let startThumbX = 0;
+      thumb.addEventListener("pointerdown", (e) => {
+        dragging = true;
+        startThumbX = e.clientX - thumb.offsetLeft;
+        thumb.style.transition = "none";
+      });
+      document.addEventListener("pointermove", (e) => {
+        if (!dragging) return;
+        let x = e.clientX - startThumbX;
+        const maxX = swipeBtn.offsetWidth - thumb.offsetWidth;
+        if (x < 0) x = 0;
+        if (x > maxX) x = maxX;
+        thumb.style.left = x + "px";
+      });
+document.addEventListener("pointerup", () => {
+  if (!dragging) return;
+  dragging = false;
+  const maxX = swipeBtn.offsetWidth - thumb.offsetWidth;
+
+// Nếu đang ở Before và kéo sang phải đủ xa -> sang After
+if (currentIndex === 0 && thumb.offsetLeft >= maxX - 10) {
+  goTo(1, true);
+  thumb.style.transition = "left 0.2s ease";
+  thumb.style.left = maxX + "px"; // 👉 đổi từ "0px" thành maxX
+}
+// Nếu đang ở After và kéo sang trái (gần 0) -> quay về Before
+else if (currentIndex === 1 && thumb.offsetLeft <= 10) {
+  goTo(0, true);
+  thumb.style.transition = "left 0.2s ease";
+  thumb.style.left = "0px";
+}
+// Nếu chưa đủ xa thì reset thumb
+else {
+  thumb.style.transition = "left 0.2s ease";
+  thumb.style.left = currentIndex === 0 ? "0px" : maxX + "px";
+}
+});
+
+
+    }
+
+    goTo(0, false);
   })();
 
   // ===== Events =====
+  beforeInput?.addEventListener("input", calcBefore);
+  document.querySelectorAll("input[name='sachhe']").forEach(r => r.addEventListener("change", calcBefore));
+  afterInput?.addEventListener("input", calcAfter);
+  document.querySelectorAll("input[name='sachheAfter']").forEach(r => r.addEventListener("change", calcAfter));
+  clearBefore?.addEventListener("click", () => { if (beforeInput) { beforeInput.value = ""; calcBefore(); } });
+  clearAfter?.addEventListener("click", () => { if (afterInput) { afterInput.value = ""; calcAfter(); } });
+
   levelSelect?.addEventListener("change", startProgress);
-  levelSelect?.addEventListener("click", startProgress);
   resetBtn?.addEventListener("click", startProgress);
-
-  // When buffs change update info
   [levelSelect, suoiLinh, danTuLinh, thanchu, thanMat, chienDau, keBangTam, huyenMinhCong].forEach(el => {
-    if (el) el.addEventListener("change", () => {
-      updateCrystalInfo();
-      const key = levelSelect.value;
-      if (crystalData[key]) {
-        expPerSecond = getCurrentSpeed(crystalData[key].rate);
-      }
-    });
+    if (el) el.addEventListener("change", updateCrystalInfo);
   });
+  customSpeedInput?.addEventListener("input", () => updateCrystalInfo());
+  clearCustomSpeed?.addEventListener("click", () => { if (customSpeedInput) customSpeedInput.value = ""; updateCrystalInfo(); });
 
-  // custom speed input behavior
-  customSpeedInput?.addEventListener("input", () => {
-    const val = parseFloat(customSpeedInput.value);
-    if (!isNaN(val) && val >= 0 && customSpeedInput.value !== "") {
-      // Reset buffs to default to avoid confusion
-      if (suoiLinh) suoiLinh.checked = false;
-      if (danTuLinh) danTuLinh.checked = false;
-      if (thanchu) thanchu.checked = false;
-      if (thanMat) thanMat.value = "0";
-      if (chienDau) chienDau.value = "0";
-      if (keBangTam) keBangTam.value = "0";
-      if (huyenMinhCong) huyenMinhCong.value = "0";
-    }
-    updateCrystalInfo();
-  });
-
-  // clear custom speed handler (defensive)
-  clearCustomSpeed?.addEventListener("click", () => {
-    if (customSpeedInput) customSpeedInput.value = "";
-    updateCrystalInfo();
-  });
-
-  // ===== Init =====
+  // init
   updateCrystalInfo();
   startProgress();
   calcBefore();
   calcAfter();
 })();
-
-// ===== Swipe an toàn cho mobile: chặn swipe khi chạm vào form control =====
-(function () {
-  const container = document.querySelector(".slide-container");
-  if (!container) return;
-  const slides = container.querySelectorAll(".slide");
-  if (!slides || slides.length <= 1) return;
-
-  let currentIndex = 0;
-  let startX = 0;
-  let currentX = 0;
-  let isTouching = false;
-  let allowSwipe = false;
-  const THRESHOLD = 50; // px để kích hoạt chuyển slide
-
-  // set transform với animation
-  function goTo(index, animate = true) {
-    index = Math.max(0, Math.min(index, slides.length - 1));
-    currentIndex = index;
-    container.style.transition = animate ? "transform 0.3s ease" : "none";
-    container.style.transform = `translateX(-${currentIndex * 100}%)`;
-    // cập nhật dots nếu có
-    const dots = document.querySelectorAll(".slide-dots .dot");
-    dots.forEach((d, i) => d.classList.toggle("active", i === currentIndex));
-  }
-
-  // nút mũi tên (nếu có)
-  document.querySelector(".slide-arrow.left")?.addEventListener("click", () => goTo(currentIndex - 1));
-  document.querySelector(".slide-arrow.right")?.addEventListener("click", () => goTo(currentIndex + 1));
-  // chấm tròn click
-  document.querySelectorAll(".slide-dots .dot").forEach((dot, i) => dot.addEventListener("click", () => goTo(i)));
-
-  // touchstart
-container.addEventListener("touchstart", (e) => {
-  startX = e.touches[0].clientX;
-  currentX = startX;
-  isTouching = true;
-  allowSwipe = true;
-  container.style.transition = "none";
-}, { passive: true });
-
-  // touchmove
-  container.addEventListener("touchmove", (e) => {
-    if (!isTouching || !allowSwipe) return;
-    currentX = e.touches[0].clientX;
-    const dx = currentX - startX;
-    // kéo theo dx (tính bằng px) để thấy preview
-    container.style.transform = `translateX(calc(${-currentIndex * 100}% + ${dx}px))`;
-  }, { passive: true });
-
-  // touchend / touchcancel
-  container.addEventListener("touchend", (e) => {
-    if (!isTouching) return;
-    const dx = currentX - startX;
-    isTouching = false;
-    allowSwipe = false;
-    // chuyển slide nếu vượt ngưỡng
-    if (dx > THRESHOLD && currentIndex > 0) {
-      goTo(currentIndex - 1, true);
-    } else if (dx < -THRESHOLD && currentIndex < slides.length - 1) {
-      goTo(currentIndex + 1, true);
-    } else {
-      // trở về vị trí cũ
-      goTo(currentIndex, true);
-    }
-  }, { passive: true });
-
-  // khóa ngang không cho ra ngoài (nếu bạn muốn vòng thì bỏ logic dưới)
-  // hiện goTo(0) là đủ khi khởi tạo:
-  goTo(0, false);
-})();
-
-// ===== Clear input =====
-clearBefore?.addEventListener("click", () => {
-  if (beforeInput) {
-    beforeInput.value = "";
-    calcBefore(); // cập nhật kết quả về 0
-  }
-});
-
-clearAfter?.addEventListener("click", () => {
-  if (afterInput) {
-    afterInput.value = "";
-    calcAfter(); // cập nhật kết quả về 0
-  }
-});
-
-
-
-
