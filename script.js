@@ -379,3 +379,24 @@ else {
   calcBefore();
   calcAfter();
 })();
+// ===== Nav buttons =====
+  (function addNavButtons() {
+    const main = document.querySelector("main");
+    if (!main) return;
+    const currentPage = window.location.pathname.split("/").pop();
+    const wrapper = document.createElement("div");
+    wrapper.className = "exp-link-wrapper";
+    const buttons = [
+      { href: "index.html", label: "🏠 Trang chính", class: "exp-btn back" },
+      { href: "exp.html", label: "📄 Bảng EXP", class: "exp-btn" },
+      { href: "choices.html", label: "❓ Câu hỏi", class: "exp-btn alt" },
+      { href: "crystal.html", label: "🔮 Mô phỏng tinh thể", class: "exp-btn" },
+    ];
+    buttons.forEach((b) => {
+      if (b.href === currentPage) return;
+      const a = document.createElement("a");
+      a.href = b.href; a.textContent = b.label; a.className = b.class;
+      wrapper.appendChild(a);
+    });
+    main.appendChild(wrapper);
+  })();
