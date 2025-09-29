@@ -601,3 +601,71 @@ html[data-theme="dark"] .reset-btn:hover {
   }
 }
 
+/* ========== Swipe button responsive theo theme ========== */
+.swipe-button {
+  position: relative;
+  width: 220px;
+  height: 20px;
+  background: var(--muted);       /* nền track đổi theo theme */
+  border-radius: 999px;
+  margin: 12px auto;
+  overflow: visible;
+  display: none; /* PC ẩn */
+}
+
+.swipe-thumb {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  background: var(--card);        /* tròn theo màu card (sáng = trắng, tối = xanh đậm) */
+  border: 1px solid var(--muted); 
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  transform: translateY(-50%);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  z-index: 2;
+  user-select: none;
+  -webkit-user-drag: none;
+  touch-action: none;
+}
+
+/* SVG icon trong thumb */
+.swipe-thumb .swipe-icon {
+  width: 25px;
+  height: 25px;
+  fill: var(--muted); 
+  pointer-events: none;
+}
+
+/* Chữ nhắc hướng swipe */
+.swipe-text {
+  position: absolute;
+  top: 48%;
+  transform: translateY(-50%);
+  font-weight: 600;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 1;
+  color: var(--bg);               /* chữ nổi trên nền muted */
+  transition: opacity .2s;
+}
+
+.swipe-text.right {
+  right: 20px;
+  text-align: right;
+}
+.swipe-text.left {
+  left: 20px;
+  text-align: left;
+}
+
+/* Mobile hiển thị */
+@media (max-width: 767px) {
+  .swipe-button { display: block; }
+}
