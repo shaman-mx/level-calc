@@ -400,6 +400,7 @@ else {
     { option1: { text: "Tiên thảo", reward: "Tăng tu vi", danger: false }, option2: { text: "Đan dược", reward: "Đan xanh", danger: false } },
     { option1: { text: "Trợ giúp chim loan", reward: "Đan xanh", danger: false }, option2: { text: "Trợ giúp chuột vàng", reward: "Đan vàng", danger: false } },
     { option1: { text: "Tưới vườn thuốc", reward: "Tăng tu vi", danger: false }, option2: { text: "Luyện đan", reward: "Đan xanh", danger: false } },
+    { option1: { text: "Đi bên trái", reward: "Trừ tu vi", danger: true }, option2: { text: "Đi bên phải", reward: "Đan xanh", danger: false } },
   ];
   (function buildChoices() {
     const choicesBody = document.getElementById("choicesBody");
