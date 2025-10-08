@@ -43,7 +43,7 @@ body{
 
 /* Container keeps PC width as canonical, but fluid */
 .container{
-  width: min(var(--content-max), 94vw);
+  width: min(var(--content-max), 100vw);
   margin-inline:auto;
   padding: calc(var(--gutter) * 1);
 }
@@ -168,7 +168,15 @@ html[data-theme="dark"] .reward{color:#4ade80}
 .choice.danger span,.choice.danger .reward{color:#ef4444!important;font-weight:600}
 
 /* Links/buttons */
-.exp-link-wrapper{display:flex;justify-content:center;gap:16px;margin:24px 0;flex-wrap:wrap}
+.exp-link-wrapper{
+  display: flex;
+  justify-content: center;
+  align-items: center;     /* ✅ căn giữa theo chiều dọc */
+  gap: 12px;
+  margin: 24px 0;
+  flex-wrap: wrap;
+  text-align: center;      /* ✅ giúp khi wrap xuống vẫn nằm giữa */
+}
 .exp-btn{display:inline-block;padding:10px 20px;font-size:1rem;font-weight:600;border-radius:10px;text-decoration:none;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.12);transition:all .2s}
 .exp-btn{background:var(--brand-blue)}
 .exp-btn:hover{background:#1d4ed8;transform:translateY(-2px)}
@@ -600,72 +608,97 @@ html[data-theme="dark"] .reset-btn:hover {
     padding: 6px 3px;
   }
 }
-
-/* ========== Swipe button responsive theo theme ========== */
-.swipe-button {
-  position: relative;
-  width: 220px;
-  height: 20px;
-  background: var(--muted);       /* nền track đổi theo theme */
-  border-radius: 999px;
-  margin: 12px auto;
-  overflow: visible;
-  display: none; /* PC ẩn */
-}
-
-.swipe-thumb {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  width: 40px;
-  height: 40px;
-  background: var(--card);        /* tròn theo màu card (sáng = trắng, tối = xanh đậm) */
-  border: 1px solid var(--muted); 
-  border-radius: 50%;
+/* ========== OUT PAGE FIXED RESPONSIVE ========== */
+.out-fields {
   display: flex;
-  align-items: center;
   justify-content: center;
-  cursor: grab;
-  transform: translateY(-50%);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-  z-index: 2;
-  user-select: none;
-  -webkit-user-drag: none;
-  touch-action: none;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;       /* ✅ Cho phép xuống hàng khi hẹp */
+  width: 100%;
+  overflow-x: hidden;    /* ✅ Ngăn tràn ngang */
+  box-sizing: border-box;
 }
 
-/* SVG icon trong thumb */
-.swipe-thumb .swipe-icon {
-  width: 25px;
-  height: 25px;
-  fill: var(--muted); 
-  pointer-events: none;
+.out-col {
+  flex: 1 1 45%;
+  min-width: 150px;      /* ✅ Giới hạn nhỏ hơn để vừa mobile */
 }
 
-/* Chữ nhắc hướng swipe */
-.swipe-text {
-  position: absolute;
-  top: 48%;
-  transform: translateY(-50%);
+@media (max-width: 480px) {
+  .out-fields {
+    gap: 10px;
+    justify-content: space-between;
+  }
+
+  .out-col {
+    flex: 1 1 48%;       /* ✅ hai ô vẫn nằm cạnh nhau, chia đều màn hình nhỏ */
+    min-width: 0;        /* ✅ tránh overflow */
+  }
+
+  .field__input {
+    font-size: 0.9rem;
+    padding: 10px;
+  }
+}
+/* ✅ Chỉ áp dụng cho out.html */
+.page-out body {
+  font-size: clamp(8px, 2.5vw, 18px); /* min 12px, max 18px, tự động scale giữa */
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+}
+/* ==== Full-page responsive text scaling for out.html ==== */
+.page-out {
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+}
+
+/* Toàn bộ body scale theo viewport width */
+.page-out body {
+  font-size: calc(10px + 0.8vw); /* chữ co giãn toàn trang */
+  line-height: 1.4;
+}
+
+/* Giữ tỉ lệ lớn hơn cho tiêu đề */
+.page-out h1, 
+.page-out h2 {
+  font-size: calc(10px + 1.2vw);
+  line-height: 1.2;
+}
+
+/* Label và input scale theo body */
+.page-out .field__label,
+.page-out .field__input,
+.page-out .result__label,
+.page-out .result__hint {
+  font-size: calc(8px + 0.6vw);
+}
+
+/* Kết quả chính to hơn, vẫn scale */
+.page-out .result__value {
+  font-size: calc(14px + 1.5vw);
   font-weight: 600;
-  font-size: 0.9rem;
-  white-space: nowrap;
-  pointer-events: none;
-  z-index: 1;
-  color: var(--bg);               /* chữ nổi trên nền muted */
-  transition: opacity .2s;
+}
+/* ==== Giảm chiều cao menu Trận Địa chỉ trong out.html ==== */
+.page-out select.field__input {
+  padding: 6px 10px;          /* giảm padding để dropdown thấp hơn */
+  height: auto;               /* tự co chiều cao */
+  line-height: 1.3;           /* giúp chữ cân đối */
 }
 
-.swipe-text.right {
-  right: 20px;
-  text-align: right;
+/* Mobile: nhỏ gọn hơn nữa */
+@media (max-width: 480px) {
+  .page-out select.field__input {
+    padding: 5px 8px;
+  }
 }
-.swipe-text.left {
-  left: 20px;
-  text-align: left;
+/* ==== Giảm hoặc bỏ gap riêng cho out.html ==== */
+.page-out .field {
+  margin-block: 4px;   /* giảm khoảng cách trên dưới */
+  gap: 2px;            /* giảm khoảng cách label - input */
 }
 
-/* Mobile hiển thị */
-@media (max-width: 767px) {
-  .swipe-button { display: block; }
+/* Nếu muốn bỏ hoàn toàn khoảng cách giữa các field */
+.page-out .field + .field {
+  margin-top: 0;       /* bỏ khoảng cách giữa các field liền kề */
 }
