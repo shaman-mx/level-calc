@@ -715,124 +715,112 @@ html[data-theme="dark"] .reset-btn:hover {
   margin-top: 0;       /* bỏ khoảng cách giữa các field liền kề */
 }
 /* ==== SWIPE BUTTON (MOBILE/PC) ==== */
-/* Vùng chứa swipe */
-.swipe-button {
-  position: relative;
-  width: 230px;
-  height: 46px;
-  margin: 16px auto;
-  border-radius: 999px;
-  background: var(--card);
-  border: 2px solid var(--brand-blue);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;         /* rất quan trọng để thumb không tràn */
-  cursor: pointer;
-  user-select: none;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-  transition: background 0.25s ease, transform 0.2s ease;
-}
-
-/* Thumb di chuyển tự do */
-.swipe-thumb {
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 40px;
-  height: 40px;
-  background: var(--brand-blue);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2;
-  cursor: grab;
-  transition: background 0.25s ease;
-}
-
-/* Khi trượt sang phải – cho phép thumb chạm gần sát mép */
-.swipe-button.active .swipe-thumb {
-  left: calc(100% - 43px - 3px); /* dịch hết cỡ trừ viền */
-  background: var(--brand-green);
-}
-
-/* Nếu vẫn chưa trượt hết, có thể tăng thêm khoảng trừ */
-@media (max-width: 600px) {
-  .swipe-button.active .swipe-thumb {
-    left: calc(100% - 37px - 3px);
-  }
-}
-transition: left 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-/* ===== Swipe button styles (paste ở cuối styles.css) ===== */
-.slide-controls { position: relative; z-index: 30; display:flex; gap:12px; align-items:center; justify-content:center; }
-
 /* Swipe button bao (vùng nhấn) */
 .swipe-button, #swipeBtn {
   position: relative;
   width: 230px;
   height: 46px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.12); /* nền sáng nhẹ */
-  border: 1.5px solid rgba(120, 120, 120, 0.3); /* viền xám mờ */
+  background: rgba(255, 255, 255, 0.12); /* nền kính mờ */
+  border: 1.5px solid rgba(120, 120, 120, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: visible;
+  overflow: hidden;
   cursor: pointer;
   user-select: none;
   box-shadow: 0 4px 12px rgba(0,0,0,0.06);
   z-index: 30;
   touch-action: none;
-  backdrop-filter: blur(6px); /* kính mờ nhẹ */
+  backdrop-filter: blur(6px);
+  transition: background 0.3s ease;
 }
 
 /* Thumb (quả cầu) */
 .swipe-thumb {
   position: absolute;
   top: 50%;
-  left: 3px; /* cách lề trái */
+  left: 3px;
   transform: translateY(-50%);
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: rgba(100,100,100,0.7); /* xám trung tính */
-  border: 2px solid rgba(255,255,255,0.3);
-  opacity: 0.9;
+  background: rgba(16,185,129,0.8); /* xanh ngọc mờ mặc định */
+  border: 2px solid rgba(255,255,255,0.4);
+  opacity: 0.95;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 40;
-  transition: left 0.22s cubic-bezier(.22,1,.36,1), background .18s ease, opacity .25s ease;
+  transition: left 0.22s cubic-bezier(.22,1,.36,1), background 0.25s ease, opacity 0.25s ease;
   touch-action: none;
+  backdrop-filter: blur(4px);
 }
 
 /* Icon bên trong thumb */
 .swipe-thumb .swipe-icon {
   width: 22px;
   height: 22px;
-  fill: #f9fafb; /* gần trắng */
-  opacity: 0.85;
+  fill: #ffffff;
+  opacity: 0.9;
   pointer-events: none;
   transition: fill 0.3s ease, opacity 0.3s ease;
 }
 
-/* Khi active (thumb ở cuối) */
+/* Text bên cạnh thumb */
+.swipe-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: #f9fafb;
+  padding-left: 50px;
+  transition: color 0.3s ease;
+}
+.swipe-text.left {
+  padding-left: 0;
+  padding-right: 50px;
+  text-align: right;
+}
+/* Trạng thái mặc định (chưa active) */
+.swipe-button,
+#swipeBtn {
+  background: linear-gradient(to left, rgba(16,185,129,0.25), rgba(16,185,129,0.1));
+  border: 1.5px solid rgba(255,255,255,0.1);
+  transition: background 0.3s ease, border 0.3s ease;
+}
+/* Khi active (thumb ở cuối + nền chuyển màu) */
+.swipe-button.active,
+#swipeBtn.active {
+  background: linear-gradient(to right, rgba(59,130,246,0.25), rgba(59,130,246,0.1)); /* nền chuyển xanh dương */
+}
+
 .swipe-button.active .swipe-thumb,
 #swipeBtn.active .swipe-thumb {
-  left: calc(100% - 40px - 3px); /* cách lề phải */
-  background: rgba(88, 199, 158, 0.85); /* xanh ngọc nhẹ */
+  left: calc(100% - 40px - 3px);
+  background: rgba(59,130,246,0.85); /* xanh dương */
   border-color: rgba(255,255,255,0.4);
-  box-shadow: 0 0 12px rgba(88,199,158,0.5);
+  box-shadow: 0 0 12px rgba(59,130,246,0.5);
   opacity: 1;
 }
 
 /* Dark mode */
-html[data-theme="dark"] .swipe-button, html[data-theme="dark"] #swipeBtn {
-  background: rgba(30,30,30,0.4);
-  border-color: rgba(80,80,80,0.4);
+html[data-theme="dark"] .swipe-button,
+html[data-theme="dark"] #swipeBtn {
+  background: linear-gradient(to right, rgba(16,185,129,0.18), rgba(16,185,129,0.08)); /* xanh ngọc mờ hơn */
+  border-color: rgba(100,100,100,0.3);
+  transition: background 0.4s ease-in-out, border 0.3s ease;
+}
+html[data-theme="dark"] .swipe-button.active,
+html[data-theme="dark"] #swipeBtn.active {
+  background: linear-gradient(to right, rgba(59,130,246,0.3), rgba(59,130,246,0.15));
 }
 html[data-theme="dark"] .swipe-thumb {
-  background: rgba(88,199,158,0.75);
+  background: rgba(16,185,129,0.75);
   border-color: rgba(255,255,255,0.2);
+}
+html[data-theme="dark"] .swipe-button.active .swipe-thumb,
+html[data-theme="dark"] #swipeBtn.active .swipe-thumb {
+  background: rgba(59,130,246,0.85);
+}
+html[data-theme="dark"] .swipe-thumb .swipe-icon {
+  fill: #1e293b;
 }
