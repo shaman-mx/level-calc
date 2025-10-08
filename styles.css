@@ -643,7 +643,7 @@ html[data-theme="dark"] .reset-btn:hover {
 }
 /* ✅ Chỉ áp dụng cho out.html */
 .page-out body {
-  font-size: clamp(8px, 2.5vw, 18px); /* min 12px, max 18px, tự động scale giữa */
+  font-size: clamp(8px, 2.5vw, 14px); /* min 12px, max 18px, tự động scale giữa */
   -webkit-text-size-adjust: none;
   text-size-adjust: none;
 }
