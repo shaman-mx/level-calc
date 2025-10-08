@@ -235,128 +235,132 @@
     });
   })();
 
-  // ===== Swipe slides + swipe button =====
-  (function () {
-    const container = document.querySelector(".slide-container");
-    if (!container) return;
-    const slides = container.querySelectorAll(".slide");
-    if (slides.length <= 1) return;
-    let currentIndex = 0;
-    let startX = 0;
-    let currentX = 0;
-    let isTouching = false;
-    const THRESHOLD = 60;
-    container.style.touchAction = "pan-y";
+// ===== Swipe slides + swipe button =====
+(function () {
+  const container = document.querySelector(".slide-container");
+  if (!container) return;
+  const slides = container.querySelectorAll(".slide");
+  if (slides.length <= 1) return;
 
-function goTo(index, animate = true) {
-  index = Math.max(0, Math.min(index, slides.length - 1));
-  currentIndex = index;
-  container.style.transition = animate ? "transform 0.3s ease" : "none";
-  container.style.transform = `translateX(-${currentIndex * 100}%)`;
+  let currentIndex = 0;
+  let startX = 0;
+  let currentX = 0;
+  let isTouching = false;
+  const THRESHOLD = 60;
 
-  // cập nhật dot
-  const dots = document.querySelectorAll(".slide-dots .dot");
-  dots.forEach((d, i) => d.classList.toggle("active", i === currentIndex));
+  container.style.touchAction = "pan-y";
 
-  // ✅ đồng bộ swipe button
-  const swipeBtn = document.getElementById("swipeBtn");
-  if (swipeBtn) {
-    const thumb = swipeBtn.querySelector(".swipe-thumb");
-    const maxX = swipeBtn.offsetWidth - thumb.offsetWidth;
-    thumb.style.transition = "left 0.25s ease";
-    thumb.style.left = (currentIndex === 0 ? "0px" : maxX + "px");
-    // ✅ cập nhật text và vị trí
-    const swipeText = swipeBtn.querySelector("#swipeText");
-    if (swipeText) {
-      if (currentIndex === 0) {
-        swipeText.textContent = "SAU LEVEL 15 >";
-        swipeText.classList.remove("left");
-        swipeText.classList.add("right");
-      } else {
-        swipeText.textContent = "< TRƯỚC LEVEL 15";
-        swipeText.classList.remove("right");
-        swipeText.classList.add("left");
-      }
-    }
-  }
-}
+  // === Chuyển slide ===
+  function goTo(index, animate = true) {
+    index = Math.max(0, Math.min(index, slides.length - 1));
+    currentIndex = index;
+    container.style.transition = animate ? "transform 0.3s ease" : "none";
+    container.style.transform = `translateX(-${currentIndex * 100}%)`;
 
+    // Cập nhật dot
+    const dots = document.querySelectorAll(".slide-dots .dot");
+    dots.forEach((d, i) => d.classList.toggle("active", i === currentIndex));
 
-
-    // swipe container
-    container.addEventListener("pointerdown", (e) => {
-      isTouching = true;
-      startX = e.clientX;
-      currentX = startX;
-      container.style.transition = "none";
-    });
-    container.addEventListener("pointermove", (e) => {
-      if (!isTouching) return; 
-      currentX = e.clientX;
-      const dx = currentX - startX;
-      container.style.transform = `translateX(calc(${-currentIndex * 100}% + ${dx}px))`;
-    });
-    container.addEventListener("pointerup", () => {
-      if (!isTouching) return;
-      const dx = currentX - startX;
-      isTouching = false;
-      if (dx > THRESHOLD && currentIndex > 0) goTo(currentIndex - 1, true);
-      else if (dx < -THRESHOLD && currentIndex < slides.length - 1) goTo(currentIndex + 1, true);
-      else goTo(currentIndex, true);
-    });
-
-    // dots
-    document.querySelectorAll(".slide-dots .dot").forEach((dot, i) => dot.addEventListener("click", () => goTo(i)));
-
-    // swipe button
+    // Cập nhật swipe button (thumb + text)
     const swipeBtn = document.getElementById("swipeBtn");
     if (swipeBtn) {
       const thumb = swipeBtn.querySelector(".swipe-thumb");
-      let dragging = false;
-      let startThumbX = 0;
-      thumb.addEventListener("pointerdown", (e) => {
-        dragging = true;
-        startThumbX = e.clientX - thumb.offsetLeft;
-        thumb.style.transition = "none";
-      });
-      document.addEventListener("pointermove", (e) => {
-        if (!dragging) return;
-        let x = e.clientX - startThumbX;
-        const maxX = swipeBtn.offsetWidth - thumb.offsetWidth;
-        if (x < 0) x = 0;
-        if (x > maxX) x = maxX;
-        thumb.style.left = x + "px";
-      });
-document.addEventListener("pointerup", () => {
-  if (!dragging) return;
-  dragging = false;
-  const maxX = swipeBtn.offsetWidth - thumb.offsetWidth;
+      const swipeText = swipeBtn.querySelector("#swipeText");
+      const MARGIN = 3;
+      const maxX = swipeBtn.offsetWidth - thumb.offsetWidth - MARGIN * 2;
 
-// Nếu đang ở Before và kéo sang phải đủ xa -> sang After
-if (currentIndex === 0 && thumb.offsetLeft >= maxX - 10) {
-  goTo(1, true);
-  thumb.style.transition = "left 0.2s ease";
-  thumb.style.left = maxX + "px"; // 👉 đổi từ "0px" thành maxX
-}
-// Nếu đang ở After và kéo sang trái (gần 0) -> quay về Before
-else if (currentIndex === 1 && thumb.offsetLeft <= 10) {
-  goTo(0, true);
-  thumb.style.transition = "left 0.2s ease";
-  thumb.style.left = "0px";
-}
-// Nếu chưa đủ xa thì reset thumb
-else {
-  thumb.style.transition = "left 0.2s ease";
-  thumb.style.left = currentIndex === 0 ? "0px" : maxX + "px";
-}
-});
+      thumb.style.transition = "left 0.25s ease";
+      thumb.style.left = (currentIndex === 0 ? MARGIN : maxX + MARGIN) + "px";
 
-
+      if (swipeText) {
+        if (currentIndex === 0) {
+          swipeText.textContent = "SAU LEVEL 15 >";
+          swipeText.classList.remove("left");
+          swipeText.classList.add("right");
+        } else {
+          swipeText.textContent = "< TRƯỚC LEVEL 15";
+          swipeText.classList.remove("right");
+          swipeText.classList.add("left");
+        }
+      }
     }
+  }
 
+  // === Swipe container (kéo slide) ===
+  container.addEventListener("pointerdown", (e) => {
+    isTouching = true;
+    startX = e.clientX;
+    currentX = startX;
+    container.style.transition = "none";
+  });
+
+  container.addEventListener("pointermove", (e) => {
+    if (!isTouching) return;
+    currentX = e.clientX;
+    const dx = currentX - startX;
+    container.style.transform = `translateX(calc(${-currentIndex * 100}% + ${dx}px))`;
+  });
+
+  container.addEventListener("pointerup", () => {
+    if (!isTouching) return;
+    const dx = currentX - startX;
+    isTouching = false;
+    if (dx > THRESHOLD && currentIndex > 0) goTo(currentIndex - 1, true);
+    else if (dx < -THRESHOLD && currentIndex < slides.length - 1) goTo(currentIndex + 1, true);
+    else goTo(currentIndex, true);
+  });
+
+  // === Dots click ===
+  document.querySelectorAll(".slide-dots .dot").forEach((dot, i) =>
+    dot.addEventListener("click", () => goTo(i))
+  );
+
+  // === Swipe Button ===
+  const swipeBtn = document.getElementById("swipeBtn");
+  if (swipeBtn) {
+    const thumb = swipeBtn.querySelector(".swipe-thumb");
+    let dragging = false;
+    let startThumbX = 0;
+
+    const MARGIN = 3;
+
+    thumb.addEventListener("pointerdown", (e) => {
+      dragging = true;
+      startThumbX = e.clientX - thumb.offsetLeft;
+      thumb.style.transition = "none";
+    });
+
+    document.addEventListener("pointermove", (e) => {
+      if (!dragging) return;
+      let x = e.clientX - startThumbX;
+      const maxX = swipeBtn.offsetWidth - thumb.offsetWidth - MARGIN * 2;
+      if (x < MARGIN) x = MARGIN;
+      if (x > maxX + MARGIN) x = maxX + MARGIN;
+      thumb.style.left = x + "px";
+    });
+
+    document.addEventListener("pointerup", () => {
+      if (!dragging) return;
+      dragging = false;
+      const maxX = swipeBtn.offsetWidth - thumb.offsetWidth - MARGIN * 2;
+      const leftNow = thumb.offsetLeft;
+
+      if (currentIndex === 0 && leftNow >= maxX + MARGIN - 10) {
+        goTo(1, true);
+        thumb.style.transition = "left 0.25s ease";
+        thumb.style.left = maxX + MARGIN + "px";
+      } else if (currentIndex === 1 && leftNow <= MARGIN + 10) {
+        goTo(0, true);
+        thumb.style.transition = "left 0.25s ease";
+        thumb.style.left = MARGIN + "px";
+      } else {
+        thumb.style.transition = "left 0.25s ease";
+        thumb.style.left = (currentIndex === 0 ? MARGIN : maxX + MARGIN) + "px";
+      }
+    });
+  }
     goTo(0, false);
   })();
-
   // ===== Events =====
   beforeInput?.addEventListener("input", calcBefore);
   document.querySelectorAll("input[name='sachhe']").forEach(r => r.addEventListener("change", calcBefore));
