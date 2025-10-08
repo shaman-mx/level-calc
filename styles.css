@@ -643,7 +643,7 @@ html[data-theme="dark"] .reset-btn:hover {
 }
 /* ✅ Chỉ áp dụng cho out.html */
 .page-out body {
-  font-size: clamp(8px, 2.5vw, 14px); /* min 12px, max 18px, tự động scale giữa */
+  font-size: clamp(8px, 2.5vw, 10px); /* min 12px, max 18px, tự động scale giữa */
   -webkit-text-size-adjust: none;
   text-size-adjust: none;
 }
@@ -655,8 +655,8 @@ html[data-theme="dark"] .reset-btn:hover {
 
 /* Toàn bộ body scale theo viewport width */
 .page-out body {
-  font-size: calc(10px + 0.8vw); /* chữ co giãn toàn trang */
-  line-height: 1.4;
+  font-size: clamp(12px, 1.1vw, 16px);
+  line-height: 1.45;
 }
 
 /* Giữ tỉ lệ lớn hơn cho tiêu đề */
@@ -671,12 +671,12 @@ html[data-theme="dark"] .reset-btn:hover {
 .page-out .field__input,
 .page-out .result__label,
 .page-out .result__hint {
-  font-size: calc(8px + 0.6vw);
+  font-size: calc(4px + 0.6vw);
 }
 
 /* Kết quả chính to hơn, vẫn scale */
 .page-out .result__value {
-  font-size: calc(14px + 1.5vw);
+  font-size: calc(4px + 1.5vw);
   font-weight: 600;
 }
 /* ==== Giảm chiều cao menu Trận Địa chỉ trong out.html ==== */
