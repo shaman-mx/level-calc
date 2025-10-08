@@ -272,6 +272,9 @@
       thumb.style.transition = "left 0.25s ease";
       thumb.style.left = (currentIndex === 0 ? MARGIN : maxX + MARGIN) + "px";
 
+      // Cập nhật class active để CSS nhận biết
+      swipeBtn.classList.toggle("active", currentIndex !== 0);
+
       if (swipeText) {
         if (currentIndex === 0) {
           swipeText.textContent = "SAU LEVEL 15 >";
@@ -321,7 +324,6 @@
     const thumb = swipeBtn.querySelector(".swipe-thumb");
     let dragging = false;
     let startThumbX = 0;
-
     const MARGIN = 3;
 
     thumb.addEventListener("pointerdown", (e) => {
@@ -357,10 +359,15 @@
         thumb.style.transition = "left 0.25s ease";
         thumb.style.left = (currentIndex === 0 ? MARGIN : maxX + MARGIN) + "px";
       }
+
+      // Cập nhật class active sau khi vuốt
+      swipeBtn.classList.toggle("active", currentIndex !== 0);
     });
   }
-    goTo(0, false);
-  })();
+
+  // Khởi tạo slide đầu tiên
+  goTo(0, false);
+})();
   // ===== Events =====
   beforeInput?.addEventListener("input", calcBefore);
   document.querySelectorAll("input[name='sachhe']").forEach(r => r.addEventListener("change", calcBefore));
