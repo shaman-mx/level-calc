@@ -655,14 +655,14 @@ html[data-theme="dark"] .reset-btn:hover {
 
 /* Toàn bộ body scale theo viewport width */
 .page-out body {
-  font-size: clamp(12px, 1.1vw, 16px);
+  font-size: clamp(10px, 1.1vw, 14px);
   line-height: 1.45;
 }
 
 /* Giữ tỉ lệ lớn hơn cho tiêu đề */
 .page-out h1, 
 .page-out h2 {
-  font-size: calc(10px + 1.2vw);
+  font-size: calc(6px + 1.2vw);
   line-height: 1.2;
 }
 
@@ -671,7 +671,16 @@ html[data-theme="dark"] .reset-btn:hover {
 .page-out .field__input,
 .page-out .result__label,
 .page-out .result__hint {
-  font-size: calc(4px + 0.6vw);
+  font-size: calc(8px + 0.6vw);
+}
+/* Giảm base size khi màn hình rộng hơn 768px (tablet/PC) */
+@media (min-width: 768px) {
+  .page-out .field__label,
+  .page-out .field__input,
+  .page-out .result__label,
+  .page-out .result__hint {
+    font-size: calc(4px + 0.6vw);
+  }
 }
 
 /* Kết quả chính to hơn, vẫn scale */
