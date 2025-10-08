@@ -4,6 +4,7 @@
 /* Áp dụng font toàn trang */
 html, body {
   font-family: 'Be Vietnam Pro', 'Segoe UI', Roboto, sans-serif;
+}
 /* ========== Màu và biến ========== */
 :root{
   --bg: #f8fafc;
