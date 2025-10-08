@@ -430,6 +430,8 @@ else {
       { href: "exp.html", label: "📄 Bảng EXP", class: "exp-btn" },
       { href: "choices.html", label: "❓ Câu hỏi", class: "exp-btn alt" },
       { href: "crystal.html", label: "🔮 Mô phỏng tinh thể", class: "exp-btn" },
+  { href: "out.html", label: "🥊 Ao Chình", class: "exp-btn alt" },
+];
     ];
     buttons.forEach((b) => {
       if (b.href === currentPage) return;
