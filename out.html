@@ -1,105 +1,11 @@
-Skip to content
-Chat history
-
-You said:
-scan hết mấy files này
-ChatGPT said:
-Mình đã quét toàn bộ 4 file bạn gửi — đây là tóm tắt nội dung và chức năng chính của từng file:
-
-🧩 index.html
-Trang máy tính lực chiến trước/sau level 15:
-
-Có hai thẻ <article> song song (hoặc vuốt được trên mobile):
-
-“Trước level 15” dùng công thức ×105 ÷95
-
-“Sau level 15” dùng công thức ×110 ÷95
-
-Cả hai đều cộng thêm giá trị “Sách hệ” (Level 0–5: +0 → +30000).
-
-Có nút đổi theme 🌙/☀️ và phần hướng dẫn công thức.
-
-Gọi script.js để xử lý logic tính toán và giao diện trượt (swipe).
-
-⚙️ script.js
-Chứa toàn bộ logic JavaScript, gồm:
-
-Máy tính lực chiến (before/after Lv15).
-
-Mô phỏng tinh thể tu vi – tính tốc độ, thời gian đầy, các buff (suối linh, đan tụ linh, thân chú, thân mật, chiến đấu, kế băng tâm, HMC).
-
-Hiệu ứng thanh tiến trình (progress bar) + hoạt ảnh nạp EXP.
-
-Chuyển theme (light/dark) lưu bằng localStorage.
-
-Tạo bảng lựa chọn (choicesData) và nút điều hướng giữa các trang.
-
-Swipe trên mobile cho 2 slide (trước/sau Lv15).
-
-Xoá input nhanh cho các ô nhập liệu.
-
-🎨 styles.css
-Toàn bộ giao diện và responsive:
-
-Sử dụng biến màu (--brand-blue, --brand-green, v.v.) cho light/dark mode.
-
-Layout linh hoạt: PC hiển thị song song, mobile vuốt ngang.
-
-Có style riêng cho:
-
-Input, toggle “Sách hệ”
-
-Bảng EXP và bảng lựa chọn
-
-Progress bar (ánh sáng xanh/vàng)
-
-Buff form trong crystal.html
-
-Nút “Bắt đầu lại”, “Theme Toggle” v.v.
-
-🔮 crystal.html
-Trang mô phỏng tinh thể tu vi:
-
-Chọn Level + Giai đoạn (1-sơ → 12-hậu).
-
-Các buff (checkbox + dropdown).
-
-Hiển thị:
-
-Dung lượng tinh thể, tốc độ cơ bản, tốc độ hiện tại, thời gian đầy & còn lại.
-
-Có thanh tiến trình, nút “Bắt đầu lại”.
-
-Gọi chung script.js để xử lý tính toán & hiển thị.
-
-Nếu bạn muốn, mình có thể:
-
-✅ Giải thích chi tiết công thức tính tinh thể/buff trong JS.
-
-🧮 Tạo thêm trang bảng EXP hoặc trang câu hỏi (choices.html) cho đồng bộ.
-
-💄 Hoặc tối ưu lại code (gộp, rút gọn, chuyển sang module).
-
-👉 Bạn muốn mình làm gì tiếp theo với bộ file này?
-
-You said:
-bây h tôi muốn làm 1 trang tính out.html với nội dung
-1 ô input nhập số, 1 ô kết quả, tương tự với trang index.html và lấy các class từ đó 
-ChatGPT said:
-Rõ rồi 👍 — bạn muốn tạo một trang out.html mới,
-với 1 ô nhập số, 1 ô hiển thị kết quả, giao diện giống index.html,
-và dùng lại toàn bộ class/style hiện có (.field, .card, .result, v.v.).
-
-Dưới đây là mẫu code hoàn chỉnh cho out.html, bạn chỉ cần lưu file mới cùng thư mục với styles.css và script.js:
-
 <!doctype html>
-<html lang="vi" data-theme="light">
+<html lang="vi" data-theme="light" class="page-out">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>OUT Calculator – TU TIÊN WEPLAY</title>
+  <title>AO CHÌNH – TU TIÊN WEPLAY</title>
   <link rel="stylesheet" href="styles.css" />
-  <meta name="theme-color" content="#2563eb">
+  <meta name="theme-color" content="#2563eb" />
   <script>
     (() => {
       const saved = localStorage.getItem("theme");
@@ -113,33 +19,97 @@ Dưới đây là mẫu code hoàn chỉnh cho out.html, bạn chỉ cần lưu 
   <header class="site-header container">
     <div class="header-row">
       <div class="header-title">
-        <h1>OUT CALCULATOR</h1>
-        <p>Công cụ tính kết quả nhanh</p>
+        <h1>AO CHÌNH</h1>
+        <p>Tính toán lực chiến trong mật cảnh ±5%</p>
       </div>
-      <button id="themeToggle" class="theme-toggle" aria-label="Chuyển chế độ sáng/tối">🌙</button>
+      <button id="themeToggle" class="theme-toggle">🌙</button>
     </div>
   </header>
 
   <main>
     <section class="cards container">
       <article class="card" aria-labelledby="out-title">
-        <h2 class="card__title" id="out-title">
-          <span class="dot dot--before"></span>
-          TÍNH OUT
-        </h2>
+        <h2 class="card__title" id="out-title">TÍNH OUT</h2>
 
-        <div class="field">
-          <label for="outInput" class="field__label">Nhập giá trị</label>
-          <div class="field__wrapper">
-            <input type="text" inputmode="decimal" id="outInput" class="field__input" placeholder="Nhập số hoặc phép tính…" autocomplete="off" />
-            <button class="clear-btn" id="clearOut" aria-label="Xoá dữ liệu">✖</button>
+        <div class="out-fields">
+          <!-- Người chơi -->
+          <div class="field out-col">
+            <label for="playerInput" class="field__label">Lực chiến người chơi</label>
+            <div class="field__wrapper">
+              <input type="text" id="playerInput" class="field__input" placeholder="Nhập lực chiến…" />
+              <button class="clear-btn" id="clearPlayer">✖</button>
+            </div>
+
+            <div class="field">
+              <select id="tranDiaPlayerSelect" class="field__input">
+                <option value="0">Trận địa 0 (+0%)</option>
+                <option value="0.02">Trận địa 1 (+2%)</option>
+                <option value="0.05">Trận địa 2 (+5%)</option>
+                <option value="0.07">Trận địa 3 (+7%)</option>
+                <option value="0.10">Trận địa 4 (+10%)</option>
+                <option value="0.15">Trận địa 5 (+15%)</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <select id="sachHePlayerSelect" class="field__input">
+                <option value="0">Sách hệ 0 (+0)</option>
+                <option value="3000">Sách hệ 1 (+3.000)</option>
+                <option value="10000">Sách hệ 2 (+10.000)</option>
+                <option value="15000">Sách hệ 3 (+15.000)</option>
+                <option value="20000">Sách hệ 4 (+20.000)</option>
+                <option value="30000">Sách hệ 5 (+30.000)</option>
+              </select>
+            </div>
+
+            <div class="result-box">
+              <div class="result__label">Tổng lực chiến người chơi</div>
+              <div id="playerTotal" class="result__value">0</div>
+            </div>
+          </div>
+
+          <!-- Đối thủ -->
+          <div class="field out-col">
+            <label for="enemyInput" class="field__label">Lực chiến đối thủ</label>
+            <div class="field__wrapper">
+              <input type="text" id="enemyInput" class="field__input" placeholder="Nhập lực chiến…" />
+              <button class="clear-btn" id="clearEnemy">✖</button>
+            </div>
+
+            <div class="field">
+              <select id="tranDiaEnemySelect" class="field__input">
+                <option value="0">Trận địa 0 (+0%)</option>
+                <option value="0.02">Trận địa 1 (+2%)</option>
+                <option value="0.05">Trận địa 2 (+5%)</option>
+                <option value="0.07">Trận địa 3 (+7%)</option>
+                <option value="0.10">Trận địa 4 (+10%)</option>
+                <option value="0.15">Trận địa 5 (+15%)</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <select id="sachHeEnemySelect" class="field__input">
+                <option value="0">Sách hệ 0 (+0)</option>
+                <option value="3000">Sách hệ 1 (+3.000)</option>
+                <option value="10000">Sách hệ 2 (+10.000)</option>
+                <option value="15000">Sách hệ 3 (+15.000)</option>
+                <option value="20000">Sách hệ 4 (+20.000)</option>
+                <option value="30000">Sách hệ 5 (+30.000)</option>
+              </select>
+            </div>
+
+            <div class="result-box">
+              <div class="result__label">Tổng lực chiến đối thủ</div>
+              <div id="enemyTotal" class="result__value">0</div>
+            </div>
           </div>
         </div>
 
+        <!-- Kết quả -->
         <output class="result result--before" id="outResultBox">
-          <div class="result__label">Kết quả</div>
-          <div class="result__value" id="outResult">0.00</div>
-          <div class="result__hint">Tự động cập nhật</div>
+          <div class="result__label">Kết quả sau khi áp dụng ±5%</div>
+          <div class="result__value" id="outResult">0.00%</div>
+          <div class="result__hint">Người yếu +5%, người mạnh -5%</div>
         </output>
       </article>
     </section>
@@ -149,46 +119,115 @@ Dưới đây là mẫu code hoàn chỉnh cho out.html, bạn chỉ cần lưu 
     <small>© 2025 TU TIÊN WEPLAY · 🌙 Bao Chửng</small>
   </footer>
 
-  <script src="script.js" defer></script>
-  <script>
-    // ===== Script riêng cho out.html =====
-    const outInput = document.getElementById("outInput");
-    const outResult = document.getElementById("outResult");
-    const clearOut = document.getElementById("clearOut");
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const $ = (id) => document.getElementById(id);
 
-    const fmt = (n) => (Number.isFinite(n) ? n.toFixed(2) : "0.00");
-    const safeEval = (expr) => {
-      if (!/^[0-9+\-*/().\s]+$/.test(expr)) return NaN;
-      try { return new Function(`return (${expr})`)(); } catch { return NaN; }
-    };
+  const playerInput = $("playerInput"),
+        enemyInput = $("enemyInput"),
+        clearPlayer = $("clearPlayer"),
+        clearEnemy = $("clearEnemy"),
+        tranDiaPlayerSelect = $("tranDiaPlayerSelect"),
+        tranDiaEnemySelect = $("tranDiaEnemySelect"),
+        sachHePlayerSelect = $("sachHePlayerSelect"),
+        sachHeEnemySelect = $("sachHeEnemySelect"),
+        playerTotal = $("playerTotal"),
+        enemyTotal = $("enemyTotal"),
+        outResult = $("outResult");
 
-    function calcOut() {
-      const expr = (outInput.value || "").replace(",", ".");
-      const val = safeEval(expr);
-      outResult.textContent = fmt(val);
+  // 🔹 Thêm phần hiển thị chênh lệch bên dưới
+  const diffLine = document.createElement("div");
+  diffLine.className = "result__hint";
+  diffLine.id = "lcDiff";
+  outResult.parentElement.appendChild(diffLine);
+
+  const fmt = (n) => (Number.isFinite(n) ? Math.round(n).toLocaleString("vi-VN") : "0");
+  const safeNum = (val) => {
+    if (!val) return 0;
+    const s = val.replace(/\./g, "").replace(/,/g, ".");
+    if (!/^[0-9+\-*/().\s]+$/.test(s)) return 0;
+    try { return new Function("return (" + s + ")")(); } catch { return 0; }
+  };
+
+  function calcOut() {
+    const P = safeNum(playerInput.value);
+    const E = safeNum(enemyInput.value);
+    const TP = parseFloat(tranDiaPlayerSelect.value || 0);
+    const TE = parseFloat(tranDiaEnemySelect.value || 0);
+    const SP = parseFloat(sachHePlayerSelect.value || 0);
+    const SE = parseFloat(sachHeEnemySelect.value || 0);
+
+    // Tổng lực chiến hiển thị
+    let totalP = P ? P + P * TP + SP : 0;
+    let totalE = E ? E + E * TE + SE : 0;
+    playerTotal.textContent = fmt(totalP);
+    enemyTotal.textContent = fmt(totalE);
+
+    // Nếu chưa nhập đủ
+    if (!P || !E) {
+      outResult.textContent = "0.00%";
+      outResult.style.color = "";
+      diffLine.textContent = "";
+      return;
     }
 
-    outInput.addEventListener("input", calcOut);
-    clearOut.addEventListener("click", () => {
-      outInput.value = "";
-      calcOut();
-    });
-  </script>
+    // Xác định ai mạnh / yếu
+    let buffP = totalP;
+    let buffE = totalE;
+    let isPlayerWeaker = false;
+    let isOut = false;
+
+    if (totalP < totalE) {
+      isPlayerWeaker = true;
+      buffP = totalP * 1.05; // +5%
+      buffE = totalE * 0.95; // -5%
+      if (buffP < buffE) isOut = true;
+    } else if (totalP > totalE) {
+      buffP = totalP * 0.95;
+      buffE = totalE * 1.05;
+      if (buffE < buffP * 0.95) isOut = true;
+    }
+
+    const ratio = (buffP / buffE) * 100;
+    const diff = Math.abs(buffP - buffE);
+
+    // Hiển thị kết quả
+    let label = ratio.toFixed(2) + "%";
+    outResult.style.color = "";
+    diffLine.textContent = "";
+
+    if (isOut && isPlayerWeaker) {
+      label += " (BỊ OUT)";
+      outResult.style.color = "#dc2626"; // đỏ đậm
+    } else if (isOut && !isPlayerWeaker) {
+      label += " (OUT)";
+      outResult.style.color = "#00FF00"; // vàng nhạt
+    } else if (ratio > 100) {
+      outResult.style.color = "limegreen";
+    } else if (ratio < 100) {
+      outResult.style.color = "#ef4444";
+    }
+
+    outResult.textContent = label;
+
+    // ✅ Dòng hiển thị chênh lệch
+    if (diff > 0) {
+      const prefix = isPlayerWeaker ? "Người chơi yếu hơn " : "Người chơi mạnh hơn ";
+      diffLine.textContent = `${prefix}${fmt(diff)} lực chiến`;
+      diffLine.style.color = isPlayerWeaker ? "#ef4444" : "#00FF00";
+    } else {
+      diffLine.textContent = "";
+    }
+  }
+
+  [playerInput, enemyInput, tranDiaPlayerSelect, tranDiaEnemySelect, sachHePlayerSelect, sachHeEnemySelect]
+    .forEach(el => el.addEventListener("input", calcOut));
+
+  clearPlayer.addEventListener("click", () => { playerInput.value = ""; calcOut(); });
+  clearEnemy.addEventListener("click", () => { enemyInput.value = ""; calcOut(); });
+
+  calcOut();
+});
+</script>
 </body>
 </html>
-✅ Điểm nổi bật:
-
-Dùng lại toàn bộ CSS của index.html (.card, .field, .result, .clear-btn).
-
-Có nút 🌙 chuyển theme hoạt động nhờ script.js.
-
-Có ô input + nút xoá + kết quả tự động cập nhật.
-
-Hỗ trợ nhập phép tính (ví dụ: 2+3*4 → 14.00).
-
-Bạn có muốn mình mở rộng trang này (ví dụ thêm chọn “hệ” như index.html, hoặc thêm công thức tính riêng như ×1.1 + 5000 chẳng hạn)?
-
-
-
-No file chosenNo file chosen
-ChatGPT can make mistakes. Check important info.
