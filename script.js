@@ -406,7 +406,7 @@
     { option1: { text: "Đồng ý", reward: "Tăng tu vi", danger: false }, option2: { text: "Từ chối", reward: "Tăng tu vi", danger: false } },
     { option1: { text: "Dũng cảm dựa vào", reward: "Tăng tu vi", danger: false }, option2: { text: "Đi nấp", reward: "Không có gì", danger: true } },
     { option1: { text: "Khai thác bề mặt", reward: "Tăng tu vi", danger: false }, option2: { text: "Khai thác sâu", reward: "Không có gì", danger: true } },
-    { option1: { text: "Lương thiện", reward: "Tăng tu vi", danger: false }, option2: { text: "Lớn mạnh", reward: "Đan vàng", danger: false } },
+    { option1: { text: "Lương thiện", reward: "Tăng tu vi", danger: false }, option2: { text: "Lớn mạnh", reward: "Thư thách đấu", danger: false } },
     { option1: { text: "Tặng thuốc", reward: "Đan xanh", danger: false }, option2: { text: "Cứu chữa", reward: "Đan vàng", danger: false } },
     { option1: { text: "Tiên thảo", reward: "Tăng tu vi", danger: false }, option2: { text: "Đan dược", reward: "Đan xanh", danger: false } },
     { option1: { text: "Trợ giúp chim loan", reward: "Đan xanh", danger: false }, option2: { text: "Trợ giúp chuột vàng", reward: "Đan vàng", danger: false } },
