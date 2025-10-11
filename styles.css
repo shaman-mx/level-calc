@@ -824,3 +824,16 @@ html[data-theme="dark"] #swipeBtn.active .swipe-thumb {
 html[data-theme="dark"] .swipe-thumb .swipe-icon {
   fill: #1e293b;
 }
+/* Ngăn bị tô đen khi click hoặc chạm */
+button, .swipe-button, .swipe-thumb, #themeToggle {
+  -webkit-tap-highlight-color: transparent; /* tắt màu nền khi chạm trên mobile */
+  user-select: none; /* ngăn chọn chữ */
+  outline: none; /* bỏ khung viền khi focus */
+}
+
+/* Khi focus bằng bàn phím vẫn giữ truy cập hợp lệ */
+button:focus-visible, #themeToggle:focus-visible {
+  outline: 2px solid var(--accent-color, #2563eb);
+  outline-offset: 3px;
+}
+
