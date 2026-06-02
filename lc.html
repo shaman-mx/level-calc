@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tính Lực Chiến</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#f5f5f5;
+    margin:0;
+    padding:20px;
+}
+
+.container{
+    max-width:800px;
+    margin:auto;
+}
+
+h1{
+    text-align:center;
+}
+
+.input-box{
+    margin-bottom:20px;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    font-size:20px;
+    box-sizing:border-box;
+}
+
+.columns{
+    display:flex;
+    gap:20px;
+}
+
+.column{
+    flex:1;
+    background:white;
+    padding:15px;
+    border-radius:10px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+
+.column h2{
+    text-align:center;
+    margin-top:0;
+}
+
+.result{
+    margin-bottom:15px;
+}
+
+.label{
+    font-weight:bold;
+    margin-bottom:5px;
+}
+
+.value{
+    background:#eee;
+    padding:10px;
+    border-radius:5px;
+    min-height:24px;
+}
+
+@media (max-width:600px){
+    .columns{
+        flex-direction:column;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Tính Lực Chiến</h1>
+
+    <div class="input-box">
+        <input
+            type="number"
+            id="power"
+            placeholder="Nhập lực chiến..."
+            oninput="calculate()"
+        >
+    </div>
+
+    <div class="columns">
+
+        <div class="column">
+            <h2>Trước 15</h2>
+
+            <div class="result">
+                <div class="label">Kết quả cùng tộc</div>
+                <div class="value" id="beforeSame">0</div>
+            </div>
+
+            <div class="result">
+                <div class="label">Tiên vs Ma</div>
+                <div class="value" id="beforeRace">0</div>
+            </div>
+        </div>
+
+        <div class="column">
+            <h2>Sau 15</h2>
+
+            <div class="result">
+                <div class="label">Kết quả cùng tộc</div>
+                <div class="value" id="afterSame">0</div>
+            </div>
+
+            <div class="result">
+                <div class="label">Tiên vs Ma</div>
+                <div class="value" id="afterRace">0</div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+function formatNumber(num){
+    return Math.round(num).toLocaleString('vi-VN');
+}
+
+function calculate(){
+    const value = parseFloat(document.getElementById('power').value) || 0;
+
+    const beforeSame = value * 105 / 95;
+    const beforeRace = value * 110 / 90;
+
+    const afterSame = value * 110 / 95;
+    const afterRace = value * 115 / 90;
+
+    document.getElementById('beforeSame').textContent = formatNumber(beforeSame);
+    document.getElementById('beforeRace').textContent = formatNumber(beforeRace);
+
+    document.getElementById('afterSame').textContent = formatNumber(afterSame);
+    document.getElementById('afterRace').textContent = formatNumber(afterRace);
+}
+</script>
+
+</body>
+</html>
