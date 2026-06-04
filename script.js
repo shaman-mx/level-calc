@@ -18,12 +18,12 @@
   };
 
   // ===== Elements (Calculator) =====
-  const beforeInput = $("#beforeInput");
-  const afterInput = $("#afterInput");
-  const beforeOut = $("#beforeResult");
-  const afterOut = $("#afterResult");
-  const clearBefore = $("#clearBefore");
-  const clearAfter = $("#clearAfter");
+  const powerInput = $("#powerInput");
+  const clearBtn = $("#clearBtn");
+  const beforeSame = $("#beforeSame");
+  const afterSame = $("#afterSame");
+  const beforeCounter = $("#beforeCounter");
+  const afterCounter = $("#afterCounter");
   const toggleBtn = $("#themeToggle");
 
   // ===== Elements (Crystal) =====
@@ -201,23 +201,36 @@
 
   // ===== Calculator (before/after Lv15) =====
   function calcBefore() {
-    const expr = (beforeInput?.value || "").replace(",", ".");
-    const val = safeEval(expr);
-    let res = (val * 105) / 95;
-    const selected = document.querySelector("input[name='sachhe']:checked");
-    const sachHeValue = selected ? parseInt(selected.value, 10) : 0;
-    res += sachHeValue;
-    if (beforeOut) beforeOut.textContent = fmt(res);
+  function calcPower() {
+  const expr = (powerInput?.value || "").replace(",", ".");
+  const val = safeEval(expr);
+
+  if (!Number.isFinite(val)) {
+    beforeSame.textContent = "0.00";
+    afterSame.textContent = "0.00";
+    beforeCounter.textContent = "0.00";
+    afterCounter.textContent = "0.00";
+    return;
   }
 
-  function calcAfter() {
-    const expr = (afterInput?.value || "").replace(",", ".");
-    const val = safeEval(expr);
-    let res = (val * 110) / 95;
-    const selected = document.querySelector("input[name='sachheAfter']:checked");
-    const sachHeValue = selected ? parseInt(selected.value, 10) : 0;
-    res += sachHeValue;
-    if (afterOut) afterOut.textContent = fmt(res);
+  const selected = document.querySelector(
+    "input[name='sachhe']:checked"
+  );
+  const sachHeValue = selected
+    ? parseInt(selected.value, 10)
+    : 0;
+
+  beforeSame.textContent =
+    fmt((val * 105) / 95 + sachHeValue);
+
+  afterSame.textContent =
+    fmt((val * 110) / 95 + sachHeValue);
+
+  beforeCounter.textContent =
+    fmt((val * 110) / 90 + sachHeValue);
+
+  afterCounter.textContent =
+    fmt((val * 115) / 90 + sachHeValue);
   }
 
   // ===== Theme =====
@@ -370,13 +383,22 @@
   goTo(0, false);
 })();
   // ===== Events =====
-  beforeInput?.addEventListener("input", calcBefore);
-  document.querySelectorAll("input[name='sachhe']").forEach(r => r.addEventListener("change", calcBefore));
-  afterInput?.addEventListener("input", calcAfter);
-  document.querySelectorAll("input[name='sachheAfter']").forEach(r => r.addEventListener("change", calcAfter));
-  clearBefore?.addEventListener("click", () => { if (beforeInput) { beforeInput.value = ""; calcBefore(); } });
-  clearAfter?.addEventListener("click", () => { if (afterInput) { afterInput.value = ""; calcAfter(); } });
+  powerInput?.addEventListener("input", calcPower);
 
+document
+  .querySelectorAll("input[name='sachhe']")
+  .forEach(r =>
+    r.addEventListener("change", calcPower)
+  );
+
+clearBtn?.addEventListener("click", () => {
+  if (powerInput) {
+    powerInput.value = "";
+    calcPower();
+    powerInput.focus();
+  }
+});
+    
   levelSelect?.addEventListener("change", startProgress);
   resetBtn?.addEventListener("click", startProgress);
   [levelSelect, suoiLinh, danTuLinh, thanchu, thanMat, chienDau, keBangTam, huyenMinhCong].forEach(el => {
@@ -388,8 +410,7 @@
   // init
   updateCrystalInfo();
   startProgress();
-  calcBefore();
-  calcAfter();
+  calcPower();
 })();
 // ===== Choices table =====
   const choicesData = [
