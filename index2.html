@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="vi" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Máy Tính Level – TU TIÊN WEPLAY</title>
+  <meta name="description" content="Công cụ tính toán lực chiến có thể thách đấu (trước/sau level 15). Hiển thị tốt trên mọi thiết bị." />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="icons/icon-192.png" type="image/png" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-512.png" />
+  <link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" sizes="512x512" href="icons/icon-512.png" />
+  <meta name="theme-color" content="#2563eb">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Level Calc">
+  <script>
+    (() => {
+      const saved = localStorage.getItem("theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const theme = saved || (prefersDark ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+</head>
+<body>
+  <header class="site-header container">
+    <div class="header-row">
+      <div class="header-title">
+        <h1>TU TIÊN WEPLAY</h1>
+        <p>Công cụ tính toán lực chiến có thể thách đấu</p>
+      </div>
+      <button id="themeToggle" class="theme-toggle" aria-label="Chuyển chế độ sáng/tối">🌙</button>
+    </div>
+  </header>
+<main>
+
+  <section class="cards container">
+    <article class="card">
+
+      <h2 class="card__title">
+        <span class="dot dot--before"></span>
+        TÍNH TOÁN LỰC CHIẾN
+      </h2>
+
+      <!-- Input -->
+      <div class="field">
+        <label for="powerInput" class="field__label">
+          Lực chiến hiện tại
+        </label>
+
+        <div class="field__wrapper">
+          <input
+            type="text"
+            inputmode="decimal"
+            id="powerInput"
+            class="field__input"
+            placeholder="Nhập số hoặc phép tính..."
+            autocomplete="off"
+          />
+
+          <button
+            class="clear-btn"
+            id="clearBtn"
+            aria-label="Xoá dữ liệu">
+            ✖
+          </button>
+        </div>
+      </div>
+
+      <!-- Sách hệ -->
+      <div class="field">
+        <label class="field__label">Sách hệ</label>
+
+        <div class="toggle">
+
+          <input type="radio" id="sachhe0" name="sachhe" value="0" checked>
+          <label for="sachhe0">Level 0</label>
+
+          <input type="radio" id="sachhe1" name="sachhe" value="3000">
+          <label for="sachhe1">Level 1</label>
+
+          <input type="radio" id="sachhe2" name="sachhe" value="10000">
+          <label for="sachhe2">Level 2</label>
+
+          <input type="radio" id="sachhe3" name="sachhe" value="15000">
+          <label for="sachhe3">Level 3</label>
+
+          <input type="radio" id="sachhe4" name="sachhe" value="20000">
+          <label for="sachhe4">Level 4</label>
+
+          <input type="radio" id="sachhe5" name="sachhe" value="30000">
+          <label for="sachhe5">Level 5</label>
+
+        </div>
+      </div>
+
+      <!-- Kết quả -->
+      <div class="result-grid">
+
+        <div class="result-card">
+          <div class="result-title">Cùng tộc Tiên/Ma</div>
+          <div class="result-sub">Trước level 15</div>
+          <div id="beforeSame" class="result-value">0.00</div>
+        </div>
+
+        <div class="result-card">
+          <div class="result-title">Cùng tộc Tiên/Ma</div>
+          <div class="result-sub">Sau level 15</div>
+          <div id="afterSame" class="result-value">0.00</div>
+        </div>
+
+        <div class="result-card">
+          <div class="result-title">Khắc tộc Tiên vs Ma</div>
+          <div class="result-sub">Trước level 15</div>
+          <div id="beforeCounter" class="result-value">0.00</div>
+        </div>
+
+        <div class="result-card">
+          <div class="result-title">Khắc tộc Tiên vs Ma</div>
+          <div class="result-sub">Sau level 15</div>
+          <div id="afterCounter" class="result-value">0.00</div>
+        </div>
+
+      </div>
+
+    </article>
+  </section>
+
+  <!-- Giữ nguyên phần thông tin -->
+  <section class="cards container">
+    <article class="info">
+      <h3>Thông tin công thức</h3>
+
+      <ul class="info__list">
+        <li class="info__item">
+          <span class="dot dot--before"></span>
+          <strong>Trước level 15:</strong>
+          Giá trị × 105 ÷ 95
+        </li>
+
+        <li class="info__item">
+          <span class="dot dot--after"></span>
+          <strong>Sau level 15:</strong>
+          Giá trị × 110 ÷ 95
+        </li>
+      </ul>
+
+      <p class="info__note">
+        Nhập số hoặc phép tính để xem kết quả ngay lập tức.
+      </p>
+    </article>
+  </section>
+
+</main>
+
+  <footer class="site-footer container">
+    <small>© 2025 TU TIÊN WEPLAY · 🌙 Bao Chửng</small>
+  </footer>
+  <script src="script.js" defer></script>
+</body>
+  </html>
