@@ -201,6 +201,13 @@
 
   // ===== Calculator (before/after Lv15) =====
   function calcPower() {
+  if (
+    !powerInput ||
+    !beforeSame ||
+    !afterSame ||
+    !beforeCounter ||
+    !afterCounter
+  ) return;
   const expr = (powerInput?.value || "").replace(",", ".");
   const val = safeEval(expr);
 
