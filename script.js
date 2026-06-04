@@ -200,7 +200,7 @@
   }
 
   // ===== Calculator (before/after Lv15) =====
-  function calcPower() {
+function calcPower() {
   if (
     !powerInput ||
     !beforeSame ||
@@ -208,36 +208,41 @@
     !beforeCounter ||
     !afterCounter
   ) return;
-  const expr = (powerInput?.value || "").replace(",", ".");
-  const val = safeEval(expr);
+
+  const val = safeEval(powerInput.value);
 
   if (!Number.isFinite(val)) {
-    beforeSame.textContent = "0.00";
-    afterSame.textContent = "0.00";
-    beforeCounter.textContent = "0.00";
-    afterCounter.textContent = "0.00";
+    beforeSame.textContent = "0";
+    afterSame.textContent = "0";
+    beforeCounter.textContent = "0";
+    afterCounter.textContent = "0";
     return;
   }
 
   const selected = document.querySelector(
     "input[name='sachhe']:checked"
   );
+
   const sachHeValue = selected
     ? parseInt(selected.value, 10)
     : 0;
 
-  beforeSame.textContent =
-    fmt((val * 105) / 95 + sachHeValue);
+  beforeSame.textContent = Math.round(
+    (val * 105) / 95 + sachHeValue
+  ).toLocaleString("vi-VN");
 
-  afterSame.textContent =
-    fmt((val * 110) / 95 + sachHeValue);
+  afterSame.textContent = Math.round(
+    (val * 110) / 95 + sachHeValue
+  ).toLocaleString("vi-VN");
 
-  beforeCounter.textContent =
-    fmt((val * 110) / 90 + sachHeValue);
+  beforeCounter.textContent = Math.round(
+    (val * 110) / 90 + sachHeValue
+  ).toLocaleString("vi-VN");
 
-  afterCounter.textContent =
-    fmt((val * 115) / 90 + sachHeValue);
-  }
+  afterCounter.textContent = Math.round(
+    (val * 115) / 90 + sachHeValue
+  ).toLocaleString("vi-VN");
+}
 
   // ===== Theme =====
   function setTheme(theme) {
